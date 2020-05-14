@@ -11,6 +11,8 @@ import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
 import gg.octave.bot.music.filters.DSPFilter
 import gg.octave.bot.music.sources.caching.CachingSourceManager
+import gg.octave.bot.music.utils.DiscordFMTrackContext
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.data
 import gg.octave.bot.utils.extensions.friendlierMessage
 import gg.octave.bot.utils.extensions.premiumGuild

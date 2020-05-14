@@ -1,7 +1,7 @@
 package gg.octave.bot.commands.music
 
 import gg.octave.bot.entities.framework.MusicCog
-import gg.octave.bot.music.TrackContext
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.Utils
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.manager

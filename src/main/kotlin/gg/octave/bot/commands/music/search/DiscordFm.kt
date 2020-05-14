@@ -2,8 +2,8 @@ package gg.octave.bot.commands.music.search
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.PLAY_MESSAGE
-import gg.octave.bot.music.DiscordFMTrackContext
-import gg.octave.bot.music.MusicLimitException
+import gg.octave.bot.music.utils.DiscordFMTrackContext
+import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.utils.DiscordFM
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command

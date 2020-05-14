@@ -20,8 +20,10 @@ import com.sedmelluq.lava.extensions.youtuberotator.YoutubeIpRotatorSetup
 import com.sedmelluq.lava.extensions.youtuberotator.planner.RotatingNanoIpRoutePlanner
 import com.sedmelluq.lava.extensions.youtuberotator.tools.ip.Ipv6Block
 import gg.octave.bot.Launcher
+import gg.octave.bot.music.sources.attachment.DiscordAttachmentAudioSourceManager
 import gg.octave.bot.music.sources.caching.CachingSourceManager
 import gg.octave.bot.music.sources.spotify.SpotifyAudioSourceManager
+import gg.octave.bot.music.utils.TrackContext
 import io.sentry.Sentry
 import org.json.JSONArray
 import org.json.JSONObject
@@ -71,6 +73,7 @@ class ExtendedAudioPlayerManager(private val dapm: AudioPlayerManager = DefaultA
 
         registerSourceManagers(
             CachingSourceManager(),
+            DiscordAttachmentAudioSourceManager(),
             spotifyAudioSourceManager,
             youtubeAudioSourceManager,
             SoundCloudAudioSourceManager.createDefault(),

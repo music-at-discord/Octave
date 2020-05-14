@@ -1,4 +1,4 @@
-package gg.octave.bot.music
+package gg.octave.bot.music.utils
 
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 

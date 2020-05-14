@@ -1,4 +1,4 @@
-package gg.octave.bot.music
+package gg.octave.bot.music.utils
 
 import me.devoxin.flight.api.Context
 import java.awt.Color

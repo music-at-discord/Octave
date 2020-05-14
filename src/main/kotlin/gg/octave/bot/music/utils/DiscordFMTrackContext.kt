@@ -1,10 +1,11 @@
-package gg.octave.bot.music
+package gg.octave.bot.music.utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import gg.octave.bot.Launcher
+import gg.octave.bot.music.MusicManager
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.util.concurrent.CompletableFuture

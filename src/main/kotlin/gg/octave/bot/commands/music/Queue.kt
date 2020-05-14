@@ -2,7 +2,7 @@ package gg.octave.bot.commands.music
 
 import com.jagrosh.jdautilities.paginator
 import gg.octave.bot.Launcher
-import gg.octave.bot.music.TrackContext
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.Utils
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.selfMember

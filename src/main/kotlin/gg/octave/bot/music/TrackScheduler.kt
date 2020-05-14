@@ -10,6 +10,7 @@ import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
 import gg.octave.bot.db.OptionsRegistry
 import gg.octave.bot.music.settings.RepeatOption
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.friendlierMessage
 import gg.octave.bot.utils.extensions.insertAt
 import io.sentry.Sentry

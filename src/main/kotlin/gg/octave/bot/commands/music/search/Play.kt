@@ -4,9 +4,9 @@ import com.jagrosh.jdautilities.menu.Selector
 import com.jagrosh.jdautilities.menu.SelectorBuilder
 import gg.octave.bot.Launcher
 import gg.octave.bot.listeners.FlightEventAdapter
-import gg.octave.bot.music.MusicLimitException
+import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.music.MusicManager
-import gg.octave.bot.music.TrackContext
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.music.TrackScheduler
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
@@ -31,11 +31,13 @@ class Play : Cog {
             return ctx.send("The bot is already playing music in another channel.")
         }
 
-        if (query == null) {
+        val attachment = ctx.message.attachments.firstOrNull()
+
+        if (query == null && attachment == null) {
             return playArgless(ctx)
         }
 
-        val args = query.split(" +".toRegex())
+        val args = attachment?.let { listOf("discord://${it.url}") } ?: query!!.split(" +".toRegex())
         val hasManager = Launcher.players.contains(ctx.guild!!.idLong)
 
         prompt(ctx, hasManager).handle { _, _ ->
@@ -125,7 +127,7 @@ class Play : Cog {
             manager.scheduler.queue.clearExpire()
 
             val query = when {
-                "https://" in args[0] || "http://" in args[0] || args[0].startsWith("spotify:") -> {
+                "discord://" in args[0] || "https://" in args[0] || "http://" in args[0] || args[0].startsWith("spotify:") -> {
                     args[0].removePrefix("<").removeSuffix(">")
                 }
                 isSearchResult -> uri

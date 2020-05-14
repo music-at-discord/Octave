@@ -4,7 +4,7 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
-import gg.octave.bot.music.TrackContext
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.manager
 import gg.octave.bot.utils.getDisplayValue

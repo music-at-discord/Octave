@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.selector
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
-import gg.octave.bot.music.MusicLimitException
+import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.utils.Utils
 import gg.octave.bot.utils.extensions.selfMember
 import gg.octave.bot.utils.extensions.voiceChannel
