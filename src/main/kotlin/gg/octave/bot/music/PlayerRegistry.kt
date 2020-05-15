@@ -15,8 +15,12 @@ class PlayerRegistry(private val bot: Launcher) {
 
     @Throws(MusicLimitException::class)
     fun get(guild: Guild?) = registry.computeIfAbsent(guild!!.idLong) {
-        if (size() >= bot.configuration.musicLimit && !ofGuild(guild).isPremium) {
-            throw MusicLimitException()
+        if (size() >= bot.configuration.musicLimit) {
+            val premium = ofGuild(guild).isPremium || Launcher.database.getPremiumGuild(guild.id) != null
+
+            if (!premium) {
+                throw MusicLimitException()
+            }
         }
 
         MusicManager(bot, guild.id, this, playerManager)
