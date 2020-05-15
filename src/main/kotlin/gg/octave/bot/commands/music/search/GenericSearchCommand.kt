@@ -11,7 +11,7 @@ import gg.octave.bot.utils.extensions.voiceChannel
 import me.devoxin.flight.api.Context
 import java.awt.Color
 
-fun GenericSearchCommand(ctx: Context, query: String, searchPrefix: String, provider: String, color: Color, link: String, icon: String, thumbnail: String) {
+fun genericSearchCommand(ctx: Context, query: String, searchPrefix: String, provider: String, color: Color, link: String, icon: String, thumbnail: String) {
     Launcher.players.get(ctx.guild).search("$searchPrefix:$query", 5) { results ->
         if (results.isEmpty()) {
             return@search ctx.send("No search results for `$query`.")

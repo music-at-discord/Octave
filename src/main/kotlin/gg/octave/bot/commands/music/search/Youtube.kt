@@ -8,6 +8,6 @@ import java.awt.Color
 
 class Youtube : Cog {
     @Command(aliases = ["yt"], description = "Search and see YouTube results.")
-    fun youtube(ctx: Context, @Greedy query: String) = GenericSearchCommand(ctx, query, "ytsearch", "YouTube", Color(141, 20, 0),
+    fun youtube(ctx: Context, @Greedy query: String) = genericSearchCommand(ctx, query, "ytsearch", "YouTube", Color(141, 20, 0),
         "https://www.youtube.com", "https://www.youtube.com/favicon.ico", "https://octave.gg/assets/img/youtube.png")
 }
