@@ -31,7 +31,7 @@ class Filters : MusicCog {
 
     @Usage("width 100")
     @SubCommand(description = "Karaoke settings for better vocal filtering.")
-    fun karaoke(ctx: Context, type: String, value: Double) = modifyKaraoke(ctx, type, value, ctx.manager)
+    fun karaoke(ctx: Context, type: String?, value: Float?) = modifyKaraoke(ctx, type, value, ctx.manager)
 
     @SubCommand(description = "Check the current status of filters.")
     fun status(ctx: Context) {
@@ -84,16 +84,20 @@ class Filters : MusicCog {
         }
     }
 
-    private fun modifyKaraoke(ctx: Context, type: String, amount: Double, manager: MusicManager) {
+    private fun modifyKaraoke(ctx: Context, type: String?, amount: Float?, manager: MusicManager) {
+        if (type != null && (type == "level" || type == "band" || type == "width") && amount == null) {
+            return ctx.send("You must specify a valid number for `amount`.")
+        }
+
         when (type) {
             "level" -> {
-                val level = amount.coerceAtLeast(0.0)
-                manager.dspFilter.kLevel = level.toFloat()
+                val level = amount!!.coerceAtLeast(0.0f)
+                manager.dspFilter.kLevel = level
                 return ctx.send("Karaoke `$type` set to `$level`")
             }
-            "band" -> manager.dspFilter.kFilterBand = amount.toFloat()
-            "width" -> manager.dspFilter.kFilterWidth = amount.toFloat()
-            else -> ctx.send("Invalid choice `$type`, pick one of `level`/`band`/`width`.")
+            "band" -> manager.dspFilter.kFilterBand = amount!!
+            "width" -> manager.dspFilter.kFilterWidth = amount!!
+            else -> return ctx.send("Invalid choice, `type` must be `level`/`band`/`width`.")
         }
 
         ctx.send("Karaoke `$type` set to `$amount`")
