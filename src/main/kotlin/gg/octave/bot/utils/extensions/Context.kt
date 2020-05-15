@@ -25,7 +25,7 @@ val Context.premiumGuild: PremiumGuild?
     get() = db.getPremiumGuild(guild!!.id)
 
 val Context.isGuildPremium: Boolean
-    get() = premiumGuild != null
+    get() = premiumGuild != null || data.isPremium
 
 val Context.config: Configuration
     get() = Launcher.configuration
