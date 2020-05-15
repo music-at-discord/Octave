@@ -11,7 +11,7 @@ import me.devoxin.flight.api.annotations.Command
 class Stop : MusicCog {
     @DJ
     @CheckVoiceState
-    @Command(aliases = ["leave", "end", "st", "fuckoff"], description = "Stop and clear the music player.")
+    @Command(aliases = ["end", "st", "fuckoff"], description = "Stop and clear the music player.")
     fun stop(ctx: Context, clear: Boolean = false) {
         val karen = ctx.manager
 
