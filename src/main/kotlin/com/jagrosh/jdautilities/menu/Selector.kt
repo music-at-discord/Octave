@@ -59,7 +59,7 @@ class Selector(
             addField("Select an Option", optionType, false)
             super.fields.forEach { addField(it) }
             setFooter("This selection will time out in $timeout ${unit.toString().toLowerCase()}.", null)
-        }.build()).queue {
+        }.build()).queue({
             message = it
             when (type) {
                 Type.REACTIONS -> {
@@ -71,8 +71,13 @@ class Selector(
                 Type.MESSAGE -> { /* pass */
                 }
             }
-        }
+            waitFor()
+        }, {
+            finally(message)
+        })
+    }
 
+    private fun waitFor() {
         when (type) {
             Type.REACTIONS -> {
                 waiter.waitFor(MessageReactionAddEvent::class.java) {
@@ -81,9 +86,7 @@ class Selector(
                     }
 
                     val value = it.reaction.reactionEmote.name[0] - '\u0030'
-                    it.channel.retrieveMessageById(it.messageIdLong).queue {
-                        options[value].action(it)
-                    }
+                    options[value].action(message!!)
                     finally(message)
                 }.predicate {
                     when {
@@ -121,10 +124,12 @@ class Selector(
                     }
 
                     val value = content.toIntOrNull() ?: return@waitFor
-                    it.channel.retrieveMessageById(it.messageIdLong).queue {
+                    it.channel.retrieveMessageById(it.messageIdLong).queue({
                         options[value - 1].action(it)
-                    }
-                    finally(message)
+                        finally(message)
+                    }, {
+                        finally(message)
+                    })
                 }.predicate {
                     when {
                         it.author.isBot -> false

@@ -40,20 +40,24 @@ class Play : Cog {
         val args = attachment?.let { listOf("discord://${it.url}") } ?: query!!.split(" +".toRegex())
         val hasManager = Launcher.players.contains(ctx.guild!!.idLong)
 
-        prompt(ctx, hasManager).handle { _, _ ->
+        prompt(ctx, hasManager).thenAccept { proceed ->
+            if (!proceed) {
+                return@thenAccept
+            }
+
             val newManager = try {
                 Launcher.players.get(ctx.guild)
             } catch (e: MusicLimitException) {
                 // I don't like these try/catches everywhere. They also have a slight impact on performance.
                 // TODO: Figure out a better solution.
-                return@handle e.sendToContext(ctx)
+                return@thenAccept e.sendToContext(ctx)
             }
 
             smartPlay(ctx, newManager, args, false, "")
         }.exceptionally {
             ctx.send("An error occurred!")
             it.printStackTrace()
-            return@exceptionally
+            return@exceptionally null
         }
     }
 
@@ -82,25 +86,34 @@ class Play : Cog {
         }
     }
 
-    private fun prompt(ctx: Context, hasManager: Boolean): CompletableFuture<Void> {
-        val future = CompletableFuture<Void>()
+    private fun prompt(ctx: Context, hasManager: Boolean): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
         val oldQueue = TrackScheduler.getQueueForGuild(ctx.guild!!.id)
 
         if (!hasManager && !oldQueue.isEmpty()) {
             SelectorBuilder(Launcher.eventWaiter)
                 .setType(Selector.Type.MESSAGE)
+                .setUser(ctx.author)
                 .setTitle("Would you like to keep your old queue?")
                 .setDescription("Thanks for using Octave!")
                 .addOption("Yes, keep it.") {
                     ctx.send("Kept old queue. Playing new song first and continuing with your queue...")
-                    future.complete(null)
-                }.addOption("No, start a new queue.") {
+                    future.complete(true)
+                }
+                .addOption("No, start a new queue.") {
                     oldQueue.clear()
                     ctx.send("Scrapped old queue. A new queue will start.")
-                    future.complete(null)
-                }.build().display(ctx.textChannel!!)
+                    future.complete(true)
+                }
+                .finally {
+                    if (!future.isDone) { // Timeout or cancel.
+                        future.complete(false)
+                    }
+                }
+                .build()
+                .display(ctx.textChannel!!)
         } else {
-            future.complete(null)
+            future.complete(true)
         }
 
         return future

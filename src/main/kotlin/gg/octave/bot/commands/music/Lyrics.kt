@@ -47,10 +47,10 @@ class Lyrics : Cog {
             ctx.textChannel?.let { tx ->
                 ctx.launcher.eventWaiter.paginator {
                     setUser(ctx.author)
+                    setTitle("Lyrics for $fullTitle")
                     setEmptyMessage("There should be something here 👀")
                     setItemsPerPage(1)
                     finally { message -> message?.delete()?.queue() }
-                    title { "Lyrics for $fullTitle" }
 
                     for (page in pages) {
                         entry { page }

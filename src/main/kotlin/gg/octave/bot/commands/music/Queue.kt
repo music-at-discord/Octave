@@ -22,9 +22,9 @@ class Queue : Cog {
         ctx.textChannel?.let {
             Launcher.eventWaiter.paginator {
                 setUser(ctx.author)
-                title { "Music Queue" }
-                color { ctx.selfMember?.color }
-                empty { "**Empty queue.** Add some music with `${ctx.config.prefix}play url|YT search`." }
+                setTitle("Music Queue")
+                setColor(ctx.selfMember?.color)
+                setEmptyMessage("**Empty queue.** Add some music with `${ctx.config.prefix}play url|YT search`.")
                 finally { message -> message?.delete()?.queue() }
 
                 for (track in queue) {
