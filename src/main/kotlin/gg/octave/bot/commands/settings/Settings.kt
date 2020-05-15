@@ -1,10 +1,7 @@
 package gg.octave.bot.commands.settings
 
 import gg.octave.bot.db.guilds.GuildData
-import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
-import gg.octave.bot.utils.extensions.config
-import gg.octave.bot.utils.extensions.data
-import gg.octave.bot.utils.extensions.premiumGuild
+import gg.octave.bot.utils.extensions.*
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.toDuration
 import me.devoxin.flight.api.Context
@@ -259,7 +256,7 @@ class Settings : Cog {
     fun alldaymusic(ctx: Context, toggle: Boolean) {
         val data = ctx.data
 
-        if(!data.isPremium) {
+        if(!ctx.isGuildPremium) {
             return ctx.send("This server is not premium. If you've donated, add this server with `${ctx.trigger}patreon servers add`")
         }
 
