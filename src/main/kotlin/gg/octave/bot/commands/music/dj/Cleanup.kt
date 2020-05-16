@@ -46,7 +46,7 @@ class Cleanup : MusicCog {
         ctx.send("Removed $removed songs from the user ${member.user.asTag}.")
     }
 
-    @SubCommand(aliases = ["d", "dupes"])
+    @SubCommand(aliases = ["absent"], description = "Removes tracks queued by absent members.")
     fun left(ctx: Context) {
         val oldSize = ctx.manager.scheduler.queue.size
 
@@ -70,7 +70,7 @@ class Cleanup : MusicCog {
         ctx.send("Removed $removed songs from users no longer in the voice channel.")
     }
 
-    @SubCommand
+    @SubCommand(aliases = ["d", "dupes"], description = "Removes tracks that exist multiple times in the queue.")
     fun duplicates(ctx: Context) {
         val oldSize = ctx.manager.scheduler.queue.size
 
@@ -90,7 +90,7 @@ class Cleanup : MusicCog {
         }
     }
 
-    @SubCommand(aliases = ["longerthan", "duration", "time"])
+    @SubCommand(aliases = ["longerthan", "duration", "time"], description = "Removes tracks that are longer than the given duration.")
     fun exceeds(ctx: Context, duration: Duration) {
         val oldSize = ctx.manager.scheduler.queue.size
 
