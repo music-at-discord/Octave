@@ -4,6 +4,7 @@ import com.sun.management.OperatingSystemMXBean
 import gg.octave.bot.Launcher
 import gg.octave.bot.utils.Capacity
 import gg.octave.bot.utils.OctaveBot
+import gg.octave.bot.utils.extensions.config
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.entities.Cog
@@ -65,7 +66,7 @@ class BotInfo : Cog {
             addField("RAM Usage", "$ramUsedFormatted${ramUsedCalculated.unit} (${ramUsedPercent}%)", true)
 
             addField("Guilds", guilds.toString(), true)
-            addField("Voice Connections", Launcher.players.size().toString(), true)
+            addField("Voice Connections", musicPlayers.toString(), true)
 
             addField("Cached Users", users.toString(), true)
             addField("Uptime", "${d}d ${h % 24}h ${m % 60}m ${s % 60}s", true)
@@ -76,7 +77,7 @@ class BotInfo : Cog {
                 append("Library: **[JDA ${JDAInfo.VERSION}](${JDAInfo.GITHUB})**\n")
             }
             addField("General", general, true)
-            setFooter("${Thread.activeCount()} threads | Current Shard: ${ctx.jda.shardInfo.shardId}")
+            setFooter("${Thread.activeCount()} threads | Current Shard: ${ctx.jda.shardInfo.shardId} | Current Node: ${ctx.config.nodeNumber} / ${ctx.config.nodeTotal}")
         }
     }
 }

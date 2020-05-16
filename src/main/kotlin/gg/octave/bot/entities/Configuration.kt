@@ -28,7 +28,7 @@ class Configuration(file: File) {
 
     val sentryDsn: String = config["bot", "sentry"].getString(null)
     val bucketFactor: Int = config["bot", "bucketFactor"].getInt(8)
-    val nodeNumber: Int = config["bot", "node"].getInt(1)
+    val nodeNumber: Int = config["bot", "node"].getInt(0)
     val nodeTotal: Int = config["bot", "nodeTotal"].getInt(1)
 
     // +--------------+

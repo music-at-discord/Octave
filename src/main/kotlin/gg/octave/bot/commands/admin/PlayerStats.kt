@@ -6,13 +6,23 @@ import gg.octave.bot.music.settings.BoostSetting
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.entities.Cog
+import org.json.JSONObject
 
 class PlayerStats : Cog {
     @Command(aliases = ["ps"], description = "Shows (est) encoding, and total players", developerOnly = true)
     fun playerstats(ctx: Context) {
         val players = Launcher.players.registry.values
+        var musicPlayers = 0L
 
-        val total = players.size
+        Launcher.database.jedisPool.resource.use {
+            for(node in 0 until Launcher.configuration.nodeTotal) {
+                val nodeStats = it.hget("node-stats", node.toString()) ?: continue
+
+                val jsonStats = JSONObject(nodeStats);
+                musicPlayers += jsonStats.getLong("music_players")
+            }
+        }
+
         val paused = players.filter { it.player.isPaused }.size
         val encoding = players.filter(::isEncoding).size
         val alone = players.filter { it.guild?.audioManager?.connectedChannel?.members?.count { m -> !m.user.isBot } == 0 }.size
@@ -21,8 +31,8 @@ class PlayerStats : Cog {
 
         ctx.send {
             setColor(0x9570D3)
-            setTitle("$total players")
-            addField("Source Insight", bySourceFormatted, true)
+            setTitle("$musicPlayers players (All Nodes)")
+            addField("Source Insight (This node)", bySourceFormatted, true)
             addField("Statistics", "• **$encoding** encoding\n• **$paused** paused\n• **$alone** alone", true)
         }
     }

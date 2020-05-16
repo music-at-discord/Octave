@@ -82,7 +82,7 @@ object Launcher {
         }
 
         commandClient.commands.register("gg.octave.bot.commands")
-        if(configuration.nodeNumber == 1) {
+        if(configuration.nodeNumber == 0) {
             statsPoster.postEvery(30, TimeUnit.MINUTES)
         }
 
