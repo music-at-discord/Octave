@@ -200,7 +200,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
     companion object {
         fun isDJ(ctx: Context, send: Boolean = true): Boolean {
             val data = ctx.data
-            val isAlone = ctx.guild!!.audioManager.connectedChannel.let { it == null || it.members.count { m -> !m.user.isBot } == 1 }
+            val isAlone = ctx.guild!!.audioManager.connectedChannel.let { it != null && it.members.count { m -> !m.user.isBot } == 1 }
             val djRole = data.command.djRole
             val djRolePresent = djRole?.let(ctx.member!!::hasAnyRoleId)
                 ?: data.music.djRoles.any(ctx.member!!::hasAnyRoleId)
