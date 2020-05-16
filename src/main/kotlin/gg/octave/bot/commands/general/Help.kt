@@ -2,16 +2,21 @@ package gg.octave.bot.commands.general
 
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
+import gg.octave.bot.utils.extensions.generateExampleUsage
 import me.devoxin.flight.api.CommandFunction
 import me.devoxin.flight.api.Context
+import me.devoxin.flight.api.SubCommandFunction
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.entities.Cog
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.entities.MessageEmbed
 
 class Help : Cog {
     private val categoryAlias = mapOf("Search" to "Music", "Dj" to "Music")
 
+    @ExperimentalStdlibApi
     @Command(aliases = ["commands", "cmds"], description = "Shows a list of commands, or command information.")
-    fun help(ctx: Context, command: String?) {
+    fun help(ctx: Context, command: String?, subcommand: String?) {
         if (command == null) {
             return sendCommands(ctx)
         }
@@ -20,7 +25,19 @@ class Help : Cog {
             ?: ctx.commandClient.commands.findCommandByAlias(command)
 
         if (cmd != null) {
-            return sendCommandHelp(ctx, cmd)
+            if (subcommand != null) {
+                val exact = cmd.subcommands[subcommand]
+                if (exact != null) {
+                    return sendSubCommandHelp(ctx, exact, cmd)
+                } else {
+                    val search = cmd.subcommands.filter { it.key.contains(subcommand) }.values.toSet()
+
+                    if (search.isNotEmpty()) {
+                        return sendCommandHelp(ctx, cmd, search)
+                    }
+                }
+            }
+            return sendCommandHelp(ctx, cmd, null)
         }
 
         val category = ctx.commandClient.commands.values
@@ -52,30 +69,19 @@ class Help : Cog {
         }
     }
 
-    fun sendCommandHelp(ctx: Context, command: CommandFunction) {
+    @ExperimentalStdlibApi
+    fun sendCommandHelp(ctx: Context, command: CommandFunction, subcomms: Set<SubCommandFunction>?) {
         val description = buildString {
             appendln(command.properties.description)
             appendln()
+
             val triggerList = listOf(command.name, *command.properties.aliases)
             appendln("**Triggers:** ${triggerList.joinToString(", ")}")
-            append("**Usage:** `${ctx.trigger}")
-            append(command.name)
+            append("**Usage:** `${ctx.trigger}${command.name}")
             if (command.arguments.isNotEmpty()) {
                 appendln(" ${command.arguments.joinToString(" ") { it.format(false) }}`")
             } else {
                 appendln("`")
-            }
-            appendln()
-            appendln("**Subcommands:**")
-
-
-            if (command.subcommands.isNotEmpty()) {
-                val padEnd = command.subcommands.values.maxBy { it.name.length }?.name?.length ?: 15
-                for (sc in command.subcommands.values.toSet()) {
-                    appendln("`${sc.name.padEnd(padEnd, ' ')}:` ${sc.properties.description}")
-                }
-            } else {
-                appendln("*None.*")
             }
         }
 
@@ -83,6 +89,41 @@ class Help : Cog {
             setColor(0x9570D3)
             setTitle("Help | ${command.name}")
             setDescription(description)
+
+            val padEnd = command.subcommands.values.maxBy { it.name.length }?.name?.length ?: 15
+            val subcommands = (subcomms ?: command.subcommands.values.toSet()).joinToString("\n") {
+                "`${it.name.padEnd(padEnd, ' ')}:` ${it.properties.description}"
+            }.takeIf { it.isNotEmpty() } ?: "*None.*"
+
+            if (subcommands.length > 1024) {
+                appendDescription("\n**Subcommands:**\n$subcommands")
+            } else {
+                if (command.arguments.isNotEmpty()) {
+                    addField("Example Usages", command.generateExampleUsage("${ctx.trigger}${command.name}"), false)
+                }
+                addField("Subcommands", subcommands, false)
+            }
+        }
+    }
+
+    @ExperimentalStdlibApi
+    fun sendSubCommandHelp(ctx: Context, subcommand: SubCommandFunction, parent: CommandFunction) {
+        val description = buildString {
+            appendln(subcommand.properties.description)
+            appendln()
+            appendln("**Triggers:** ${subcommand.properties.aliases.joinToString(", ")}")
+            appendln("**Usage:** `${ctx.trigger}${parent.name} ${subcommand.name}`")
+        }
+
+        ctx.send {
+            setColor(0x9570D3)
+            setTitle("Help | ${subcommand.name}")
+            setDescription(description)
+
+            if (subcommand.arguments.isNotEmpty()) {
+                val examples = subcommand.generateExampleUsage("${ctx.trigger}${parent.name} ${subcommand.name}")
+                addField("Example Usage(s)", examples, false)
+            }
         }
     }
 

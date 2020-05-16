@@ -110,6 +110,7 @@ class Play : Cog {
                 .finally {
                     if (!future.isDone) { // Timeout or cancel.
                         future.complete(false)
+                        it?.delete()?.queue()
                     }
                 }
                 .build()

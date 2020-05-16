@@ -6,6 +6,7 @@ import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
+import gg.octave.bot.utils.extensions.generateExampleUsage
 import gg.octave.bot.utils.extensions.selfMember
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.hasAnyRoleId
@@ -24,33 +25,9 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
 class FlightEventAdapter : DefaultCommandEventAdapter() {
-    fun generateDefaultUsage(arguments: List<Argument>): String {
-        return buildString {
-            for (arg in arguments) {
-                val value = when (arg.type) {
-                    String::class.java -> "\"some text\""
-                    Int::class, java.lang.Integer::class.java, Long::class.java, java.lang.Long::class.java -> "0"
-                    Double::class.java, java.lang.Double::class.java -> "0.0"
-                    Member::class.java, User::class.java -> "@User"
-                    Role::class.java -> "@DJ"
-                    TextChannel::class.java -> "#general"
-                    VoiceChannel::class.java -> "Music"
-                    Boolean::class.java, java.lang.Boolean::class.java -> "yes"
-                    Duration::class.java -> "20m"
-                    else -> {
-                        if (arg.type.isEnum) {
-                            arg.type.enumConstants.first().toString().toLowerCase()
-                        } else {
-                            "[Unknown Type, report to devs]"
-                        }
-                    }
-                }
-                append(value)
-                append(" ")
-            }
-        }.trim()
-    }
 
+
+    @ExperimentalStdlibApi
     override fun onBadArgument(ctx: Context, command: CommandFunction, error: BadArgument) {
         if (error.argument.type.isEnum) {
             val options = error.argument.type.enumConstants.map { it.toString().toLowerCase() }
@@ -83,15 +60,12 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             }
         }.trim()
 
-        val usage = executed.method.findAnnotation<Usages>()?.usages?.joinToString("\n") { "`$commandLayout $it`" }
-            ?: "`$commandLayout ${generateDefaultUsage(arguments)}`"
-
         ctx.send {
             setColor(0x9570D3)
             setTitle("Help | ${command.name}")
             setDescription("You specified an invalid argument for `${error.argument.name}`")
             addField("Syntax", "`$syntax`", false)
-            addField("Example Usage(s)", usage, false)
+            addField("Example Usage(s)", executed.generateExampleUsage(commandLayout), false)
             addField("Still Confused?", "Head over to our [#support channel](https://discord.gg/musicbot)", false)
         }
     }
