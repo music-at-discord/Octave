@@ -24,6 +24,7 @@ class Pause : MusicCog {
         }
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Pause")
             setDescription(message)
         }

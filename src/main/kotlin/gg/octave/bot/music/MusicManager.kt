@@ -133,6 +133,7 @@ class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: P
                 }
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Music Playback")
                     setDescription("Joining channel `${channel.name}`.")
                 }
@@ -239,6 +240,7 @@ class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: P
                 scheduler.queue(track, isNext)
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Music Queue")
                     setDescription("Added __**[${track.info.embedTitle}](${track.info.embedUri})**__ to queue.")
                     setFooter(footnote)
@@ -291,6 +293,7 @@ class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: P
                 }
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Music Queue")
                     val desc = buildString {
                         append("Added `$added` tracks to queue from playlist `${playlist.name}`.\n")

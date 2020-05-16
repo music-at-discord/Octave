@@ -36,8 +36,8 @@ class Redeem : Cog {
         }
 
         ctx.send {
-            setTitle("Premium Code")
             setColor(Color.ORANGE)
+            setTitle("Premium Code")
             setDescription("Redeemed key `${key.id}`. **Thank you for supporting the bot's development!*")
             addField("Key Type", key.type.name, true)
             addField(

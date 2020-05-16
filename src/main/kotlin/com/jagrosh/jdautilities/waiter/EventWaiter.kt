@@ -21,6 +21,7 @@ import java.util.function.Consumer
 class EventWaiter : EventListener {
     private val waiters = mutableMapOf<Class<*>, MutableList<Waiter<GenericEvent>>>()
     private val scheduledExecutor = Executors.newSingleThreadScheduledExecutor()
+
     @Suppress("UNCHECKED_CAST")
     fun <T : GenericEvent> waitForEvent(cls: Class<in T>,
                                         predicate: (T) -> Boolean,

@@ -43,6 +43,7 @@ class Patron : Cog {
         val premiumServers = totalServers - premiumUser.remainingPremiumGuildQuota
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Premium Status")
             setDescription("Status for <@$userId>")
             addField("Is Premium?", if (!premiumUser.isPremium) "No" else "Yes", true)
@@ -59,6 +60,7 @@ class Patron : Cog {
             .thenAccept { pledges ->
                 val pledge = pledges.firstOrNull { it.discordId != null && it.discordId == ctx.author.idLong }
                     ?: return@thenAccept ctx.send {
+                        setColor(0x9570D3)
                         setDescription(
                             "Couldn't find your pledge.\n" +
                                 "[Re-link your account](https://support.patreon.com/hc/en-us/articles/212052266-Get-my-Discord-role) and try again."
@@ -78,6 +80,7 @@ class Patron : Cog {
                 user.save()
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Thank you, ${ctx.author.name}!")
                     setDescription("Thanks for pledging $${String.format("%1$,.2f", pledgeAmount)}!\n" +
                         "You can have up to **${user.totalPremiumGuildQuota}** premium servers, which can be " +
@@ -92,9 +95,7 @@ class Patron : Cog {
                 }
 
                 Sentry.capture(it)
-                ctx.send(
-                    "An unknown error occurred while looking for your pledge.\n`${it.localizedMessage}`"
-                )
+                ctx.send("An unknown error occurred while looking for your pledge.\n`${it.localizedMessage}`")
                 return@exceptionally null
             }
     }
@@ -193,9 +194,10 @@ class Patron : Cog {
             return ctx.send("You may not remove premium status for the server.")
         }
 
-        if (premiumGuild.daysSinceAdded < 28 && !hasDevOverride) {
+        if (premiumGuild.daysSinceAdded < minDaysBeforeRemoval && !hasDevOverride) {
+            val remainingDays = minDaysBeforeRemoval - premiumGuild.daysSinceAdded
             return ctx.send(
-                "You must wait 28 days before removing the premium status for the server.\n" +
+                "You must wait $remainingDays more days before removing the premium status for the server.\n" +
                     "If there is a valid reason for early removal, please contact the developers."
             )
         }
@@ -210,7 +212,6 @@ class Patron : Cog {
                 }
 
                 premiumGuild.delete()
-
                 ctx.send("Removed **$guild** as a premium server.")
             }
             .exceptionally {
@@ -240,6 +241,7 @@ class Patron : Cog {
     }
 
     companion object {
+        private const val minDaysBeforeRemoval = 28
         private val answers = setOf("y", "yes", "yeah", "ok", "true", "1")
     }
 }

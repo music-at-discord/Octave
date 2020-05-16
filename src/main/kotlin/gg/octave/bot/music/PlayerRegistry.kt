@@ -28,7 +28,9 @@ class PlayerRegistry(private val bot: Launcher) {
 
     fun getExisting(id: Long) = registry[id]
     fun getExisting(guild: Guild?) = getExisting(guild!!.idLong)
-    fun destroy(id: Long) { registry.remove(id)?.destroy() }
+    fun destroy(id: Long) {
+        registry.remove(id)?.destroy()
+    }
 
     fun destroy(guild: Guild?) = destroy(guild!!.idLong)
     fun contains(id: Long) = registry.containsKey(id)

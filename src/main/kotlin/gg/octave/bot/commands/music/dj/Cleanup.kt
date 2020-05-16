@@ -1,6 +1,7 @@
 package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.Launcher
+import gg.octave.bot.entities.`typealias`.Predicate
 import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
@@ -30,7 +31,7 @@ class Cleanup : MusicCog {
 
         val oldSize = ctx.manager.scheduler.queue.size
 
-        val predicate: (String) -> Boolean = {
+        val predicate: Predicate = {
             val track = Launcher.players.playerManager.decodeAudioTrack(it)
             track.getUserData(TrackContext::class.java)?.requester == member.idLong
         }
@@ -46,12 +47,12 @@ class Cleanup : MusicCog {
         ctx.send("Removed $removed songs from the user ${member.user.asTag}.")
     }
 
-    @SubCommand(aliases = ["d", "dupes"])
+    @SubCommand(aliases = ["absent"], description = "Removes tracks queued by absent members.")
     fun left(ctx: Context) {
         val oldSize = ctx.manager.scheduler.queue.size
 
         // Return Boolean: True if track should be removed
-        val predicate: (String) -> Boolean = check@{
+        val predicate: Predicate = check@{
             val track = Launcher.players.playerManager.decodeAudioTrack(it)
 
             val req = track.getUserData(TrackContext::class.java)?.let { m -> ctx.guild?.getMemberById(m.requester) }
@@ -70,13 +71,13 @@ class Cleanup : MusicCog {
         ctx.send("Removed $removed songs from users no longer in the voice channel.")
     }
 
-    @SubCommand
+    @SubCommand(aliases = ["d", "dupes"], description = "Removes tracks that exist multiple times in the queue.")
     fun duplicates(ctx: Context) {
         val oldSize = ctx.manager.scheduler.queue.size
 
         val tracks = mutableSetOf<String>()
         // Return Boolean: True if track should be removed (could not add to set: already exists).
-        val predicate: (String) -> Boolean = {
+        val predicate: Predicate = {
             val track = Launcher.players.playerManager.decodeAudioTrack(it)
             !tracks.add(track.identifier)
         }
@@ -90,7 +91,7 @@ class Cleanup : MusicCog {
         }
     }
 
-    @SubCommand(aliases = ["longerthan", "duration", "time"])
+    @SubCommand(aliases = ["longerthan", "duration", "time"], description = "Removes tracks that are longer than the given duration.")
     fun exceeds(ctx: Context, duration: Duration) {
         val oldSize = ctx.manager.scheduler.queue.size
 

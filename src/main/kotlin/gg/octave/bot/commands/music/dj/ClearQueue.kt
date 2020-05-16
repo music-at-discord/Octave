@@ -21,6 +21,5 @@ class ClearQueue : Cog {
 
         queue.clear()
         ctx.send("Queue cleared.")
-
     }
 }

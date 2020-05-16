@@ -4,10 +4,10 @@ import com.jagrosh.jdautilities.menu.Selector
 import com.jagrosh.jdautilities.menu.SelectorBuilder
 import gg.octave.bot.Launcher
 import gg.octave.bot.listeners.FlightEventAdapter
-import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.music.MusicManager
-import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.music.TrackScheduler
+import gg.octave.bot.music.utils.MusicLimitException
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
 import gg.octave.bot.utils.extensions.selfMember
@@ -70,6 +70,7 @@ class Play : Cog {
                 manager.player.isPaused = false
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Play Music")
                     setDescription("Music is no longer paused.")
                 }
@@ -79,6 +80,7 @@ class Play : Cog {
             }
             manager.scheduler.queue.isEmpty() -> {
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Empty Queue")
                     setDescription("There is no music queued right now. Add some songs with `${ctx.trigger}play (song/url)`.")
                 }
@@ -108,6 +110,7 @@ class Play : Cog {
                 .finally {
                     if (!future.isDone) { // Timeout or cancel.
                         future.complete(false)
+                        it?.delete()?.queue()
                     }
                 }
                 .build()
@@ -220,6 +223,7 @@ class Play : Cog {
                     val votes = m.reactions.firstOrNull { it.reactionEmote.name == "👍" }?.count?.minus(1) ?: 0
 
                     ctx.send {
+                        setColor(0x9570D3)
                         setTitle("Vote Play")
                         setDescription(
                             buildString {

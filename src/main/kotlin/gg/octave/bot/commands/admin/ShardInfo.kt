@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.JDA
 class ShardInfo : Cog {
     @Command(aliases = ["shards", "shard"], description = "View shard information.", developerOnly = true)
     suspend fun shardinfo(ctx: Context) {
-        val status = ctx.jda.shardManager!!.shards.joinToString("\n", transform = ::formatInfo)
+        val status = ctx.jda.shardManager!!.shards.reversed().joinToString("\n", transform = ::formatInfo)
         val pages = TextSplitter.split(status, 1920)
 
         for (page in pages) {

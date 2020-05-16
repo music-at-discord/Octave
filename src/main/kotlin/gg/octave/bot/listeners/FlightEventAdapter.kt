@@ -3,10 +3,9 @@ package gg.octave.bot.listeners
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.entities.framework.DJ
-import gg.octave.bot.entities.framework.Usage
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
-import gg.octave.bot.utils.extensions.selfMember
+import gg.octave.bot.utils.extensions.generateExampleUsage
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.hasAnyRoleId
 import gg.octave.bot.utils.hasAnyRoleNamed
@@ -16,44 +15,20 @@ import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.SubCommandFunction
 import me.devoxin.flight.api.exceptions.BadArgument
 import me.devoxin.flight.api.hooks.DefaultCommandEventAdapter
-import me.devoxin.flight.internal.arguments.Argument
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.*
-import java.time.Duration
-import kotlin.reflect.full.findAnnotation
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Role
 import kotlin.reflect.full.hasAnnotation
 
 class FlightEventAdapter : DefaultCommandEventAdapter() {
-    fun generateDefaultUsage(arguments: List<Argument>): String {
-        return buildString {
-            for (arg in arguments) {
-                val value = when (arg.type) {
-                    String::class.java -> "\"some text\""
-                    Int::class, java.lang.Integer::class.java, Long::class.java, java.lang.Long::class.java -> "0"
-                    Double::class.java, java.lang.Double::class.java -> "0.0"
-                    Member::class.java, User::class.java -> "@User"
-                    TextChannel::class.java -> "#general"
-                    VoiceChannel::class.java -> "Music"
-                    Boolean::class.java, java.lang.Boolean::class.java -> "yes"
-                    Duration::class.java -> "20m"
-                    else -> {
-                        if (arg.type.isEnum) {
-                            arg.type.enumConstants.first().toString().toLowerCase()
-                        } else {
-                            "[Unknown Type, report to devs]"
-                        }
-                    }
-                }
-                append(value)
-                append(" ")
-            }
-        }.trim()
-    }
 
+
+    @ExperimentalStdlibApi
     override fun onBadArgument(ctx: Context, command: CommandFunction, error: BadArgument) {
         if (error.argument.type.isEnum) {
             val options = error.argument.type.enumConstants.map { it.toString().toLowerCase() }
             return ctx.send {
+                setColor(0x9570D3)
                 setTitle("Help | ${command.name}")
                 setDescription("You specified an invalid argument for `${error.argument.name}`.")
                 addField("Valid Options", options.joinToString("`\n- `", prefix = "- `", postfix = "`"), true)
@@ -81,14 +56,12 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             }
         }.trim()
 
-        val usage = executed.method.findAnnotation<Usage>()?.description
-            ?: generateDefaultUsage(arguments)
-
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Help | ${command.name}")
             setDescription("You specified an invalid argument for `${error.argument.name}`")
             addField("Syntax", "`$syntax`", false)
-            addField("Example Usage", "`$commandLayout $usage`", false)
+            addField("Example Usage(s)", executed.generateExampleUsage(commandLayout), false)
             addField("Still Confused?", "Head over to our [#support channel](https://discord.gg/musicbot)", false)
         }
     }
@@ -130,7 +103,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             return false
         }
 
-        if (command.category == "Music" || command.category == "Dj" || command.category == "Search") {
+        if (command.category == "Music" || command.category == "Dj" || command.category == "Search") { // CheckVoiceState
             if (ctx.member!!.voiceState?.channel == null) {
                 ctx.send("You're not in a voice channel.")
                 return false
@@ -178,6 +151,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         // I'm pretty sure we don't label embed_links as a requirement for all commands anyway.
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Missing Permissions")
             setDescription("I need the following permissions:\n$formatted")
         }
@@ -187,6 +161,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         val formatted = permissions.joinToString("`\n`", prefix = "`", postfix = "`", transform = Permission::getName)
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Missing Permissions")
             setDescription("You need the following permissions:\n$formatted")
         }
@@ -195,15 +170,14 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
     companion object {
         fun isDJ(ctx: Context, send: Boolean = true): Boolean {
             val data = ctx.data
-            val memberSize = ctx.selfMember!!.voiceState?.channel?.members?.size
+            val isAlone = ctx.guild!!.audioManager.connectedChannel.let { it != null && it.members.count { m -> !m.user.isBot } == 1 }
             val djRole = data.command.djRole
             val djRolePresent = djRole?.let(ctx.member!!::hasAnyRoleId)
                 ?: data.music.djRoles.any(ctx.member!!::hasAnyRoleId)
 
-            val memberAmount = if (memberSize != null) memberSize <= 2 else false
             val admin = ctx.member!!.hasPermission(Permission.MANAGE_SERVER)
 
-            if (ctx.member!!.hasAnyRoleNamed("DJ") || djRolePresent || memberAmount || admin) {
+            if (ctx.member!!.hasAnyRoleNamed("DJ") || djRolePresent || isAlone || admin) {
                 return true
             }
 

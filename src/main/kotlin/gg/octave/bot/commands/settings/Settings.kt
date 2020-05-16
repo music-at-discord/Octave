@@ -44,7 +44,7 @@ class Settings : Cog {
         ctx.send(send)
     }
 
-    @SubCommand(aliases = ["ta"], description = "Toggles music announcements.")
+    @SubCommand(aliases = ["ta", "announce"], description = "Toggles music announcements.")
     fun announcements(ctx: Context, toggle: Boolean) {
         ctx.data.let {
             it.music.announce = toggle
@@ -169,6 +169,7 @@ class Settings : Cog {
             ?: "*No DJ roles. Add some with `${ctx.trigger}settings djrolesadd <role>`*"
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("DJ Roles List")
             addField("Default DJ Role", defaultDjRole, true)
             addField("Extra DJ roles", djRoles, true)
@@ -256,7 +257,7 @@ class Settings : Cog {
     fun alldaymusic(ctx: Context, toggle: Boolean) {
         val data = ctx.data
 
-        if(!ctx.isGuildPremium) {
+        if (!ctx.isGuildPremium) {
             return ctx.send("This server is not premium. If you've donated, add this server with `${ctx.trigger}patreon servers add`")
         }
 

@@ -3,7 +3,7 @@ package gg.octave.bot.commands.music.dj
 import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
-import gg.octave.bot.entities.framework.Usage
+import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.music.MusicManager
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.manager
@@ -21,15 +21,15 @@ class Filters : MusicCog {
     @Command(aliases = ["filters", "fx", "effects"], description = "Apply audio filters to the music such as speed and pitch")
     fun filter(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
 
-    @Usage("depth 0.5")
+    @Usages("depth 0.5")
     @SubCommand(description = "Wobble effect.")
     fun tremolo(ctx: Context, type: String, value: Double) = modifyTremolo(ctx, type, value, ctx.manager)
 
-    @Usage("speed 1.5")
+    @Usages("speed 1.5")
     @SubCommand(description = "Pitch, rate, and speed.")
     fun timescale(ctx: Context, type: String, value: Double) = modifyTimescale(ctx, type, value, ctx.manager)
 
-    @Usage("width 100")
+    @Usages("width 100")
     @SubCommand(description = "Karaoke settings for better vocal filtering.")
     fun karaoke(ctx: Context, type: String?, value: Float?) = modifyKaraoke(ctx, type, value, ctx.manager)
 
@@ -41,6 +41,7 @@ class Filters : MusicCog {
         val timescaleStatus = if (manager.dspFilter.timescaleEnable) "Enabled" else "Disabled"
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Music Effects")
             addField("Karaoke", karaokeStatus, true)
             addField("Timescale", timescaleStatus, true)

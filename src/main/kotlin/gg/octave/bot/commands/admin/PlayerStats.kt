@@ -20,6 +20,7 @@ class PlayerStats : Cog {
         val bySourceFormatted = bySource.map { "• ${it.key.capitalize()}: **${it.value.size}**" }.joinToString("\n")
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("$total players")
             addField("Source Insight", bySourceFormatted, true)
             addField("Statistics", "• **$encoding** encoding\n• **$paused** paused\n• **$alone** alone", true)

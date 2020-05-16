@@ -23,6 +23,7 @@ class NowPlaying : MusicCog {
         manager.scheduler.queue.clearExpireAsync()
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Now Playing")
             setDescription("**[${track.info.embedTitle}](${track.info.embedUri})**")
             manager.discordFMTrack?.let {
