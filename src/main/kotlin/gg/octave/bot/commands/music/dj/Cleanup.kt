@@ -1,6 +1,7 @@
 package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.Launcher
+import gg.octave.bot.entities.`typealias`.Predicate
 import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
@@ -14,8 +15,6 @@ import me.devoxin.flight.api.annotations.Greedy
 import me.devoxin.flight.api.annotations.SubCommand
 import net.dv8tion.jda.api.entities.Member
 import java.time.Duration
-
-typealias Predicate = (String) -> Boolean
 
 class Cleanup : MusicCog {
     override fun sameChannel() = true
