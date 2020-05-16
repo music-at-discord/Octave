@@ -24,7 +24,7 @@ class Remove : MusicCog {
     @DJ
     @CheckVoiceState
     @Usages("first", "last", "all", "1..5", "1", "1 7 12 3")
-    @Command(aliases = ["removesong"], description = "Remove a song from the queue.")
+    @Command(aliases = ["removesong", "rm", "rem"], description = "Remove a song from the queue.")
     fun remove(ctx: Context, @Greedy which: String?) {
         val queue = ctx.manager.scheduler.queue
 
