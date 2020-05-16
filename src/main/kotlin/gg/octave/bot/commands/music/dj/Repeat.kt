@@ -22,28 +22,16 @@ class Repeat : MusicCog {
 
     @DJ
     @CheckVoiceState
-    @Command(aliases = ["lq"], description = "Repeats the queue.")
-    fun rq(ctx: Context) {
-        val option = RepeatOption.QUEUE
-        ctx.manager.scheduler.repeatOption = option
-        ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
-    }
+    @Command(aliases = ["lq"], description = "(Alias) Repeats the queue.", hidden = true)
+    fun rq(ctx: Context) = repeat(ctx, RepeatOption.QUEUE)
 
     @DJ
     @CheckVoiceState
-    @Command(aliases = ["ls"], description = "Repeats the song.")
-    fun rs(ctx: Context) {
-        val option = RepeatOption.SONG
-        ctx.manager.scheduler.repeatOption = option
-        ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
-    }
+    @Command(aliases = ["ls"], description = "(Alias) Repeats the song.", hidden = true)
+    fun rs(ctx: Context) = repeat(ctx, RepeatOption.SONG)
 
     @DJ
     @CheckVoiceState
-    @Command(aliases = ["ln"], description = "Disables track repeating.")
-    fun rn(ctx: Context) {
-        val option = RepeatOption.NONE
-        ctx.manager.scheduler.repeatOption = option
-        ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
-    }
+    @Command(aliases = ["ln"], description = "(Alias) Disables track repeating.", hidden = true)
+    fun rn(ctx: Context) = repeat(ctx, RepeatOption.NONE)
 }

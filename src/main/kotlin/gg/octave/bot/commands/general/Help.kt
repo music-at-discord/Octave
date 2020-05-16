@@ -35,15 +35,16 @@ class Help : Cog {
         val guildTrigger = ctx.data.command.prefix ?: ctx.config.prefix
         val categories = ctx.commandClient.commands.values
             .groupBy { categoryAlias[it.category] ?: it.category }
-            .filter { ctx.author.idLong in ctx.commandClient.ownerIds || it.key != "Admin" }
+            .filter { it.key != "Admin" || ctx.author.idLong in ctx.commandClient.ownerIds }
 
         ctx.send {
             setColor(0x9571D3)
             setTitle("Bot Commands")
             setDescription("The prefix of the bot on this server is `$guildTrigger`")
             for ((key, commands) in categories) {
-                val fieldName = "$key — ${commands.size}"
-                val commandList = commands.joinToString("`, `", prefix = "`", postfix = "`") { it.name }
+                val allCommands = commands.filter { !it.properties.hidden }
+                val fieldName = "$key — ${allCommands.size}"
+                val commandList = allCommands.joinToString("`, `", prefix = "`", postfix = "`") { it.name }
                 addField(fieldName, commandList, false)
             }
             setFooter("For more information try ${guildTrigger}help (command) " +
