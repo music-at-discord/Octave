@@ -1,5 +1,6 @@
 package gg.octave.bot.commands.general
 
+import kotlinx.coroutines.future.await
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.entities.Cog
@@ -17,15 +18,14 @@ class General : Cog {
     }
 
     @Command(aliases = ["pong", "hello????"], description = "Show the bot's current response time.")
-    fun ping(ctx: Context) {
-        ctx.jda.restPing.queue {
-            ctx.send(
-                "```prolog\n" +
-                    "Shard ID: ${ctx.jda.shardInfo.shardId}\n" +
-                    "Latency (HTTP): ${it}ms\n" +
-                    "Latency (WS  ): ${ctx.jda.shardManager!!.averageGatewayPing.toInt()}ms```"
-            )
-        }
+    suspend fun ping(ctx: Context) {
+        val latency = ctx.jda.restPing.submit().await()
+        ctx.send(
+            "```prolog\n" +
+                "Shard ID: ${ctx.jda.shardInfo.shardId}\n" +
+                "Latency (HTTP): ${latency}ms\n" +
+                "Latency (WS  ): ${ctx.jda.shardManager!!.averageGatewayPing.toInt()}ms```"
+        )
     }
 
     @Command(description = "Shows how to vote for the bot.")

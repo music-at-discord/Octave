@@ -3,7 +3,7 @@ package gg.octave.bot.listeners
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.entities.framework.DJ
-import gg.octave.bot.entities.framework.Usage
+import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
 import gg.octave.bot.utils.extensions.selfMember
@@ -82,14 +82,14 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             }
         }.trim()
 
-        val usage = executed.method.findAnnotation<Usage>()?.description
-            ?: generateDefaultUsage(arguments)
+        val usage = executed.method.findAnnotation<Usages>()?.usages?.joinToString("\n") { "`$commandLayout $it`" }
+            ?: "`$commandLayout ${generateDefaultUsage(arguments)}`"
 
         ctx.send {
             setTitle("Help | ${command.name}")
             setDescription("You specified an invalid argument for `${error.argument.name}`")
             addField("Syntax", "`$syntax`", false)
-            addField("Example Usage", "`$commandLayout $usage`", false)
+            addField("Example Usage(s)", usage, false)
             addField("Still Confused?", "Head over to our [#support channel](https://discord.gg/musicbot)", false)
         }
     }
