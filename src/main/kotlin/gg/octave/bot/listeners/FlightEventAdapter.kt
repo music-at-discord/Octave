@@ -32,6 +32,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
                     Int::class, java.lang.Integer::class.java, Long::class.java, java.lang.Long::class.java -> "0"
                     Double::class.java, java.lang.Double::class.java -> "0.0"
                     Member::class.java, User::class.java -> "@User"
+                    Role::class.java -> "@DJ"
                     TextChannel::class.java -> "#general"
                     VoiceChannel::class.java -> "Music"
                     Boolean::class.java, java.lang.Boolean::class.java -> "yes"
