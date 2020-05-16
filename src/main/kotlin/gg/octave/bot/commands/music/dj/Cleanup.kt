@@ -15,6 +15,8 @@ import me.devoxin.flight.api.annotations.SubCommand
 import net.dv8tion.jda.api.entities.Member
 import java.time.Duration
 
+typealias Predicate = (String) -> Boolean
+
 class Cleanup : MusicCog {
     override fun sameChannel() = true
     override fun requirePlayingTrack() = true
@@ -30,7 +32,7 @@ class Cleanup : MusicCog {
 
         val oldSize = ctx.manager.scheduler.queue.size
 
-        val predicate: (String) -> Boolean = {
+        val predicate: Predicate = {
             val track = Launcher.players.playerManager.decodeAudioTrack(it)
             track.getUserData(TrackContext::class.java)?.requester == member.idLong
         }
@@ -51,7 +53,7 @@ class Cleanup : MusicCog {
         val oldSize = ctx.manager.scheduler.queue.size
 
         // Return Boolean: True if track should be removed
-        val predicate: (String) -> Boolean = check@{
+        val predicate: Predicate = check@{
             val track = Launcher.players.playerManager.decodeAudioTrack(it)
 
             val req = track.getUserData(TrackContext::class.java)?.let { m -> ctx.guild?.getMemberById(m.requester) }
@@ -76,7 +78,7 @@ class Cleanup : MusicCog {
 
         val tracks = mutableSetOf<String>()
         // Return Boolean: True if track should be removed (could not add to set: already exists).
-        val predicate: (String) -> Boolean = {
+        val predicate: Predicate = {
             val track = Launcher.players.playerManager.decodeAudioTrack(it)
             !tracks.add(track.identifier)
         }
