@@ -74,6 +74,7 @@ class Remove : MusicCog {
 
         val decodedTrack = Launcher.players.playerManager.decodeAudioTrack(track)
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Track Removed")
             setDescription("Removed __[${decodedTrack.info.embedTitle}](${decodedTrack.info.embedUri})__ from the queue.")
         }

@@ -169,6 +169,7 @@ class Settings : Cog {
             ?: "*No DJ roles. Add some with `${ctx.trigger}settings djrolesadd <role>`*"
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("DJ Roles List")
             addField("Default DJ Role", defaultDjRole, true)
             addField("Extra DJ roles", djRoles, true)

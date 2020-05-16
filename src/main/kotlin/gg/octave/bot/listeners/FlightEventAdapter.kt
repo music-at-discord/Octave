@@ -55,6 +55,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         if (error.argument.type.isEnum) {
             val options = error.argument.type.enumConstants.map { it.toString().toLowerCase() }
             return ctx.send {
+                setColor(0x9570D3)
                 setTitle("Help | ${command.name}")
                 setDescription("You specified an invalid argument for `${error.argument.name}`.")
                 addField("Valid Options", options.joinToString("`\n- `", prefix = "- `", postfix = "`"), true)
@@ -86,6 +87,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             ?: "`$commandLayout ${generateDefaultUsage(arguments)}`"
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Help | ${command.name}")
             setDescription("You specified an invalid argument for `${error.argument.name}`")
             addField("Syntax", "`$syntax`", false)
@@ -179,6 +181,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         // I'm pretty sure we don't label embed_links as a requirement for all commands anyway.
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Missing Permissions")
             setDescription("I need the following permissions:\n$formatted")
         }
@@ -188,6 +191,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         val formatted = permissions.joinToString("`\n`", prefix = "`", postfix = "`", transform = Permission::getName)
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Missing Permissions")
             setDescription("You need the following permissions:\n$formatted")
         }

@@ -18,6 +18,7 @@ class DiscordFm : Cog {
             val stations = DiscordFM.LIBRARIES.joinToString("\n") { "• `${it.capitalize()}`" }
 
             return ctx.send {
+                setColor(0x9570D3)
                 setDescription(
                     buildString {
                         appendln("Stream random songs from radio stations!")
@@ -64,6 +65,7 @@ class DiscordFm : Cog {
         manager.discordFMTrack = null
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Radio")
             setDescription("No longer streaming random songs from the `$station` station.")
         }

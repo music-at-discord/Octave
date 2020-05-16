@@ -38,6 +38,7 @@ class Filters : MusicCog {
         val timescaleStatus = if (manager.dspFilter.timescaleEnable) "Enabled" else "Disabled"
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Music Effects")
             addField("Karaoke", karaokeStatus, true)
             addField("Timescale", timescaleStatus, true)

@@ -60,6 +60,7 @@ class Patron : Cog {
             .thenAccept { pledges ->
                 val pledge = pledges.firstOrNull { it.discordId != null && it.discordId == ctx.author.idLong }
                     ?: return@thenAccept ctx.send {
+                        setColor(0x9570D3)
                         setDescription(
                             "Couldn't find your pledge.\n" +
                                 "[Re-link your account](https://support.patreon.com/hc/en-us/articles/212052266-Get-my-Discord-role) and try again."
@@ -94,9 +95,7 @@ class Patron : Cog {
                 }
 
                 Sentry.capture(it)
-                ctx.send(
-                    "An unknown error occurred while looking for your pledge.\n`${it.localizedMessage}`"
-                )
+                ctx.send("An unknown error occurred while looking for your pledge.\n`${it.localizedMessage}`")
                 return@exceptionally null
             }
     }
@@ -213,7 +212,6 @@ class Patron : Cog {
                 }
 
                 premiumGuild.delete()
-
                 ctx.send("Removed **$guild** as a premium server.")
             }
             .exceptionally {
@@ -243,7 +241,7 @@ class Patron : Cog {
     }
 
     companion object {
+        private const val minDaysBeforeRemoval = 28
         private val answers = setOf("y", "yes", "yeah", "ok", "true", "1")
-        private val minDaysBeforeRemoval = 28
     }
 }

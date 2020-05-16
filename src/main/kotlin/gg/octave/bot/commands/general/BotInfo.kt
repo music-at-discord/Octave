@@ -44,6 +44,7 @@ class BotInfo : Cog {
         }
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Octave (Revision ${OctaveBot.GIT_REVISION})")
             setThumbnail(ctx.jda.selfUser.avatarUrl)
             setDescription("Never miss a beat with Octave, " +

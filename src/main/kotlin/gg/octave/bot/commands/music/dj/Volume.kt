@@ -23,6 +23,7 @@ class Volume : MusicCog {
             val bar = buildBar(volume, maximumVolume)
 
             return ctx.send {
+                setColor(0x9570D3)
                 setTitle("Volume")
                 setDescription(bar)
                 setFooter("Set the volume by using ${ctx.config.prefix}volume (number)", null)
@@ -36,6 +37,7 @@ class Volume : MusicCog {
         ctx.manager.player.volume = newVolume
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Volume")
             setDescription(bar)
             setFooter("Volume changed from $old% to ${ctx.manager.player.volume}%")

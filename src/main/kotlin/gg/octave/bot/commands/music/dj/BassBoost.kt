@@ -20,6 +20,7 @@ class BassBoost : MusicCog {
         ctx.manager.dspFilter.bassBoost = strength
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Bass Boost")
             setDescription("Bass Boost strength is now set to `${strength.name.toLowerCase()}`")
         }

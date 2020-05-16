@@ -98,6 +98,7 @@ class VoteSkip : MusicCog {
                 val skip = m.reactions.firstOrNull { it.reactionEmote.name == "👍" }?.count?.minus(1) ?: 0
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Vote Skip")
                     setDescription(
                         buildString {

@@ -70,6 +70,7 @@ class Play : Cog {
                 manager.player.isPaused = false
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Play Music")
                     setDescription("Music is no longer paused.")
                 }
@@ -79,6 +80,7 @@ class Play : Cog {
             }
             manager.scheduler.queue.isEmpty() -> {
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Empty Queue")
                     setDescription("There is no music queued right now. Add some songs with `${ctx.trigger}play (song/url)`.")
                 }
@@ -220,6 +222,7 @@ class Play : Cog {
                     val votes = m.reactions.firstOrNull { it.reactionEmote.name == "👍" }?.count?.minus(1) ?: 0
 
                     ctx.send {
+                        setColor(0x9570D3)
                         setTitle("Vote Play")
                         setDescription(
                             buildString {
