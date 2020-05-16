@@ -24,7 +24,7 @@ class Stop : MusicCog {
         Launcher.players.destroy(ctx.guild!!.idLong)
 
         val extra = when {
-            karen.scheduler.queue.isEmpty() -> "."
+            !clear && karen.scheduler.queue.isEmpty() -> "."
             clear -> ", and the queue has been cleared."
             else -> ". If you want to clear the queue run `${ctx.trigger}clearqueue` or `${ctx.trigger}stop yes`"
         }
