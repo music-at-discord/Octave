@@ -26,7 +26,7 @@ class Stop : MusicCog {
         val extra = when {
             karen.scheduler.queue.isEmpty() -> "."
             clear -> ", and the queue has been cleared."
-            else -> ". If you want to clear the queue run `${ctx.trigger}clearqueue` or `${ctx.trigger}stop yes`"
+            else -> ". If you want to clear the queue run `${ctx.trigger}clearqueue` or `${ctx.trigger}stop yes`."
         }
 
         ctx.send("Playback has been completely stopped$extra")

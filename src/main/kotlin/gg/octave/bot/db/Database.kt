@@ -30,22 +30,14 @@ class Database(private val name: String) {
 
     init {
         val creds = Launcher.credentials
-
-        // Init Rethink
-        val builder = r.connection()
-            .hostname(creds.rethinkHost)
-            .port(creds.rethinkPort)
-
         val rethinkUser = creds.rethinkUsername
         val rethinkAuth = creds.rethinkAuth
 
-        if (!rethinkAuth.isNullOrEmpty()) {
-            if (!rethinkUser.isNullOrEmpty()) {
-                builder.user(creds.rethinkUsername, rethinkAuth)
-            } else {
-                builder.authKey(rethinkAuth)
-            }
-        }
+        // Init Rethink
+        val builder = r.connection()
+                .hostname(creds.rethinkHost)
+                .port(creds.rethinkPort)
+                .user(rethinkUser, rethinkAuth)
 
         try {
             conn = builder.connect()

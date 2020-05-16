@@ -42,8 +42,8 @@ class BotCredentials(file: File) {
     /* Rethink */
     val rethinkHost: String = config["rethink", "host"].string ?: "localhost"
     val rethinkPort: Int = config["rethink", "port"].getInt(28015)
-    val rethinkUsername: String? = config["rethink", "username"].string
-    val rethinkAuth: String? = config["rethink", "auth"].string
+    val rethinkUsername: String? = config["rethink", "username"].string ?: "admin"
+    val rethinkAuth: String? = config["rethink", "auth"].string ?: ""
 
     /* Redis */
     val redisHost: String = config["redis", "host"].string ?: "localhost"
