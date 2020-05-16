@@ -7,6 +7,7 @@ import gg.octave.bot.Launcher
 import org.slf4j.LoggerFactory
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
+import redis.clients.jedis.Protocol
 import redis.clients.jedis.exceptions.JedisConnectionException
 import redis.clients.jedis.params.SetParams
 import java.io.DataInput
@@ -75,7 +76,11 @@ class CachingSourceManager : AudioSourceManager {
         var successfulHits = 0
             private set
 
-        private val jedisPool = JedisPool(JedisPoolConfig(), "localhost")
+        val creds = Launcher.credentials
+        val redisHost = creds.redisHost
+        val redisPort = creds.redisPort
+        val redisAuth = creds.redisAuth
+        private val jedisPool = JedisPool(JedisPoolConfig(), redisHost, redisPort, Protocol.DEFAULT_TIMEOUT, redisAuth)
 
         private val PLAYLIST_TTL = TimeUnit.HOURS.toMillis(2)
         private val SEARCH_TTL = TimeUnit.HOURS.toMillis(12)
