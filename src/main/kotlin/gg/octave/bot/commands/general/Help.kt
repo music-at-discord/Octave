@@ -8,8 +8,6 @@ import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.SubCommandFunction
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.entities.Cog
-import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.MessageEmbed
 
 class Help : Cog {
     private val categoryAlias = mapOf("Search" to "Music", "Dj" to "Music")

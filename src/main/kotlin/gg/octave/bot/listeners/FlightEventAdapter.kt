@@ -3,11 +3,9 @@ package gg.octave.bot.listeners
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.entities.framework.DJ
-import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
 import gg.octave.bot.utils.extensions.generateExampleUsage
-import gg.octave.bot.utils.extensions.selfMember
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.hasAnyRoleId
 import gg.octave.bot.utils.hasAnyRoleNamed
@@ -17,11 +15,9 @@ import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.SubCommandFunction
 import me.devoxin.flight.api.exceptions.BadArgument
 import me.devoxin.flight.api.hooks.DefaultCommandEventAdapter
-import me.devoxin.flight.internal.arguments.Argument
 import net.dv8tion.jda.api.Permission
-import net.dv8tion.jda.api.entities.*
-import java.time.Duration
-import kotlin.reflect.full.findAnnotation
+import net.dv8tion.jda.api.entities.Member
+import net.dv8tion.jda.api.entities.Role
 import kotlin.reflect.full.hasAnnotation
 
 class FlightEventAdapter : DefaultCommandEventAdapter() {

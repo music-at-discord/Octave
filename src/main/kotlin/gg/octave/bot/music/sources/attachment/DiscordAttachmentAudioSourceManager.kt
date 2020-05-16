@@ -1,6 +1,9 @@
 package gg.octave.bot.music.sources.attachment
 
-import com.sedmelluq.discord.lavaplayer.container.*
+import com.sedmelluq.discord.lavaplayer.container.MediaContainerDescriptor
+import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetection
+import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetectionResult
+import com.sedmelluq.discord.lavaplayer.container.MediaContainerHints
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager
 import com.sedmelluq.discord.lavaplayer.source.ProbingAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException

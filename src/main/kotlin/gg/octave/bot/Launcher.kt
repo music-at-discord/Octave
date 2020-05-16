@@ -24,7 +24,6 @@ import me.devoxin.flight.api.CommandClientBuilder
 import net.dv8tion.jda.api.JDAInfo
 import net.dv8tion.jda.api.requests.RestAction
 import java.io.File
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object Launcher {
