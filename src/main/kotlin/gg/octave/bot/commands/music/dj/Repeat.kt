@@ -17,12 +17,33 @@ class Repeat : MusicCog {
     @Command(aliases = ["loop"], description = "Set if the music player should repeat")
     fun repeat(ctx: Context, option: RepeatOption) {
         ctx.manager.scheduler.repeatOption = option
-        val symbol = when (ctx.manager.scheduler.repeatOption) {
-            RepeatOption.QUEUE -> "\uD83D\uDD01"
-            RepeatOption.SONG -> "\uD83D\uDD02"
-            RepeatOption.NONE -> "\u274C"
-        }
+        ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
+    }
 
-        ctx.send("$symbol Track repeating was set to __**${ctx.manager.scheduler.repeatOption.name.toLowerCase()}**__.")
+    @DJ
+    @CheckVoiceState
+    @Command(aliases = ["lq"], description = "Repeats the queue.")
+    fun rq(ctx: Context) {
+        val option = RepeatOption.QUEUE
+        ctx.manager.scheduler.repeatOption = option
+        ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
+    }
+
+    @DJ
+    @CheckVoiceState
+    @Command(aliases = ["ls"], description = "Repeats the song.")
+    fun rs(ctx: Context) {
+        val option = RepeatOption.SONG
+        ctx.manager.scheduler.repeatOption = option
+        ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
+    }
+
+    @DJ
+    @CheckVoiceState
+    @Command(aliases = ["ln"], description = "Disables track repeating.")
+    fun rn(ctx: Context) {
+        val option = RepeatOption.NONE
+        ctx.manager.scheduler.repeatOption = option
+        ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
     }
 }
