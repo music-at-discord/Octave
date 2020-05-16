@@ -133,7 +133,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             return false
         }
 
-        if (command.category == "Music" || command.category == "Dj" || command.category == "Search") {
+        if (command.category == "Music" || command.category == "Dj" || command.category == "Search") { // CheckVoiceState
             if (ctx.member!!.voiceState?.channel == null) {
                 ctx.send("You're not in a voice channel.")
                 return false
@@ -200,15 +200,14 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
     companion object {
         fun isDJ(ctx: Context, send: Boolean = true): Boolean {
             val data = ctx.data
-            val memberSize = ctx.selfMember!!.voiceState?.channel?.members?.size
+            val isAlone = ctx.guild!!.audioManager.connectedChannel.let { it != null && it.members.count { m -> !m.user.isBot } == 1 }
             val djRole = data.command.djRole
             val djRolePresent = djRole?.let(ctx.member!!::hasAnyRoleId)
                 ?: data.music.djRoles.any(ctx.member!!::hasAnyRoleId)
 
-            val memberAmount = if (memberSize != null) memberSize <= 2 else false
             val admin = ctx.member!!.hasPermission(Permission.MANAGE_SERVER)
 
-            if (ctx.member!!.hasAnyRoleNamed("DJ") || djRolePresent || memberAmount || admin) {
+            if (ctx.member!!.hasAnyRoleNamed("DJ") || djRolePresent || isAlone || admin) {
                 return true
             }
 
