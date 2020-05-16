@@ -3,6 +3,7 @@ package gg.octave.bot
 import com.jagrosh.jdautilities.waiter.EventWaiter
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary
 import com.timgroup.statsd.NonBlockingStatsDClient
+import gg.octave.bot.apis.nodes.NodeInfoPoster
 import gg.octave.bot.apis.patreon.PatreonAPI
 import gg.octave.bot.apis.statsposter.StatsPoster
 import gg.octave.bot.db.Database
@@ -81,6 +82,10 @@ object Launcher {
         }
 
         commandClient.commands.register("gg.octave.bot.commands")
-        statsPoster.postEvery(30, TimeUnit.MINUTES)
+        if(configuration.nodeNumber == 1) {
+            statsPoster.postEvery(30, TimeUnit.MINUTES)
+        }
+
+        NodeInfoPoster(configuration.nodeNumber).postEvery(5, TimeUnit.SECONDS)
     }
 }

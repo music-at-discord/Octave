@@ -34,12 +34,22 @@ class BotInfo : Cog {
         val ramUsedPercent = dpFormatter.format(ramUsedBytes.toDouble() / Runtime.getRuntime().totalMemory() * 100)
         var guilds = 0L
         var users = 0L
+        var musicPlayers = 0L
 
         Launcher.database.jedisPool.resource.use {
-            for (x in 0 until Launcher.credentials.totalShards) {
-                val stats = JSONObject(it.hget("stats", x.toString()));
-                guilds += stats.getLong("guild_count")
-                users += stats.getLong("cached_users")
+            for (shard in 0 until Launcher.credentials.totalShards) {
+                val stats = it.hget("stats", shard.toString()) ?: continue
+
+                val jsonStats = JSONObject(stats);
+                guilds += jsonStats.getLong("guild_count")
+                users += jsonStats.getLong("cached_users")
+            }
+
+            for(node in 0 until Launcher.configuration.nodeTotal) {
+                val nodeStats = it.hget("node-stats", node.toString()) ?: continue
+
+                val jsonStats = JSONObject(nodeStats);
+                musicPlayers += jsonStats.getLong("music_players")
             }
         }
 

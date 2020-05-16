@@ -28,6 +28,8 @@ class Configuration(file: File) {
 
     val sentryDsn: String = config["bot", "sentry"].getString(null)
     val bucketFactor: Int = config["bot", "bucketFactor"].getInt(8)
+    val nodeNumber: Int = config["bot", "node"].getInt(1)
+    val nodeTotal: Int = config["bot", "nodeTotal"].getInt(1)
 
     // +--------------+
     // Music Settings
@@ -52,4 +54,5 @@ class Configuration(file: File) {
 
     val votePlayDurationText: String = config["music", "vote play duration"].getString("20 seconds")
     val votePlayDuration: Duration = voteSkipDurationText.toDuration()
+
 }

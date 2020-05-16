@@ -120,15 +120,16 @@ class BotListener : EventListener {
 
     private fun onException(event: ExceptionEvent) {
         Launcher.datadog.incrementCounter("octave_bot.exception")
-        if (!event.isLogged) log.error("Exception in JDA {}", event.jda.shardInfo.shardId, event.cause)
+        if (!event.isLogged)
+            log.error("Exception in JDA {}", event.jda.shardInfo.shardId, event.cause)
     }
 
     private fun postStats(jda: JDA) {
         Launcher.database.jedisPool.resource.use {
             it.hset("stats", jda.shardInfo.shardId.toString(), JSONObject()
-                .put("guild_count", jda.guildCache.size())
-                .put("cached_users", jda.userCache.size())
-                .toString()
+                    .put("guild_count", jda.guildCache.size())
+                    .put("cached_users", jda.userCache.size())
+                    .toString()
             )
         }
     }
