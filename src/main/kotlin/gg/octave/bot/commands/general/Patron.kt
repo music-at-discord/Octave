@@ -43,6 +43,7 @@ class Patron : Cog {
         val premiumServers = totalServers - premiumUser.remainingPremiumGuildQuota
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Premium Status")
             setDescription("Status for <@$userId>")
             addField("Is Premium?", if (!premiumUser.isPremium) "No" else "Yes", true)
@@ -78,6 +79,7 @@ class Patron : Cog {
                 user.save()
 
                 ctx.send {
+                    setColor(0x9570D3)
                     setTitle("Thank you, ${ctx.author.name}!")
                     setDescription("Thanks for pledging $${String.format("%1$,.2f", pledgeAmount)}!\n" +
                         "You can have up to **${user.totalPremiumGuildQuota}** premium servers, which can be " +
@@ -193,9 +195,10 @@ class Patron : Cog {
             return ctx.send("You may not remove premium status for the server.")
         }
 
-        if (premiumGuild.daysSinceAdded < 28 && !hasDevOverride) {
+        if (premiumGuild.daysSinceAdded < minDaysBeforeRemoval && !hasDevOverride) {
+            val remainingDays = minDaysBeforeRemoval - premiumGuild.daysSinceAdded
             return ctx.send(
-                "You must wait 28 days before removing the premium status for the server.\n" +
+                "You must wait $remainingDays more days before removing the premium status for the server.\n" +
                     "If there is a valid reason for early removal, please contact the developers."
             )
         }
@@ -241,5 +244,6 @@ class Patron : Cog {
 
     companion object {
         private val answers = setOf("y", "yes", "yeah", "ok", "true", "1")
+        private val minDaysBeforeRemoval = 28
     }
 }

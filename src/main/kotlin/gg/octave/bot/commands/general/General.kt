@@ -12,6 +12,7 @@ class General : Cog {
         val link = ctx.jda.getInviteUrl(Permission.ADMINISTRATOR)
 
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Add Octave to your server!")
             setDescription("__**[Click to invite Octave to your server.]($link)**__")
         }
@@ -31,6 +32,7 @@ class General : Cog {
     @Command(description = "Shows how to vote for the bot.")
     fun vote(ctx: Context) {
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Vote")
             setDescription(
                 "Vote here to increase the visibility of the bot!\nIf you vote for Octave, you can get a normie box in Dank Memer everytime you vote too!\n" +
@@ -42,6 +44,7 @@ class General : Cog {
     @Command(aliases = ["supportserver"], description = "Shows a link to the support server.")
     fun support(ctx: Context) {
         ctx.send {
+            setColor(0x9570D3)
             setTitle("Support Server")
             setDescription("[Join our support server by clicking here!](https://discord.gg/musicbot)")
         }
@@ -50,9 +53,8 @@ class General : Cog {
     @Command(description = "Show the donation info.")
     fun donate(ctx: Context) {
         ctx.send {
+            setColor(0x9570D3)
             setDescription("Want to donate to support Octave?\n**[Patreon](https://www.patreon.com/octavebot)**")
         }
     }
-
-
 }
