@@ -36,6 +36,7 @@ class BotInfo : Cog {
         var guilds = 0L
         var users = 0L
         var musicPlayers = 0L
+        var totalNodes = 0L
 
         Launcher.database.jedisPool.resource.use {
             val stats = it.hgetAll("stats")
@@ -49,6 +50,7 @@ class BotInfo : Cog {
             for (node in nodeStats) {
                 val jsonStats = JSONObject(node.value);
                 musicPlayers += jsonStats.getLong("music_players")
+                totalNodes++
             }
         }
 
@@ -75,7 +77,7 @@ class BotInfo : Cog {
                 append("Library: **[JDA ${JDAInfo.VERSION}](${JDAInfo.GITHUB})**\n")
             }
             addField("General", general, true)
-            setFooter("${Thread.activeCount()} threads | Current Shard: ${ctx.jda.shardInfo.shardId} | Current Node: ${ctx.config.nodeNumber} / ${ctx.config.nodeTotal}")
+            setFooter("${Thread.activeCount()} threads | Current Shard: ${ctx.jda.shardInfo.shardId} | Current Node: ${ctx.config.nodeNumber} / $totalNodes")
         }
     }
 }

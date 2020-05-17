@@ -15,10 +15,9 @@ class PlayerStats : Cog {
         var musicPlayers = 0L
 
         Launcher.database.jedisPool.resource.use {
-            for(node in 0 until Launcher.configuration.nodeTotal) {
-                val nodeStats = it.hget("node-stats", node.toString()) ?: continue
-
-                val jsonStats = JSONObject(nodeStats);
+            val nodeStats = it.hgetAll("node-stats")
+            for (node in nodeStats) {
+                val jsonStats = JSONObject(node.value);
                 musicPlayers += jsonStats.getLong("music_players")
             }
         }
