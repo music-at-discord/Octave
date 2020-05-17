@@ -37,7 +37,7 @@ class Play : Cog {
             return playArgless(ctx)
         }
 
-        val args = attachment?.let { listOf("discord://${it.url}") } ?: query!!.split(" +".toRegex())
+        val args = attachment?.let { listOf(it.url) } ?: query!!.split(" +".toRegex())
         val hasManager = Launcher.players.contains(ctx.guild!!.idLong)
 
         prompt(ctx, hasManager).thenAccept { proceed ->
@@ -143,7 +143,7 @@ class Play : Cog {
             manager.scheduler.queue.clearExpire()
 
             val query = when {
-                "discord://" in args[0] || "https://" in args[0] || "http://" in args[0] || args[0].startsWith("spotify:") -> {
+                "https://" in args[0] || "http://" in args[0] || args[0].startsWith("spotify:") -> {
                     args[0].removePrefix("<").removeSuffix(">")
                 }
                 isSearchResult -> uri

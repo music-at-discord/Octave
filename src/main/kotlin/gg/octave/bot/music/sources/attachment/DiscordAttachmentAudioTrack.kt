@@ -18,9 +18,8 @@ class DiscordAttachmentAudioTrack(
     override fun makeShallowClone() = DiscordAttachmentAudioTrack(trackInfo, containerTrackFactory, sourceManager)
 
     override fun process(executor: LocalAudioTrackExecutor) {
-        val streamUrl = trackInfo.identifier.substring(DiscordAttachmentAudioSourceManager.uriPrefix.length)
         sourceManager.httpInterface.use {
-            PersistentHttpStream(it, URI(streamUrl), Units.CONTENT_LENGTH_UNKNOWN).use { inputStream ->
+            PersistentHttpStream(it, URI(trackInfo.identifier), Units.CONTENT_LENGTH_UNKNOWN).use { inputStream ->
                 processDelegate(containerTrackFactory.createTrack(trackInfo, inputStream) as InternalAudioTrack, executor)
             }
         }

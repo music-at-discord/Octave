@@ -39,28 +39,28 @@ class DiscordAttachmentAudioSourceManager : ProbingAudioSourceManager(LimitedCon
     override fun getSourceName() = "attachment"
 
     override fun loadItem(manager: DefaultAudioPlayerManager, reference: AudioReference): AudioItem? {
-        if (!reference.identifier.startsWith(uriPrefix)) {
+        if (!(reference.identifier matches cdnRegex)) {
             return null
         }
 
         return if (reference.containerDescriptor != null) {
             createTrack(AudioTrackInfoBuilder.create(reference, null).build(), reference.containerDescriptor)
         } else {
-            handleLoadResult(detectContainer(reference.identifier.substring(uriPrefix.length), reference))
+            handleLoadResult(detectContainer(reference))
         }
     }
 
-    private fun detectContainer(url: String, reference: AudioReference): MediaContainerDetectionResult? {
+    private fun detectContainer(reference: AudioReference): MediaContainerDetectionResult? {
         return try {
-            httpInterface.use { detectContainerWithClient(url, httpInterface, reference) }
+            httpInterface.use { detectContainerWithClient(httpInterface, reference) }
         } catch (e: IOException) {
             throw FriendlyException("Connecting to the URL failed.", FriendlyException.Severity.SUSPICIOUS, e)
         }
     }
 
     @Throws(IOException::class)
-    private fun detectContainerWithClient(url: String, httpInterface: HttpInterface, reference: AudioReference): MediaContainerDetectionResult? {
-        val uri = inlineTry("Not a valid URL.") { URI(url) }
+    private fun detectContainerWithClient(httpInterface: HttpInterface, reference: AudioReference): MediaContainerDetectionResult? {
+        val uri = inlineTry("Not a valid URL.") { URI(reference.identifier) }
 
         // We could probably scrape content-length from headers.
         PersistentHttpStream(httpInterface, uri, Units.CONTENT_LENGTH_UNKNOWN).use { inputStream ->
@@ -107,6 +107,6 @@ class DiscordAttachmentAudioSourceManager : ProbingAudioSourceManager(LimitedCon
     }
 
     companion object {
-        internal val uriPrefix = "discord://"
+        private val cdnRegex = "^https?://cdn\\.discordapp\\.com/attachments/\\d{17,21}/\\d{17,21}/[a-zA-Z0-9_-]+\\.\\w{2,6}".toRegex()
     }
 }
