@@ -38,18 +38,16 @@ class BotInfo : Cog {
         var musicPlayers = 0L
 
         Launcher.database.jedisPool.resource.use {
-            for (shard in 0 until Launcher.credentials.totalShards) {
-                val stats = it.hget("stats", shard.toString()) ?: continue
-
-                val jsonStats = JSONObject(stats);
+            val stats = it.hkeys("stats")
+            for (shard in stats) {
+                val jsonStats = JSONObject(shard);
                 guilds += jsonStats.getLong("guild_count")
                 users += jsonStats.getLong("cached_users")
             }
 
-            for(node in 0 until Launcher.configuration.nodeTotal) {
-                val nodeStats = it.hget("node-stats", node.toString()) ?: continue
-
-                val jsonStats = JSONObject(nodeStats);
+            val nodeStats = it.hkeys("node-stats")
+            for (node in nodeStats) {
+                val jsonStats = JSONObject(node);
                 musicPlayers += jsonStats.getLong("music_players")
             }
         }
