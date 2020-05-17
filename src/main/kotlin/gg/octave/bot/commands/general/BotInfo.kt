@@ -17,7 +17,7 @@ class BotInfo : Cog {
     private val dpFormatter = DecimalFormat("0.00")
 
     @Command(aliases = ["about", "info", "stats"], description = "Show information about the bot.")
-    suspend fun botinfo(ctx: Context) {
+    fun botinfo(ctx: Context) {
         val commandSize = ctx.commandClient.commands.size
 
         // Uptime
