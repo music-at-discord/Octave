@@ -19,6 +19,7 @@ class NodeInfoPoster(var nodeId: Int) {
                                 .put("music_players", Launcher.players.size())
                                 .put("uptime", ManagementFactory.getRuntimeMXBean().uptime)
                                 .put("used_ram", ramUsedBytes)
+                                .put("thread_count", Thread.activeCount())
                                 .toString()
                 )
             }
