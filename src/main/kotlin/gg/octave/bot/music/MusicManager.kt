@@ -189,7 +189,7 @@ class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: P
         player.isPaused = false
     }
 
-    private fun createLeaveTask() = schedulerThread.schedule({ playerRegistry.destroy(guild) }, 30, TimeUnit.SECONDS)
+    private fun createLeaveTask() = schedulerThread.schedule({ playerRegistry.destroy(guildId.toLong()) }, 30, TimeUnit.SECONDS)
 
     fun loadAndPlay(ctx: Context, trackUrl: String, trackContext: TrackContext, footnote: String? = null, isNext: Boolean) {
         playerManager.loadItemOrdered(this, trackUrl, object : AudioLoadResultHandler {
