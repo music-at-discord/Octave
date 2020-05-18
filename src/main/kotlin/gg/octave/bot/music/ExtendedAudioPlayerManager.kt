@@ -35,7 +35,6 @@ import java.util.*
 
 class ExtendedAudioPlayerManager(private val dapm: AudioPlayerManager = DefaultAudioPlayerManager()) : AudioPlayerManager by dapm {
     init {
-        dapm.frameBufferDuration = 5000
         dapm.configuration.apply {
             isFilterHotSwapEnabled = true
             setFrameBufferFactory(::NonAllocatingAudioFrameBuffer)

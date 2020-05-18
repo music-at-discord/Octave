@@ -4,7 +4,6 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.db.OptionsRegistry
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.GenericEvent
-import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
@@ -25,27 +24,27 @@ class VoiceListener : EventListener {
     }
 
     private fun onGuildVoiceJoin(event: GuildVoiceJoinEvent) {
-        if (event.member.user != event.jda.selfUser) {
+        if (event.member.user.idLong != event.jda.selfUser.idLong) {
             checkVoiceState(event.guild)
         }
     }
 
     private fun onGuildVoiceLeave(event: GuildVoiceLeaveEvent) {
-        when (event.member.user) {
-            event.jda.selfUser -> Launcher.players.destroy(event.guild.idLong)
+        when (event.member.user.idLong) {
+            event.jda.selfUser.idLong -> Launcher.players.destroy(event.guild.idLong)
             else -> checkVoiceState(event.guild)
         }
     }
 
     private fun onGuildVoiceMove(event: GuildVoiceMoveEvent) {
-        if (event.member.user != event.jda.selfUser) {
+        if (event.member.user.idLong != event.jda.selfUser.idLong) {
             return
         }
 
         val manager = Launcher.players.getExisting(event.guild.idLong)
             ?: return
 
-        if (event.channelJoined.id == event.guild.afkChannel?.id) {
+        if (event.channelJoined.idLong == event.guild.afkChannel?.idLong) {
             return Launcher.players.destroy(event.guild.idLong)
         }
 
