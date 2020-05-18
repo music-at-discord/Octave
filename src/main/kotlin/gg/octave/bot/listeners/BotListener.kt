@@ -48,6 +48,10 @@ class BotListener : EventListener {
         //Don't fire this if the SelfMember joined a longish time ago. This avoids discord fuckups.
         if (event.guild.selfMember.timeJoined.isBefore(OffsetDateTime.now().minusSeconds(30))) return
 
+        //Find the first channel we can talk to.
+        val channel = event.guild.textChannels.firstOrNull { it.canTalk() }
+            ?: return
+
         //Greet message start.
         val embedBuilder = EmbedBuilder()
             .setThumbnail(event.jda.selfUser.effectiveAvatarUrl)
@@ -61,12 +65,7 @@ class BotListener : EventListener {
                     "[Patreon](https://patreon.com/octave)", true)
             .setFooter("Thanks for using Octave!")
 
-
-        //Find the first channel we can talk to.
-        val channel = event.guild.textChannels.firstOrNull { it.canTalk() }
-            ?: return
-
-        channel.sendMessage(embedBuilder.build()).queue { m: Message -> m.delete().queueAfter(1, TimeUnit.MINUTES) }
+        channel.sendMessage(embedBuilder.build()).queue { it.delete().queueAfter(1, TimeUnit.MINUTES) }
 
         Launcher.datadog.gauge("octave_bot.guilds", Launcher.shardManager.guildCache.size())
         Launcher.datadog.gauge("octave_bot.users", Launcher.shardManager.userCache.size())

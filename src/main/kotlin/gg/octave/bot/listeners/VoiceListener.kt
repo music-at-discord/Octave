@@ -4,6 +4,7 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.db.OptionsRegistry
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.GenericEvent
+import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.api.events.guild.voice.GenericGuildVoiceEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceJoinEvent
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceLeaveEvent
@@ -24,19 +25,16 @@ class VoiceListener : EventListener {
     }
 
     private fun onGuildVoiceJoin(event: GuildVoiceJoinEvent) {
-        if (event.member.user == event.jda.selfUser) {
-            return
+        if (event.member.user != event.jda.selfUser) {
+            checkVoiceState(event.guild)
         }
-
-        checkVoiceState(event.guild)
     }
 
     private fun onGuildVoiceLeave(event: GuildVoiceLeaveEvent) {
-        if (event.member.user == event.jda.selfUser) {
-            return Launcher.players.destroy(event.guild.idLong)
+        when (event.member.user) {
+            event.jda.selfUser -> Launcher.players.destroy(event.guild.idLong)
+            else -> checkVoiceState(event.guild)
         }
-
-        checkVoiceState(event.guild)
     }
 
     private fun onGuildVoiceMove(event: GuildVoiceMoveEvent) {
@@ -54,7 +52,7 @@ class VoiceListener : EventListener {
         val options = OptionsRegistry.ofGuild(event.guild)
 
         if (options.music.channels.isNotEmpty() && event.channelJoined.id !in options.music.channels) {
-            manager.currentRequestChannel
+            manager.announcementChannel
                 ?.sendMessage("Cannot join `${event.channelJoined.name}`, it isn't one of the designated music channels.")
                 ?.queue()
 
@@ -68,14 +66,14 @@ class VoiceListener : EventListener {
         val manager = Launcher.players.getExisting(guild.idLong)
             ?: return
 
-        if (!guild.selfMember.voiceState!!.inVoiceChannel()) {
+        if (guild.audioManager.connectedChannel == null) {
             return Launcher.players.destroy(guild.idLong)
         }
 
         val guildData = OptionsRegistry.ofGuild(guild.id)
         val premiumGuild = Launcher.database.getPremiumGuild(guild.id)
-
         val avoidLeave = (premiumGuild != null || guildData.isPremium) && guildData.music.isAllDayMusic
+
         when {
             manager.isAlone() && !manager.leaveQueued && !avoidLeave -> manager.queueLeave()
             !manager.isAlone() && manager.leaveQueued -> manager.cancelLeave()
