@@ -114,7 +114,7 @@ task writeVersion() {
         resources.mkdirs()
     }
 
-    file("$resourcePath/version.txt").text = getBuildVersion()
+    file("$resourcePath/botversion.txt").text = getBuildVersion()
 }
 
 build {
