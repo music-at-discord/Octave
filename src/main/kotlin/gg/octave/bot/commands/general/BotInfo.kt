@@ -1,15 +1,20 @@
 package gg.octave.bot.commands.general
 
+import com.jagrosh.jdautilities.paginator
 import com.sun.management.OperatingSystemMXBean
 import gg.octave.bot.Launcher
 import gg.octave.bot.utils.Capacity
 import gg.octave.bot.utils.OctaveBot
+import gg.octave.bot.utils.Utils
 import gg.octave.bot.utils.extensions.config
+import gg.octave.bot.utils.extensions.selfMember
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
+import me.devoxin.flight.api.annotations.SubCommand
 import me.devoxin.flight.api.entities.Cog
 import net.dv8tion.jda.api.JDAInfo
 import org.json.JSONObject
+import java.lang.StringBuilder
 import java.lang.management.ManagementFactory
 import java.text.DecimalFormat
 
@@ -78,6 +83,43 @@ class BotInfo : Cog {
             }
             addField("General", general, true)
             setFooter("${Thread.activeCount()} threads | Current Shard: ${ctx.jda.shardInfo.shardId} | Current Node: ${ctx.config.nodeNumber + 1} / $totalNodes")
+        }
+    }
+
+    @SubCommand(description = "Gets node statistics.")
+    fun nodes(ctx: Context) {
+        ctx.textChannel?.let {tx ->
+            Launcher.eventWaiter.paginator {
+                setTitle("Node Statistics")
+                setUser(ctx.author)
+                setDescription("Per-node breakdown of the bot statistics.\nA node contains a set amount of shards.")
+                setColor(ctx.selfMember?.color)
+                Launcher.database.jedisPool.resource.use {
+                    val nodeStats = it.hgetAll("node-stats")
+                    for (node in nodeStats) {
+                        val stats = JSONObject(node.value);
+
+                        val ramUsedBytes = stats.getLong("used_ram")
+                        val ramUsedCalculated = Capacity.calculate(ramUsedBytes)
+                        val ramUsedFormatted = dpFormatter.format(ramUsedCalculated.amount)
+                        val ramUsedPercent = dpFormatter.format(ramUsedBytes.toDouble() / Runtime.getRuntime().totalMemory() * 100)
+
+                        entry {
+                            StringBuilder().append("Node ${node.key}\n")
+                                    .append("**Slice**: ${stats.getInt("shard_slice_start")} to ${stats.getInt("shard_slice_end") - 1}\n")
+                                    .append("**Uptime**: ${Utils.getTimestamp(stats.getLong("uptime"))}\n")
+                                    .append("**RAM Usage:** $ramUsedFormatted${ramUsedCalculated.unit} (${ramUsedPercent})%\n")
+                                    .append("**Threads**: ${stats.getLong("thread_count")}\n")
+                                    .append("**Guilds**: ${stats.getLong("guild_count")}\n")
+                                    .append("**Cached Users**: ${stats.getLong("cached_users")}\n")
+                                    .append("**Players**: ${stats.getLong("music_players")}\n")
+                                    .append("\n\n").toString()
+                        }
+                    }
+                }
+
+                setItemsPerPage(3)
+            }.display(tx)
         }
     }
 }

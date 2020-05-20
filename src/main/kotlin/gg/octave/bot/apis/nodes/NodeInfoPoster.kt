@@ -24,10 +24,11 @@ class NodeInfoPoster(var nodeId: Int) {
                                 .put("thread_count", Thread.activeCount())
                                 .put("guild_count", Launcher.shardManager.guildCache.size())
                                 .put("cached_users", Launcher.shardManager.userCache.size())
+                                .put("shard_slice_start", Launcher.credentials.shardStart)
+                                .put("shard_slice_end", Launcher.credentials.shardEnd)
                                 .toString()
                 )
             }
         }, time, time, unit)
     }
-
 }
