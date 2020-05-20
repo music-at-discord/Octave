@@ -92,7 +92,8 @@ class BotInfo : Cog {
             Launcher.eventWaiter.paginator {
                 setTitle("Node Statistics")
                 setUser(ctx.author)
-                setDescription("Per-node breakdown of the bot statistics.\nA node contains a set amount of shards.")
+                setDescription("Per-node breakdown of the bot statistics.\nA node contains a set amount of shards.\n" +
+                        "**Current Node**: ${Launcher.configuration.nodeNumber} (${Launcher.configuration.nodeNumber + 1})")
                 setColor(ctx.selfMember?.color)
                 Launcher.database.jedisPool.resource.use {
                     val nodeStats = it.hgetAll("node-stats")
