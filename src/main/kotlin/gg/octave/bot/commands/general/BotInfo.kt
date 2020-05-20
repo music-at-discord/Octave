@@ -77,7 +77,7 @@ class BotInfo : Cog {
                 append("Library: **[JDA ${JDAInfo.VERSION}](${JDAInfo.GITHUB})**\n")
             }
             addField("General", general, true)
-            setFooter("${Thread.activeCount()} threads | Current Shard: ${ctx.jda.shardInfo.shardId} | Current Node: ${ctx.config.nodeNumber} / $totalNodes")
+            setFooter("${Thread.activeCount()} threads | Current Shard: ${ctx.jda.shardInfo.shardId} | Current Node: ${ctx.config.nodeNumber + 1} / $totalNodes")
         }
     }
 }
