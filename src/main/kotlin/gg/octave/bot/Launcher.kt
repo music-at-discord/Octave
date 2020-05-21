@@ -20,12 +20,15 @@ import gg.octave.bot.utils.DiscordFM
 import gg.octave.bot.utils.OctaveBot
 import gg.octave.bot.utils.extensions.registerAlmostAllParsers
 import io.sentry.Sentry
+import jodd.util.concurrent.ThreadFactoryBuilder
 import me.devoxin.flight.FlightInfo
 import me.devoxin.flight.api.CommandClient
 import me.devoxin.flight.api.CommandClientBuilder
 import net.dv8tion.jda.api.JDAInfo
 import net.dv8tion.jda.api.requests.RestAction
 import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 object Launcher {
@@ -51,6 +54,9 @@ object Launcher {
     val loaded: Boolean
         get() = shardManager.shardsRunning == shardManager.shardsTotal
 
+    lateinit var commandExecutor: ExecutorService
+        private set
+
     @ExperimentalStdlibApi
     @JvmStatic
     fun main(args: Array<String>) {
@@ -65,24 +71,30 @@ object Launcher {
         Sentry.init(configuration.sentryDsn)
         RestAction.setPassContext(false)
 
+        commandExecutor = Executors.newCachedThreadPool(
+                ThreadFactoryBuilder().setNameFormat("Octave-FlightExecutor-%d").get()
+        )
+
         commandClient = CommandClientBuilder()
-            .setPrefixProvider(DefaultPrefixProvider())
-            .registerAlmostAllParsers()
-            .addCustomParser(ExtendedMemberParser())
-            .addCustomParser(DurationParser())
-            .addCustomParser(KeyTypeParser())
-            .addCustomParser(BoostSettingParser())
-            .addCustomParser(RepeatOptionParser())
-            .setOwnerIds(*configuration.admins.toLongArray())
-            .addEventListeners(FlightEventAdapter())
-            .configureDefaultHelpCommand { enabled = false }
-            .build()
+                .setPrefixProvider(DefaultPrefixProvider())
+                .registerAlmostAllParsers()
+                .addCustomParser(ExtendedMemberParser())
+                .addCustomParser(DurationParser())
+                .addCustomParser(KeyTypeParser())
+                .addCustomParser(BoostSettingParser())
+                .addCustomParser(RepeatOptionParser())
+                .setOwnerIds(*configuration.admins.toLongArray())
+                .addEventListeners(FlightEventAdapter())
+                .setExecutionThreadPool(commandExecutor)
+                .configureDefaultHelpCommand { enabled = false }
+                .build()
 
         shardManager = ExtendedShardManager.create(credentials.token) {
             addEventListeners(eventWaiter, BotListener(), VoiceListener(), commandClient)
         }
 
         commandClient.commands.register("gg.octave.bot.commands")
+
         if(configuration.nodeNumber == 0) {
             statsPoster.postEvery(30, TimeUnit.MINUTES)
         }
