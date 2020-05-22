@@ -114,7 +114,7 @@ class BotInfo : Cog {
                                     .append("**Guilds**: ${stats.getLong("guild_count")}\n")
                                     .append("**Cached Users**: ${stats.getLong("cached_users")}\n")
                                     .append("**Players**: ${stats.getLong("music_players")}\n")
-                                    .append("\n\n").toString()
+                                    .toString()
                         }
                     }
                 }
