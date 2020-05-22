@@ -10,7 +10,12 @@ class PlayerSweeper {
 
     fun runEvery(timeUnit: TimeUnit, amount: Long) {
         executor.scheduleAtFixedRate({
-            Launcher.players.registry.values.filter {
+            val players = Launcher.players.registry.values
+
+            //Remove null guilds.
+            players.filter { it.guild == null }.forEach { players.remove(it) }
+
+            players.filter {
                 //In short: If the manager is connected, if there's is NO playing track, if it hasn't been queued for
                 //leave, if there has been 2 minutes without a new song playing (and nothing is playing, as said above)
                 //and if allDayMusic hasn't been enabled.
