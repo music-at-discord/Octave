@@ -109,7 +109,7 @@ class BotInfo : Cog {
                             StringBuilder().append("Node ${node.key}\n")
                                     .append("**Slice**: ${stats.getInt("shard_slice_start")} to ${stats.getInt("shard_slice_end") - 1}\n")
                                     .append("**Uptime**: ${Utils.getTimestamp(stats.getLong("uptime"))}\n")
-                                    .append("**RAM Usage:** $ramUsedFormatted${ramUsedCalculated.unit} (${ramUsedPercent})%\n")
+                                    .append("**RAM Usage:** $ramUsedFormatted${ramUsedCalculated.unit} ($ramUsedPercent%)\n")
                                     .append("**Threads**: ${stats.getLong("thread_count")}\n")
                                     .append("**Guilds**: ${stats.getLong("guild_count")}\n")
                                     .append("**Cached Users**: ${stats.getLong("cached_users")}\n")
