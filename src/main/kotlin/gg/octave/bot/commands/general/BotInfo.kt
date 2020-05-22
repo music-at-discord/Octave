@@ -88,7 +88,7 @@ class BotInfo : Cog {
 
     @SubCommand(description = "Gets node statistics.")
     fun nodes(ctx: Context) {
-        ctx.textChannel?.let {tx ->
+        ctx.textChannel?.let { tx ->
             Launcher.eventWaiter.paginator {
                 setTitle("Node Statistics")
                 setUser(ctx.author)

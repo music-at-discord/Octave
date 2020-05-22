@@ -77,6 +77,7 @@ class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: P
     var isVotingToSkip = false
     var isVotingToPlay = false
     var lastPlayVoteTime: Long = 0L
+    var lastPlayedAt: Long = 0L
 
     val currentRequestChannel: TextChannel?
         get() {
@@ -109,6 +110,7 @@ class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: P
         scheduler.queue.expire(4, TimeUnit.HOURS)
         player.destroy()
         dspFilter.clearFilters()
+
         closeAudioConnection()
     }
 
@@ -237,6 +239,7 @@ class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: P
                 }
 
                 track.userData = trackContext
+                lastPlayedAt = System.currentTimeMillis()
                 scheduler.queue(track, isNext)
 
                 ctx.send {
