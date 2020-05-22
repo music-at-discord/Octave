@@ -101,6 +101,6 @@ object Launcher {
         }
 
         NodeInfoPoster(configuration.nodeNumber).postEvery(5, TimeUnit.SECONDS)
-        PlayerSweeper().runEvery(TimeUnit.MINUTES, 4)
+        PlayerSweeper().runEvery(TimeUnit.MINUTES, 3)
     }
 }

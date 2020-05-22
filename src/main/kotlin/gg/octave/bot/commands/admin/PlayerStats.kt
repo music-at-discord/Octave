@@ -30,8 +30,10 @@ class PlayerStats : Cog {
 
         ctx.send {
             setColor(0x9570D3)
-            setTitle("$musicPlayers players (All Nodes)")
-            addField("Source Insight (This node)", bySourceFormatted, true)
+            setTitle("Player Statistics")
+            setDescription("**This node**: ${players.size}\n" +
+                    "**All nodes**: $musicPlayers")
+            addField("Source Insight", "This node:\n$bySourceFormatted", true)
             addField("Statistics", "• **$encoding** encoding\n• **$paused** paused\n• **$alone** alone", true)
         }
     }
