@@ -46,11 +46,12 @@ class PlayerStats : Cog {
             }
         }
 
-        val paused = players.filter { it.player.isPaused }.size
-        val encoding = players.filter(::isEncoding).size
-        val alone = players.filter { it.guild?.audioManager?.connectedChannel?.members?.count { m -> !m.user.isBot } == 0 }.size
-        val bySource = sources.associateBy({ it }, { players.filter { m -> isSource(it, m) } })
-        val bySourceFormatted = bySource.map { "• ${it.key.capitalize()}: **${it.value.size}**" }.joinToString("\n")
+        val paused = players.count { it.player.isPaused }
+        val encoding = players.count(::isEncoding)
+        val alone = players.count { it.guild?.audioManager?.connectedChannel?.members?.none { m -> !m.user.isBot } ?: true }
+        val bySource = players.mapNotNull { it.player.playingTrack?.sourceManager?.sourceName }.groupingBy { it }.eachCount()
+        //val bySource = sources.associateBy({ it }, { players.count { m -> isSource(it, m) } })
+        val bySourceFormatted = bySource.map { "• ${it.key.capitalize()}: **${it.value}**" }.joinToString("\n")
 
         ctx.send {
             setColor(0x9570D3)
@@ -71,12 +72,7 @@ class PlayerStats : Cog {
             (manager.player.volume != 100 || hasDspFx || !opusSources.any { it in manager.player.playingTrack.info.uri })
     }
 
-    private fun isSource(source: String, manager: MusicManager): Boolean {
-        return manager.player.playingTrack != null && manager.player.playingTrack.sourceManager.sourceName == source
-    }
-
     companion object {
         private val opusSources = listOf("youtube", "soundcloud")
-        private val sources = listOf("youtube", "soundcloud", "getyarn.io", "bandcamp", "vimeo", "twitch", "beam.pro")
     }
 }
