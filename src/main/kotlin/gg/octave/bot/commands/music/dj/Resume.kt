@@ -37,7 +37,7 @@ class Resume : Cog {
     @DJ
     @CheckVoiceState
     @Command(description = "Resume the music queue.")
-    fun resume(ctx: Context) {
+    fun resumequeue(ctx: Context) {
         val manager = ctx.manager
         val scheduler = manager.scheduler
 
