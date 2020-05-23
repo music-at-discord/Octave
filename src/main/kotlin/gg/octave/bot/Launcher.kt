@@ -97,22 +97,22 @@ object Launcher {
         RestAction.setPassContext(false)
 
         commandExecutor = Executors.newCachedThreadPool(
-                ThreadFactoryBuilder().setNameFormat("Octave-FlightExecutor-%d").get()
+            ThreadFactoryBuilder().setNameFormat("Octave-FlightExecutor-%d").get()
         )
 
         commandClient = CommandClientBuilder()
-                .setPrefixProvider(DefaultPrefixProvider())
-                .registerAlmostAllParsers()
-                .addCustomParser(ExtendedMemberParser())
-                .addCustomParser(DurationParser())
-                .addCustomParser(KeyTypeParser())
-                .addCustomParser(BoostSettingParser())
-                .addCustomParser(RepeatOptionParser())
-                .setOwnerIds(*configuration.admins.toLongArray())
-                .addEventListeners(FlightEventAdapter())
-                .setExecutionThreadPool(commandExecutor)
-                .configureDefaultHelpCommand { enabled = false }
-                .build()
+            .setPrefixProvider(DefaultPrefixProvider())
+            .registerAlmostAllParsers()
+            .addCustomParser(ExtendedMemberParser())
+            .addCustomParser(DurationParser())
+            .addCustomParser(KeyTypeParser())
+            .addCustomParser(BoostSettingParser())
+            .addCustomParser(RepeatOptionParser())
+            .setOwnerIds(*configuration.admins.toLongArray())
+            .addEventListeners(FlightEventAdapter())
+            .setExecutionThreadPool(commandExecutor)
+            .configureDefaultHelpCommand { enabled = false }
+            .build()
 
         shardManager = ExtendedShardManager.create(credentials.token) {
             addEventListeners(eventWaiter, BotListener(), VoiceListener(), commandClient)
@@ -120,7 +120,7 @@ object Launcher {
 
         commandClient.commands.register("gg.octave.bot.commands")
 
-        if(configuration.nodeNumber == 0) {
+        if (configuration.nodeNumber == 0) {
             statsPoster.postEvery(30, TimeUnit.MINUTES)
         }
 

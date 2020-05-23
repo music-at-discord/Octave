@@ -51,7 +51,6 @@ fun RQueue<String>.removeAll(indexes: Collection<Int>): Int {
     val iterator = this.iterator()
     var removedCount = 0
     while (iterator.hasNext() && iterIndex <= biggestIndex) {
-        val currentValue = iterator.next()
         if (iterIndex in indexes) {
             removedCount++
             iterator.remove()
