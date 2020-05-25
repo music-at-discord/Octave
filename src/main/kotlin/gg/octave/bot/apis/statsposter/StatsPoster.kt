@@ -32,6 +32,10 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 class StatsPoster(botId: String) {
+    init {
+        log.info("Posting statistics to bot lists using client (or bot) id {}", botId)
+    }
+
     private val scheduler = Executors.newSingleThreadScheduledExecutor()
     val websites = listOf(
         BotsForDiscord(botId, Launcher.credentials.botsForDiscord ?: ""),

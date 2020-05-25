@@ -46,6 +46,8 @@ class Configuration(file: File) {
     // +--------------+
     val name: String = config["bot", "name"].getString("Octave")
     val game: String = config["bot", "game"].getString("${prefix}help | %d")
+    val clientId: String = config["bot", "clientId"].getString("201503408652419073")
+    val homeGuild = config["bot", "homeGuild"].getLong(215616923168276480L)
 
     val ipv6Block: String = config["bot", "ipv6block"].getString(null)
     val ipv6Exclude: String = config["bot", "ipv6Exclude"].getString(null)
@@ -59,6 +61,7 @@ class Configuration(file: File) {
     // +--------------+
     val musicEnabled = config["music", "enabled"].getBoolean(true)
     val searchEnabled = config["music", "search"].getBoolean(true)
+    val bufferDuration = config["music", "buffer"].getInt(800)
 
     val queueLimit = config["music", "queue limit"].getInt(20)
     val musicLimit = config["music", "limit"].getInt(500)

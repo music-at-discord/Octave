@@ -47,17 +47,20 @@ class ExtendedShardManager(private val shardManager: ShardManager) : ShardManage
         fun create(token: String, apply: DefaultShardManagerBuilder.() -> Unit = {}): ExtendedShardManager {
             return DefaultShardManagerBuilder.create(token, IntentHelper.enabledIntents)
                 .apply {
+                    val configuration = Launcher.configuration
+                    val credentials = Launcher.credentials
+
                     // General
-                    setActivityProvider { Activity.playing(Launcher.configuration.game.format(it)) }
+                    setActivityProvider { Activity.playing(configuration.game.format(it)) }
 
                     // Gateway
-                    setSessionController(BucketedController(Launcher.configuration.bucketFactor, 215616923168276480L))
-                    setShardsTotal(Launcher.credentials.totalShards)
-                    setShards(Launcher.credentials.shardStart, Launcher.credentials.shardEnd - 1)
+                    setSessionController(BucketedController(configuration.bucketFactor, configuration.homeGuild))
+                    setShardsTotal(credentials.totalShards)
+                    setShards(credentials.shardStart, Launcher.credentials.shardEnd - 1)
                     setMaxReconnectDelay(32)
 
                     // Audio
-                    setAudioSendFactory(NativeAudioSendFactory(1000))
+                    setAudioSendFactory(NativeAudioSendFactory(configuration.bufferDuration))
 
                     // Performance
                     setBulkDeleteSplittingEnabled(false)

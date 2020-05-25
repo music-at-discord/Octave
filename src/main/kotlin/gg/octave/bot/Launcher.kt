@@ -64,7 +64,7 @@ object Launcher {
 
     val eventWaiter = EventWaiter()
     val datadog = NonBlockingStatsDClient("statsd", "localhost", 8125)
-    val statsPoster = StatsPoster("201503408652419073")
+    val statsPoster = StatsPoster(configuration.clientId)
     val patreon = PatreonAPI(credentials.patreonAccessToken)
 
     val players = PlayerRegistry(this)
