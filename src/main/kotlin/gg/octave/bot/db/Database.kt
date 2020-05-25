@@ -33,6 +33,7 @@ import com.rethinkdb.net.Cursor
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.db.guilds.UserData
+import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.db.premium.PremiumGuild
 import gg.octave.bot.db.premium.PremiumUser
 import org.redisson.Redisson
@@ -113,6 +114,8 @@ class Database(private val name: String) {
     fun getPremiumGuilds(redeemer: String) = query<Cursor<PremiumGuild>, PremiumGuild>(PremiumGuild::class.java) {
         table("premiumguilds").filter { it.g("redeemer").eq(redeemer) }
     }
+
+    fun getCustomPlaylist(authorId: String, title: String) = get("customplaylists", "$authorId-$title", CustomPlaylist::class.java)
 
     fun close() = conn.close()
 

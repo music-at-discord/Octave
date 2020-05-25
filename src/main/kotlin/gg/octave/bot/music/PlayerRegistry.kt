@@ -28,12 +28,9 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.db.OptionsRegistry.ofGuild
 import gg.octave.bot.music.utils.MusicLimitException
 import net.dv8tion.jda.api.entities.Guild
-import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 
 class PlayerRegistry(private val bot: Launcher) {
-    private val log = LoggerFactory.getLogger("PlayerRegistry")
-
     val registry = ConcurrentHashMap<Long, MusicManager>(bot.configuration.musicLimit)
     val playerManager = ExtendedAudioPlayerManager()
 
