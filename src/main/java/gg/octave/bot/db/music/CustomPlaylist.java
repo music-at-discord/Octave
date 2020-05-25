@@ -68,7 +68,7 @@ public class CustomPlaylist extends ManagedObject {
 
     @JsonIgnore
     public String getAuthor() {
-        return name;
+        return author;
     }
 
     @JsonIgnore
@@ -103,5 +103,12 @@ public class CustomPlaylist extends ManagedObject {
     @JsonIgnore
     public void removeTrackAt(int index) {
         encodedTracks.remove(index);
+    }
+
+    public static CustomPlaylist createWith(String authorId, String name) {
+        CustomPlaylist playlist = new CustomPlaylist(authorId + "-" + name);
+        playlist.setAuthor(authorId);
+        playlist.setName(name);
+        return playlist;
     }
 }
