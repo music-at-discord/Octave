@@ -45,13 +45,22 @@ class Playlists : Cog {
         ctx.send {
             setColor(0x9571D3)
             setTitle("Playlist Created")
-            setDescription("Your shiny new playlist has now been created.")
+            setDescription("Your shiny new playlist has been created.")
         }
     }
 
     @SubCommand(aliases = ["del", "remove", "-"])
     fun delete(ctx: Context, @Greedy name: String) {
+        val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
+            ?: return ctx.send("You don't have any playlists with that name.")
 
+        existingPlaylist.delete()
+
+        ctx.send {
+            setColor(0x9571D3)
+            setTitle("Playlist Deleted")
+            setDescription("Your custom playlist has been removed.")
+        }
     }
 
     // fun share(ctx: Context, @Greedy name: String)
