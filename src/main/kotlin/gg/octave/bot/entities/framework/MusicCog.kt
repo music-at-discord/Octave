@@ -37,6 +37,7 @@ interface MusicCog : Cog {
     fun requirePlayingTrack() = false
     fun requirePlayer() = false
     fun requireManager() = true
+    fun requireVoiceState() = false
 
     override fun localCheck(ctx: Context, command: CommandFunction) = check(ctx)
 
@@ -49,6 +50,11 @@ interface MusicCog : Cog {
         }
 
         val botChannel = ctx.selfMember!!.voiceState?.channel
+
+        if(requireVoiceState() && ctx.voiceChannel == null) {
+            ctx.send("You're not in a voice channel.")
+            return false
+        }
 
         if (requirePlayer() && botChannel == null) {
             ctx.send("The bot is not currently in a voice channel.\n$PLAY_MESSAGE")
@@ -64,6 +70,7 @@ interface MusicCog : Cog {
             ctx.send("The player is not playing anything.")
             return false
         }
+
 
         return true
     }

@@ -36,6 +36,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel
 
 class Summon : MusicCog {
     override fun requireManager() = false
+    override fun requireVoiceState() = true
 
     @DJ
     @Command(aliases = ["join", "connect"], description = "Connects, or moves the bot to a voice channel.")

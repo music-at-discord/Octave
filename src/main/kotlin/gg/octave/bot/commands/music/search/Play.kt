@@ -49,7 +49,7 @@ class Play : Cog {
     @Command(aliases = ["p"], description = "Plays music in a voice channel.")
     fun play(ctx: Context, @Greedy query: String?) {
         val botChannel = ctx.selfMember!!.voiceState?.channel
-        val userChannel = ctx.voiceChannel
+        val userChannel = ctx.voiceChannel ?: return ctx.send("You're not in a voice channel.")
 
         if (botChannel != null && botChannel != userChannel) {
             return ctx.send("The bot is already playing music in another channel.")
