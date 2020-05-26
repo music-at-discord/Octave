@@ -5,6 +5,7 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.db
+import gg.octave.bot.utils.extensions.iterate
 import me.devoxin.flight.api.CommandFunction
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -14,6 +15,7 @@ import me.devoxin.flight.api.entities.Cog
 import net.dv8tion.jda.api.EmbedBuilder
 import java.net.URL
 import java.util.function.Consumer
+import kotlin.math.ceil
 
 class Playlists : Cog {
     override fun localCheck(ctx: Context, command: CommandFunction): Boolean {
@@ -24,7 +26,7 @@ class Playlists : Cog {
     fun playlists(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
 
     @SubCommand(description = "Lists all of your custom playlists.")
-    fun list(ctx: Context) {
+    fun list(ctx: Context, page: Int = 1) {
         val playlists = ctx.db.getCustomPlaylists(ctx.author.id).takeIf { it.isNotEmpty() }
             ?: return ctx.send {
                 setColor(0x9571D3)
@@ -32,8 +34,18 @@ class Playlists : Cog {
                 setDescription("That's OK! You can create a new one with `${ctx.trigger}playlists create <name>`\n*Without the `<>` of course.*")
             }
 
-        val joined = playlists.joinToString("\n") { it.name }
-        ctx.send("You have **${playlists.size}** custom playlists. Here they are:\n$joined")
+        val pages = ceil(playlists.size.toDouble() / 10).toInt()
+        val start = 10 * (page - 1)
+        val end = (start + 10).coerceAtMost(playlists.size)
+        val showing = end - start
+        val joined = playlists.iterate(start..end).joinToString("\n") { (index, pl) -> "`${index + 1}.` ${pl.name}" }
+
+        ctx.send {
+            setColor(0x9571D3)
+            setTitle("Your Playlists")
+            setDescription(joined)
+            setFooter("Showing $showing of ${playlists.size} playlists • Page $page/$pages")
+        }
     }
 
     @SubCommand(aliases = ["new", "add", "+"], description = "Create a new custom playlist.")
