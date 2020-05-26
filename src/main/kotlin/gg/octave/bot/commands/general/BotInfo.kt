@@ -66,6 +66,7 @@ class BotInfo : Cog {
         var users = 0L
         var musicPlayers = 0L
         var totalNodes = 0L
+        var totalMemory = 0L
 
         Launcher.database.jedisPool.resource.use {
             val stats = it.hgetAll("stats")
@@ -79,9 +80,13 @@ class BotInfo : Cog {
             for (node in nodeStats) {
                 val jsonStats = JSONObject(node.value);
                 musicPlayers += jsonStats.getLong("music_players")
+                totalMemory += jsonStats.getLong("used_ram")
                 totalNodes++
             }
         }
+
+        val totalRamCalculated = Capacity.calculate(totalMemory)
+        val totalRamFormatted = dpFormatter.format(totalRamCalculated.amount)
 
         ctx.send {
             setColor(0x9570D3)
@@ -92,8 +97,7 @@ class BotInfo : Cog {
                 " We support Youtube, Soundcloud, and more!")
 
             addField("CPU Usage", "${procCpuUsage}% JVM\n${sysCpuUsage}% SYS", true)
-            addField("RAM Usage", "$ramUsedFormatted${ramUsedCalculated.unit} (${ramUsedPercent}%)", true)
-
+            addField("RAM Usage", "$ramUsedFormatted${ramUsedCalculated.unit}\nAll: $totalRamFormatted${totalRamCalculated.unit}", true)
             addField("Guilds", guilds.toString(), true)
             addField("Voice Connections", musicPlayers.toString(), true)
 
