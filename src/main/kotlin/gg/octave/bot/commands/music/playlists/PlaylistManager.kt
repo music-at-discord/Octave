@@ -40,7 +40,18 @@ class PlaylistManager(
 
     // COMMAND HANDLING
     private fun sendHelp() {
-        ctx.send("WhAtS gOoD")
+        ctx.send {
+            setColor(0x9571D3)
+            setTitle("Editing a Custom Playlist")
+            setDescription("""
+                `help             :` Shows this menu.
+                `remove <index>   :` Removes the track at the specified index.
+                `move <track> <to>:` Moves the track at the given index, to the new index.
+                `page <#>         :` Tabs to the given page, and displays it.
+                `resend           :` Re-sends the track list.
+                `save             :` Saves any modifications made to the playlist.
+            """.trimIndent())
+        }
     }
 
     private fun remove(index: Int?) {
@@ -84,7 +95,7 @@ class PlaylistManager(
         }.build()
 
         if (update) {
-            msg.channel.sendMessage(embed).queue { msg = it }
+            msg.channel.sendMessage(embed).queue(::msg::set)
         } else {
             msg.editMessage(embed).queue()
         }
