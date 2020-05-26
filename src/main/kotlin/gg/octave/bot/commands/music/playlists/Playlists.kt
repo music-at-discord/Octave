@@ -9,6 +9,7 @@ import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.annotations.Greedy
 import me.devoxin.flight.api.annotations.SubCommand
 import me.devoxin.flight.api.entities.Cog
+import net.dv8tion.jda.api.EmbedBuilder
 
 class Playlists : Cog {
     override fun localCheck(ctx: Context, command: CommandFunction): Boolean {
@@ -61,6 +62,21 @@ class Playlists : Cog {
             setTitle("Playlist Deleted")
             setDescription("Your custom playlist has been removed.")
         }
+    }
+
+    @SubCommand(aliases = ["manage"])
+    fun edit(ctx: Context, @Greedy name: String) {
+        val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
+            ?: return ctx.send("You don't have any playlists with that name.")
+
+        ctx.messageChannel.sendMessage(EmbedBuilder().apply {
+            setColor(0x9571D3)
+            setDescription("Loading playlist...")
+        }.build()).queue({
+            PlaylistManager(existingPlaylist, ctx, it)
+        }, {
+            ctx.send("Failed to load playlist: `${it.localizedMessage}`")
+        })
     }
 
     // fun share(ctx: Context, @Greedy name: String)

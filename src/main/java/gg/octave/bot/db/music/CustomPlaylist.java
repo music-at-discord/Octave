@@ -49,7 +49,7 @@ public class CustomPlaylist extends ManagedObject {
 
     @JsonSerialize
     @JsonDeserialize
-    private final List<String> encodedTracks = new ArrayList<>();
+    private List<String> encodedTracks = new ArrayList<>();
 
     @ConstructorProperties("id")
     public CustomPlaylist(String id) {
@@ -103,6 +103,13 @@ public class CustomPlaylist extends ManagedObject {
     @JsonIgnore
     public void removeTrackAt(int index) {
         encodedTracks.remove(index);
+    }
+
+    @JsonIgnore
+    public void setTracks(List<AudioTrack> tracks) {
+        encodedTracks = tracks.stream()
+                .map(Launcher.INSTANCE.getPlayers().getPlayerManager()::encodeAudioTrack)
+                .collect(Collectors.toList());
     }
 
     public static CustomPlaylist createWith(String authorId, String name) {
