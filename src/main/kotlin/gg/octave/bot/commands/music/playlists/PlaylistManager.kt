@@ -37,8 +37,7 @@ class PlaylistManager(
         waitForInput()
     }
 
-    // COMMAND HANDLING AND EVENT WAITING
-    // ==================================
+    // COMMAND HANDLING
     private fun sendHelp() {
         ctx.send("WhAtS gOoD")
     }
@@ -73,15 +72,10 @@ class PlaylistManager(
             setFooter("Page $page/$pages - Playlist Duration: $playlistDuration - Send \"help\" to view commands")
         }.build()
 
-        msg.editMessage(
-            MessageBuilder()
-                .setContent("\u200b")
-                .setEmbed(embed)
-                .build()
-        ).queue()
+        msg.editMessage(embed).queue()
     }
 
-    // COMMAND HANDLING AND EVENT WAITING
+    // EVENT WAITING AND INPUT PROCESSING
     // ==================================
     private fun waitForInput() {
         val defaultPredicate = DEFAULT_PREDICATE(ctx.author.idLong, ctx.messageChannel.idLong)
