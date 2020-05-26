@@ -52,7 +52,17 @@ class PlaylistManager(
     }
 
     private fun move(index: Int?, to: Int?) {
+        if (index == null || index > tracks.size || index < 1) {
+            return ctx.send("You must specify the index of the track you wish to move.")
+        }
 
+        if (to == null || to > tracks.size || to < 1 || to == index) {
+            return ctx.send("You must specify a valid index to move the track to.")
+        }
+
+        val temp = tracks.removeAt(index)
+        tracks.add(to, temp)
+        renderPage()
     }
 
     private fun renderPage() {
