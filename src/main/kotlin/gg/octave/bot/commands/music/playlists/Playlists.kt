@@ -1,5 +1,7 @@
 package gg.octave.bot.commands.music.playlists
 
+import com.sedmelluq.discord.lavaplayer.player.FunctionalResultHandler
+import gg.octave.bot.Launcher
 import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.db
@@ -10,6 +12,8 @@ import me.devoxin.flight.api.annotations.Greedy
 import me.devoxin.flight.api.annotations.SubCommand
 import me.devoxin.flight.api.entities.Cog
 import net.dv8tion.jda.api.EmbedBuilder
+import java.net.URL
+import java.util.function.Consumer
 
 class Playlists : Cog {
     override fun localCheck(ctx: Context, command: CommandFunction): Boolean {
@@ -19,7 +23,7 @@ class Playlists : Cog {
     @Command(aliases = ["pl", "cpl"], description = "Manage your custom playlists.", hidden = true)
     fun playlists(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
 
-    @SubCommand
+    @SubCommand(description = "Lists all of your custom playlists.")
     fun list(ctx: Context) {
         val playlists = ctx.db.getCustomPlaylists(ctx.author.id).takeIf { it.isNotEmpty() }
             ?: return ctx.send {
@@ -32,7 +36,7 @@ class Playlists : Cog {
         ctx.send("You have **${playlists.size}** custom playlists. Here they are:\n$joined")
     }
 
-    @SubCommand(aliases = ["new", "add", "+"])
+    @SubCommand(aliases = ["new", "add", "+"], description = "Create a new custom playlist.")
     fun create(ctx: Context, @Greedy name: String) {
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
 
@@ -50,7 +54,7 @@ class Playlists : Cog {
         }
     }
 
-    @SubCommand(aliases = ["del", "remove", "-"])
+    @SubCommand(aliases = ["del", "remove", "-"], description = "Delete one of your custom playlists.")
     fun delete(ctx: Context, @Greedy name: String) {
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
@@ -64,7 +68,7 @@ class Playlists : Cog {
         }
     }
 
-    @SubCommand(aliases = ["manage"])
+    @SubCommand(aliases = ["manage"], description = "Edit an existing playlist (move/remove/...)")
     fun edit(ctx: Context, @Greedy name: String) {
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
@@ -77,6 +81,36 @@ class Playlists : Cog {
         }, {
             ctx.send("Failed to load playlist: `${it.localizedMessage}`")
         })
+    }
+
+    @SubCommand(description = "Import a playlist from YouTube/SoundCloud/...")
+    fun import(ctx: Context, url: URL, @Greedy name: String?) {
+        val loader = FunctionalResultHandler(
+            Consumer { ctx.send("This is not a playlist.") },
+            Consumer {
+                val importName = name
+                    ?: it.name
+                    ?: return@Consumer ctx.send("The playlist does not have a name. You need to specify one instead.")
+                // Last bit shouldn't happen but better safe than sorry.
+
+                val existing = ctx.db.getCustomPlaylist(ctx.author.id, importName)
+
+                if (existing != null) {
+                    return@Consumer ctx.send("A playlist with that name already exists. Specify a different one.")
+                    // Maybe we could append tracks to a playlist here? TODO, or, INVESTIGATE
+                }
+
+                val playlist = CustomPlaylist.createWith(ctx.author.id, importName)
+                playlist.setTracks(it.tracks)
+                playlist.save()
+
+                ctx.send("Playlist imported as `$importName` successfully!")
+            },
+            Runnable { ctx.send("The URL doesn't lead to a valid playlist.") },
+            Consumer { ctx.send("Failed to load the media resource.\n`${it.localizedMessage}`") }
+        )
+
+        Launcher.players.playerManager.loadItem(url.toString(), loader)
     }
 
     // fun share(ctx: Context, @Greedy name: String)

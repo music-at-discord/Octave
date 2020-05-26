@@ -10,6 +10,7 @@ import io.sentry.Sentry
 import me.devoxin.flight.api.Context
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.MessageBuilder
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
@@ -19,7 +20,7 @@ import kotlin.math.ceil
 class PlaylistManager(
     private val playlist: CustomPlaylist,
     private val ctx: Context,
-    private val msg: Message
+    private var msg: Message
 ) {
     private val tracks = playlist.decodedTracks
 
@@ -47,7 +48,7 @@ class PlaylistManager(
             return ctx.send("You need to specify a valid track index, between 1 and ${tracks.size}.")
         }
 
-        tracks.removeAt(index)
+        tracks.removeAt(index - 1)
         renderPage()
     }
 
@@ -60,12 +61,12 @@ class PlaylistManager(
             return ctx.send("You must specify a valid index to move the track to.")
         }
 
-        val temp = tracks.removeAt(index)
-        tracks.add(to, temp)
+        val temp = tracks.removeAt(index - 1)
+        tracks.add(to - 1, temp)
         renderPage()
     }
 
-    private fun renderPage() {
+    private fun renderPage(update: Boolean = false) {
         val playlistDuration = Utils.getTimestamp(tracks.sumByLong { it.duration })
         val start = ELEMENTS_PER_PAGE * (page - 1)
         val end = (start + ELEMENTS_PER_PAGE).coerceAtMost(tracks.size)
@@ -82,7 +83,11 @@ class PlaylistManager(
             setFooter("Page $page/$pages - Playlist Duration: $playlistDuration - Send \"help\" to view commands")
         }.build()
 
-        msg.editMessage(embed).queue()
+        if (update) {
+            msg.channel.sendMessage(embed).queue { msg = it }
+        } else {
+            msg.editMessage(embed).queue()
+        }
     }
 
     // EVENT WAITING AND INPUT PROCESSING
@@ -92,8 +97,11 @@ class PlaylistManager(
         val response = ctx.commandClient.waitFor(defaultPredicate, 20000)
 
         response.thenAccept {
-            handle(it.message)
-            waitForInput()
+            val wait = handle(it.message)
+
+            if (wait) {
+                waitForInput()
+            }
         }.exceptionally {
             val exc = it.cause ?: it
             playlist.setTracks(tracks)
@@ -115,24 +123,44 @@ class PlaylistManager(
         }
     }
 
-    private fun handle(received: Message) {
+    private fun handle(received: Message): Boolean {
         val (command, args) = received.contentRaw.split("\\s+".toRegex()).section()
 
-        when (command) {
-            "help" -> sendHelp()
-            "remove" -> remove(args.firstOrNull()?.toIntOrNull())
-            "move" -> move(args.getOrNull(0)?.toIntOrNull(), args.getOrNull(1)?.toIntOrNull())
+        return when (command) {
+            "help" -> {
+                sendHelp()
+                true
+            }
+            "remove" -> {
+                remove(args.firstOrNull()?.toIntOrNull())
+                true
+            }
+            "move" -> {
+                move(args.getOrNull(0)?.toIntOrNull(), args.getOrNull(1)?.toIntOrNull())
+                true
+            }
             "page" -> {
                 val page = args.firstOrNull()?.toIntOrNull()?.coerceIn(1, pages)
-                    ?: return ctx.send("You need to specify the page # to jump to.")
 
-                this.page = page
+                if (page == null) {
+                    ctx.send("You need to specify the page # to jump to.")
+                } else {
+                    this.page = page
+                }
+
+                true
+            }
+            "resend" -> {
+                renderPage(true)
+                true
             }
             "save" -> {
                 playlist.setTracks(tracks)
                 playlist.save()
-                ctx.send("Changes saved.")
+                ctx.send("Changes saved. Re-run `${ctx.trigger}cpl edit ${playlist.name}` if you would like to make further modifications.")
+                false
             }
+            else -> true
         }
     }
 
