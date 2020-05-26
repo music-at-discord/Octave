@@ -35,16 +35,16 @@ class Playlists : Cog {
             }
 
         val pages = ceil(playlists.size.toDouble() / 10).toInt()
-        val start = 10 * (page - 1).coerceAtLeast(0)
+        val selectedPage = page.coerceIn(1, pages)
+        val start = 10 * (selectedPage - 1)
         val end = (start + 10).coerceAtMost(playlists.size)
-        val showing = end - start
         val joined = playlists.iterate(start..end).joinToString("\n") { (index, pl) -> "`${index + 1}.` ${pl.name}" }
 
         ctx.send {
             setColor(0x9571D3)
             setTitle("Your Playlists")
             setDescription(joined)
-            setFooter("Showing $showing of ${playlists.size} playlists • Page $page/$pages")
+            setFooter("Showing ${end - start} of ${playlists.size} playlists • Page $page/$pages")
         }
     }
 
