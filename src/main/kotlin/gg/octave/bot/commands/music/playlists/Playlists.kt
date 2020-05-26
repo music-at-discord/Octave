@@ -35,7 +35,7 @@ class Playlists : Cog {
             }
 
         val pages = ceil(playlists.size.toDouble() / 10).toInt()
-        val start = 10 * (page - 1)
+        val start = 10 * (page - 1).coerceAtLeast(0)
         val end = (start + 10).coerceAtMost(playlists.size)
         val showing = end - start
         val joined = playlists.iterate(start..end).joinToString("\n") { (index, pl) -> "`${index + 1}.` ${pl.name}" }
