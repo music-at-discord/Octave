@@ -26,6 +26,7 @@ package gg.octave.bot.apis.patreon
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.utils.RequestUtil
+import io.sentry.Sentry
 import okhttp3.HttpUrl
 import okhttp3.Request
 import org.json.JSONObject
@@ -45,7 +46,13 @@ class PatreonAPI(var accessToken: String?) {
     init {
         if (accessToken?.isEmpty() == false) {
             log.info("Initialising sweepy boi // SWEEPER! AW MAN!")
-            scheduler.schedule(::sweep, 1, TimeUnit.DAYS)
+            scheduler.schedule({
+                try {
+                    sweep()
+                } catch (e: Exception) {
+                    Sentry.capture(e)
+                }
+            }, 1, TimeUnit.DAYS)
         }
     }
 
