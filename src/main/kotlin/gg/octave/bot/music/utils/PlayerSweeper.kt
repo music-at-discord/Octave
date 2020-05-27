@@ -36,15 +36,15 @@ class PlayerSweeper {
     fun runEvery(timeUnit: TimeUnit, amount: Long) {
         Scheduler.fixedRateScheduleWithSuppression(executor, amount, amount, timeUnit) {
             Launcher.players.registry.values
-                .filter {
-                    //In short: If the manager is connected, if there's is NO playing track, if it hasn't been queued for
-                    //leave, if there has been 2 minutes without a new song playing (and nothing is playing, as said above)
-                    //and if allDayMusic hasn't been enabled.
-                    it.guild!!.audioManager.isConnected && it.player.playingTrack == null &&
-                        !it.leaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
-                        !isAllDayMusic(it.guildId)
-                }
-                .forEach { it.queueLeave() } //Then queue leave.
+                    .filter { it.guild != null }
+                    .filter {
+                        //In short: If the manager is connected, if there's is NO playing track, if it hasn't been queued for
+                        // leave, if there has been 2 minutes without a new song playing (and nothing is playing, as said above)
+                        // and if allDayMusic hasn't been enabled.
+                        it.guild!!.audioManager.isConnected && it.player.playingTrack == null &&
+                                !it.leaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
+                                !isAllDayMusic(it.guildId)
+                }.forEach { it.queueLeave() } //Then queue leave.
         }
     }
 
