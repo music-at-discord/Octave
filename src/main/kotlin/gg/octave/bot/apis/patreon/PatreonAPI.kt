@@ -46,13 +46,7 @@ class PatreonAPI(var accessToken: String?) {
     init {
         if (accessToken?.isEmpty() == false) {
             log.info("Initialising sweepy boi // SWEEPER! AW MAN!")
-            scheduler.schedule({
-                try {
-                    sweep()
-                } catch (e: Exception) {
-                    Sentry.capture(e)
-                }
-            }, 1, TimeUnit.DAYS)
+            scheduler.schedule(::sweep, 1, TimeUnit.DAYS)
         }
     }
 
@@ -65,46 +59,50 @@ class PatreonAPI(var accessToken: String?) {
             var removed = 0
 
             for (entry in storedPledges) {
-                val userId = entry.idLong
-                val pledge = pledges.firstOrNull { it.discordId != null && it.discordId == userId }
+                try {
+                    val userId = entry.idLong
+                    val pledge = pledges.firstOrNull { it.discordId != null && it.discordId == userId }
 
-                if (pledge == null || pledge.isDeclined) {
-                    Launcher.shardManager.openPrivateChannel(userId)
-                        .flatMap {
-                            it.sendMessage("Your pledge was either declined or removed from Patreon. " +
-                                "As a result, your perks have been revoked. If you believe this was in error, " +
-                                "check your payment method. If not, we hope Octave exceeded your expectations, and " +
-                                "we hope to see you again soon!")
-                        }.queue()
+                    if (pledge == null || pledge.isDeclined) {
+                        Launcher.shardManager.openPrivateChannel(userId)
+                                .flatMap {
+                                    it.sendMessage("Your pledge was either declined or removed from Patreon. " +
+                                            "As a result, your perks have been revoked. If you believe this was in error, " +
+                                            "check your payment method. If not, we hope Octave exceeded your expectations, and " +
+                                            "we hope to see you again soon!")
+                                }.queue()
 
-                    for (guild in entry.premiumGuildsList) {
-                        guild.delete()
-                    }
-
-                    entry.delete()
-                    removed++
-                    continue
-                }
-
-                val pledging = pledge.pledgeCents.toDouble() / 100
-
-                if (pledging < entry.pledgeAmount) { // User is pledging less than what we have stored.
-                    entry.setPledgeAmount(pledging).save()
-
-                    val entitledServers = entry.totalPremiumGuildQuota
-                    val activatedServers = entry.premiumGuildsList
-                    val exceedingLimitBy = activatedServers.size - entitledServers
-
-                    if (exceedingLimitBy > 0) {
-                        val remove = (0 until exceedingLimitBy)
-
-                        for (unused in remove) {
-                            activatedServers.firstOrNull()?.delete()
+                        for (guild in entry.premiumGuildsList) {
+                            guild.delete()
                         }
-                        // Message about removed guilds? eh
+
+                        entry.delete()
+                        removed++
+                        continue
                     }
 
-                    changed++
+                    val pledging = pledge.pledgeCents.toDouble() / 100
+
+                    if (pledging < entry.pledgeAmount) { // User is pledging less than what we have stored.
+                        entry.setPledgeAmount(pledging).save()
+
+                        val entitledServers = entry.totalPremiumGuildQuota
+                        val activatedServers = entry.premiumGuildsList
+                        val exceedingLimitBy = activatedServers.size - entitledServers
+
+                        if (exceedingLimitBy > 0) {
+                            val remove = (0 until exceedingLimitBy)
+
+                            for (unused in remove) {
+                                activatedServers.firstOrNull()?.delete()
+                            }
+                            // Message about removed guilds? eh
+                        }
+
+                        changed++
+                    }
+                } catch (e: Exception) {
+                    Sentry.capture(e)
                 }
             }
 
