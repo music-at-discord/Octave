@@ -125,6 +125,14 @@ class Playlists : Cog {
         Launcher.players.playerManager.loadItem(url.toString(), loader)
     }
 
+    @SubCommand
+    fun load(ctx: Context, @Greedy name: String) {
+        val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
+            ?: return ctx.send("You don't have any playlists with that name.")
+
+        val manager = Launcher.players.get(ctx.guild!!)
+    }
+
     // fun share(ctx: Context, @Greedy name: String)
     // fun privacy(ctx: Context, setting: ..., @Greedy name: String) // Changes whether a playlist can be viewed by other users.
     // fun snoop(ctx: Context, user: User) // snoop on other user's custom playlists.
