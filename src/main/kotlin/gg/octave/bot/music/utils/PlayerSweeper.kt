@@ -26,6 +26,7 @@ package gg.octave.bot.music.utils
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.OptionsRegistry
+import io.sentry.Sentry
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -34,16 +35,21 @@ class PlayerSweeper {
 
     fun runEvery(timeUnit: TimeUnit, amount: Long) {
         executor.scheduleAtFixedRate({
-            val players = Launcher.players.registry.values
+            try {
+                val players = Launcher.players.registry.values
 
-            players.filter {
-                //In short: If the manager is connected, if there's is NO playing track, if it hasn't been queued for
-                //leave, if there has been 2 minutes without a new song playing (and nothing is playing, as said above)
-                //and if allDayMusic hasn't been enabled.
-                it.guild!!.audioManager.isConnected && it.player.playingTrack == null &&
-                        !it.leaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
-                        !isAllDayMusic(it.guildId)
-            }.forEach { it.queueLeave() } //Then queue leave.
+                players.filter {
+                    //In short: If the manager is connected, if there's is NO playing track, if it hasn't been queued for
+                    //leave, if there has been 2 minutes without a new song playing (and nothing is playing, as said above)
+                    //and if allDayMusic hasn't been enabled.
+                    it.guild!!.audioManager.isConnected && it.player.playingTrack == null &&
+                            !it.leaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
+                            !isAllDayMusic(it.guildId)
+                }.forEach { it.queueLeave() } //Then queue leave.
+            } catch (e: Exception) {
+                Sentry.capture(e)
+                e.printStackTrace()
+            }
         }, amount, amount, timeUnit)
     }
 
