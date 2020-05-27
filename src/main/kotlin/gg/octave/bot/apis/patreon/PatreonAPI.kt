@@ -46,7 +46,13 @@ class PatreonAPI(var accessToken: String?) {
     init {
         if (accessToken?.isEmpty() == false) {
             log.info("Initialising sweepy boi // SWEEPER! AW MAN!")
-            scheduler.schedule(::sweep, 1, TimeUnit.DAYS)
+            scheduler.schedule({
+                try {
+                    sweep()
+                } catch (e: Exception) {
+                    Sentry.capture(e)
+                }
+            }, 1, TimeUnit.DAYS)
         }
     }
 
