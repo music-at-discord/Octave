@@ -26,6 +26,7 @@ package gg.octave.bot.apis.patreon
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.utils.RequestUtil
+import gg.octave.bot.utils.Scheduler
 import io.sentry.Sentry
 import okhttp3.HttpUrl
 import okhttp3.Request
@@ -37,22 +38,13 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-
 class PatreonAPI(var accessToken: String?) {
-    // (val clientId: String, val clientSecret: String, val refreshToken: String) {
-    private val scheduler = Executors.newSingleThreadScheduledExecutor()
-    //var accessToken: String = ""
+    private val executor = Executors.newSingleThreadScheduledExecutor()
 
     init {
         if (accessToken?.isEmpty() == false) {
             log.info("Initialising sweepy boi // SWEEPER! AW MAN!")
-            scheduler.schedule({
-                try {
-                    sweep()
-                } catch (e: Exception) {
-                    Sentry.capture(e)
-                }
-            }, 1, TimeUnit.DAYS)
+            Scheduler.fixedRateScheduleWithSuppression(executor, 1, 1, TimeUnit.DAYS, ::sweep)
         }
     }
 
@@ -63,6 +55,7 @@ class PatreonAPI(var accessToken: String?) {
             val total = storedPledges.size
             var changed = 0
             var removed = 0
+            var fatal = 0
 
             for (entry in storedPledges) {
                 try {
@@ -109,10 +102,11 @@ class PatreonAPI(var accessToken: String?) {
                     }
                 } catch (e: Exception) {
                     Sentry.capture(e)
+                    fatal++
                 }
             }
 
-            SweepStats(total, changed, removed)
+            SweepStats(total, changed, removed, fatal)
         }
         // Fetch pledges from database. Iterate through results from api.
         // If no pledge, or pledge is declined; remove from DB. Purge premium servers.
@@ -121,32 +115,6 @@ class PatreonAPI(var accessToken: String?) {
     }
 
     fun fetchPledges(campaignId: String = "754103") = fetchPledgesOfCampaign0(campaignId)
-
-//    fun refreshAccessToken() {
-//        val url = baseUrl.newBuilder().apply {
-//            addPathSegment("token")
-//            addQueryParameter("grant_type", "refresh_token")
-//            addQueryParameter("refresh_token", refreshToken)
-//            addQueryParameter("client_id", clientId)
-//            addQueryParameter("client_secret", clientSecret)
-//        }.build()
-//        println(url)
-//
-//        request {
-//            url(url)
-//            post(RequestBody.create(null, ByteArray(0)))
-//        }.thenAccept {
-//            val token = it.getString("access_token")
-//            val expiresEpochSeconds = it.getLong("expires_in")
-//
-//            accessToken = token
-//            scheduler.schedule(::refreshAccessToken, expiresEpochSeconds, TimeUnit.SECONDS)
-//            log.info("Successfully refreshed Patreon access token.")
-//        }.exceptionally {
-//            log.error("Unable to refresh Patreon access token!", it)
-//            return@exceptionally null
-//        }
-//    }
 
     private fun fetchPledgesOfCampaign0(campaignId: String, offset: String? = null): CompletableFuture<List<PatreonUser>> {
         val users = mutableListOf<PatreonUser>()
