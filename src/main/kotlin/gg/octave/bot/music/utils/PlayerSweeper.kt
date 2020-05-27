@@ -38,10 +38,10 @@ class PlayerSweeper {
         Scheduler.fixedRateScheduleWithSuppression(executor, amount, amount, timeUnit) {
             Launcher.players.registry.values
                 .filter {
-                    //In short: If the manager is connected, if there's is NO playing track, if it hasn't been queued for
+                    //In short: If guild is null, or the manager is connected, if there's is NO playing track, if it hasn't been queued for
                     // leave, if there has been 2 minutes without a new song playing (and nothing is playing, as said above)
                     // and if allDayMusic hasn't been enabled.
-                    it.guild == null || it.guild!!.audioManager.isConnected && it.player.playingTrack == null &&
+                    (it.guild == null || it.guild!!.audioManager.isConnected) && it.player.playingTrack == null &&
                         !it.leaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
                         !isAllDayMusic(it.guildId)
                 }
