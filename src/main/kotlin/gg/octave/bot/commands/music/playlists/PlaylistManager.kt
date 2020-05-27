@@ -33,14 +33,10 @@ import gg.octave.bot.utils.extensions.section
 import io.sentry.Sentry
 import me.devoxin.flight.api.Context
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.MessageBuilder
-import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import org.jetbrains.kotlin.com.intellij.util.TripleFunction
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.util.concurrent.TimeoutException
-import java.util.function.BiFunction
 import kotlin.math.ceil
 
 class PlaylistManager(

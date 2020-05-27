@@ -51,7 +51,7 @@ interface MusicCog : Cog {
 
         val botChannel = ctx.selfMember!!.voiceState?.channel
 
-        if(requireVoiceState() && ctx.voiceChannel == null) {
+        if (requireVoiceState() && ctx.voiceChannel == null) {
             ctx.send("You're not in a voice channel.")
             return false
         }
@@ -70,7 +70,6 @@ interface MusicCog : Cog {
             ctx.send("The player is not playing anything.")
             return false
         }
-
 
         return true
     }
