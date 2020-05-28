@@ -42,6 +42,6 @@ class EqualizerFilter : FilterConfig<Equalizer> {
     }
 
     companion object {
-        private val zero = (0..14).map { 0.0f }.toFloatArray()
+        private val zero = FloatArray(15)
     }
 }

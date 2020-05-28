@@ -167,5 +167,4 @@ class DSPFilter(private val player: AudioPlayer) {
         tsRate = 1.0
         tsSpeed = 1.0
     }
-
 }

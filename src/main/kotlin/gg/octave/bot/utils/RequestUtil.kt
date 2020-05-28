@@ -54,8 +54,7 @@ object RequestUtil {
                     } else {
                         "{}"
                     }
-                    throw IllegalStateException("Received invalid status code: " +
-                        "${it.code()} - $extra")
+                    throw IllegalStateException("Received invalid status code: ${it.code()} - $extra")
                 }
                 it
             }
