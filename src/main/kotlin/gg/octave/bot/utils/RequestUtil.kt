@@ -54,7 +54,7 @@ object RequestUtil {
                     } else {
                         "{}"
                     }
-                    throw IllegalStateException("Received invalid status code from Patreon API: " +
+                    throw IllegalStateException("Received invalid status code: " +
                         "${it.code()} - $extra")
                 }
                 it
