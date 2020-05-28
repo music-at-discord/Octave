@@ -25,8 +25,6 @@
 package gg.octave.bot.music
 
 import gg.octave.bot.Launcher
-import gg.octave.bot.db.OptionsRegistry.ofGuild
-import gg.octave.bot.music.utils.MusicLimitException
 import net.dv8tion.jda.api.entities.Guild
 import java.util.concurrent.ConcurrentHashMap
 
@@ -34,16 +32,7 @@ class PlayerRegistry(private val bot: Launcher) {
     val registry = ConcurrentHashMap<Long, MusicManager>(bot.configuration.musicLimit)
     val playerManager = ExtendedAudioPlayerManager()
 
-    @Throws(MusicLimitException::class)
     fun get(guild: Guild?) = registry.computeIfAbsent(guild!!.idLong) {
-        if (size() >= bot.configuration.musicLimit) {
-            val premium = ofGuild(guild).isPremium || Launcher.database.getPremiumGuild(guild.id) != null
-
-            if (!premium) {
-                throw MusicLimitException()
-            }
-        }
-
         MusicManager(bot, guild.id, this, playerManager)
     }
 

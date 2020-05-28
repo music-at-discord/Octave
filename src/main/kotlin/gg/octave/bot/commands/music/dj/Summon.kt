@@ -27,7 +27,6 @@ package gg.octave.bot.commands.music.dj
 import gg.octave.bot.Launcher
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
-import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.utils.extensions.voiceChannel
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -41,12 +40,7 @@ class Summon : MusicCog {
     @DJ
     @Command(aliases = ["join", "connect"], description = "Connects, or moves the bot to a voice channel.")
     fun summon(ctx: Context, @Greedy channel: VoiceChannel?) {
-        val musicManager = try {
-            Launcher.players.get(ctx.guild!!)
-        } catch (e: MusicLimitException) {
-            return e.sendToContext(ctx)
-        }
-
+        val musicManager = Launcher.players.get(ctx.guild!!)
         val targetChannel = channel ?: ctx.voiceChannel!!
 
         if (ctx.guild!!.audioManager.connectedChannel != null) {
