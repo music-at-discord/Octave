@@ -71,7 +71,7 @@ class Save : Cog {
             Consumer { ctx.send("Encountered an issue while looking for the resource.\n`${it.friendlierMessage()}`") }
         )
 
-        val exQuery = if (directResourcePrefixes.any { it in query }) query.removePrefix("<").removeSuffix(">") else "ytsearch:$query"
+        val exQuery = if (directResourcePrefixes.any { it in query }) query.removeSurrounding("<", ">") else "ytsearch:$query"
         Launcher.players.playerManager.loadItem(exQuery, handler)
     }
 
