@@ -36,7 +36,7 @@ import me.devoxin.flight.api.entities.Cog
 class Resume : Cog {
     @DJ
     @CheckVoiceState
-    @Command(description = "Resume the music queue.")
+    @Command(aliases = ["rq"], description = "Resume the music queue.")
     fun resumequeue(ctx: Context) {
         val manager = ctx.manager
 

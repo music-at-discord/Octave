@@ -31,6 +31,7 @@ import gg.octave.bot.music.settings.RepeatOption
 import gg.octave.bot.utils.extensions.manager
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
+import me.devoxin.flight.api.annotations.SubCommand
 
 class Repeat : MusicCog {
     override fun sameChannel() = true
@@ -44,18 +45,12 @@ class Repeat : MusicCog {
         ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")
     }
 
-    @DJ
-    @CheckVoiceState
-    @Command(aliases = ["lq"], description = "(Alias) Repeats the queue.", hidden = true)
-    fun rq(ctx: Context) = repeat(ctx, RepeatOption.QUEUE)
+    @SubCommand(description = "Repeats the queue.")
+    fun q(ctx: Context) = repeat(ctx, RepeatOption.QUEUE)
 
-    @DJ
-    @CheckVoiceState
-    @Command(aliases = ["ls"], description = "(Alias) Repeats the song.", hidden = true)
-    fun rs(ctx: Context) = repeat(ctx, RepeatOption.SONG)
+    @SubCommand(description = "Repeats the song.")
+    fun s(ctx: Context) = repeat(ctx, RepeatOption.SONG)
 
-    @DJ
-    @CheckVoiceState
-    @Command(aliases = ["ln"], description = "(Alias) Disables track repeating.", hidden = true)
-    fun rn(ctx: Context) = repeat(ctx, RepeatOption.NONE)
+    @SubCommand(description = "Disables repeat.")
+    fun n(ctx: Context) = repeat(ctx, RepeatOption.NONE)
 }
