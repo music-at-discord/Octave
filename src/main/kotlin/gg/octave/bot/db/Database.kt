@@ -116,6 +116,7 @@ class Database(private val name: String) {
     }
 
     fun getCustomPlaylist(authorId: String, title: String) = get("customplaylists", "$authorId-$title", CustomPlaylist::class.java)
+    fun findCustomPlaylist(authorId: String, fuzzyTitle: String) = getCustomPlaylists(authorId).firstOrNull { it.name.toLowerCase().contains(fuzzyTitle) }
     fun getCustomPlaylists(authorId: String) = query<Cursor<CustomPlaylist>, CustomPlaylist>(CustomPlaylist::class.java) {
         table("customplaylists").filter { it.g("author").eq(authorId) }
     }?.toList() ?: emptyList()

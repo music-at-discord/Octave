@@ -21,15 +21,7 @@ import java.util.function.Consumer
 import kotlin.math.ceil
 
 class Playlists : Cog {
-    override fun localCheck(ctx: Context, command: CommandFunction): Boolean {
-        return ctx.author.idLong in ctx.commandClient.ownerIds
-    }
-
-    //IDEA:
-    // - Access playlists via index
-    // - Perhaps fuzzy name searching
-
-    @Command(aliases = ["pl", "cpl"], description = "Manage your custom playlists.", hidden = true)
+    @Command(aliases = ["pl", "cpl"], description = "Manage your custom playlists.")
     fun playlists(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
 
     @SubCommand(description = "Lists all of your custom playlists.")
@@ -76,7 +68,11 @@ class Playlists : Cog {
     @SubCommand(aliases = ["del", "remove", "-"], description = "Delete one of your custom playlists.")
     fun delete(ctx: Context, @Greedy name: String) {
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
-            ?: return ctx.send("You don't have any playlists with that name.")
+            ?: return ctx.send {
+                setColor(0x9571D3)
+                setTitle("Unknown Custom Playlist")
+                setDescription("No custom playlists found with that name.\nTo prevent accidental deletion, you need to enter the full playlist name.")
+            }
 
         existingPlaylist.delete()
 
@@ -89,7 +85,7 @@ class Playlists : Cog {
 
     @SubCommand(aliases = ["manage"], description = "Edit an existing playlist (move/remove/...)")
     fun edit(ctx: Context, @Greedy name: String) {
-        val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
+        val existingPlaylist = ctx.db.findCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
 
         ctx.messageChannel.sendMessage(EmbedBuilder().apply {
@@ -134,7 +130,7 @@ class Playlists : Cog {
 
     @SubCommand
     fun load(ctx: Context, @Greedy name: String) {
-        val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
+        val existingPlaylist = ctx.db.findCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
 
         val manager = Launcher.players.get(ctx.guild!!)
