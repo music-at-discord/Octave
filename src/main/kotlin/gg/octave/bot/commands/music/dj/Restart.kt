@@ -42,7 +42,7 @@ class Restart : MusicCog {
     fun restart(ctx: Context) {
         val manager = ctx.manager
 
-        val track = manager.player.playingTrack ?: manager.scheduler.lastTrack
+        val track = manager.player.playingTrack ?: manager.lastTrack
         ?: return ctx.send("No track has been previously started.")
 
         ctx.send("Restarting track: `${track.info.embedTitle}`.")

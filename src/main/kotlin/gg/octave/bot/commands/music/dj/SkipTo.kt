@@ -44,7 +44,7 @@ class SkipTo : MusicCog {
     fun skipTo(ctx: Context, where: Int?) {
         val manager = ctx.manager
 
-        val toIndex = where?.takeIf { it > 0 && it <= manager.scheduler.queue.size }
+        val toIndex = where?.takeIf { it > 0 && it <= manager.queue.size }
             ?: return ctx.send("You need to specify the position of the track in the queue that you want to skip to.")
 
         if (toIndex - 1 == 0) {
@@ -52,10 +52,10 @@ class SkipTo : MusicCog {
         }
 
         for (i in 0 until toIndex - 1) {
-            manager.scheduler.queue.removeAt(0)
+            manager.queue.removeAt(0)
         }
 
-        manager.scheduler.nextTrack()
+        manager.nextTrack()
         ctx.send("Skipped **${toIndex - 1}** tracks.")
     }
 }

@@ -50,7 +50,7 @@ class Remove : MusicCog {
     @Usages("first", "last", "all", "1..5", "1", "1 7 12 3")
     @Command(aliases = ["removesong", "rm", "rem"], description = "Remove a song from the queue.")
     fun remove(ctx: Context, @Greedy which: String?) {
-        val queue = ctx.manager.scheduler.queue
+        val queue = ctx.manager.queue
 
         if (queue.isEmpty()) {
             return ctx.send("The queue is empty.")
@@ -83,7 +83,7 @@ class Remove : MusicCog {
     }
 
     fun removeMany(ctx: Context, ind: List<String>) {
-        val queue = ctx.manager.scheduler.queue
+        val queue = ctx.manager.queue
         val invalidIndexes = ind.filter {
             val int = it.toIntOrNull()
             return@filter int == null || int < 1 || int > queue.size
@@ -108,7 +108,7 @@ class Remove : MusicCog {
     }
 
     fun removeRange(ctx: Context, matcher: Matcher) {
-        val queue = ctx.manager.scheduler.queue
+        val queue = ctx.manager.queue
 
         if (matcher.group(1) == null && matcher.group(2) == null) {
             return ctx.send("You must specify start range and/or end range.")

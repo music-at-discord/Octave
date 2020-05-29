@@ -66,7 +66,7 @@ object Launcher {
     val statsPoster = StatsPoster(configuration.clientId)
     val patreon = PatreonAPI(credentials.patreonAccessToken)
 
-    val players = PlayerRegistry(this)
+    val players = PlayerRegistry()
     val discordFm = DiscordFM()
 
     lateinit var shardManager: ExtendedShardManager

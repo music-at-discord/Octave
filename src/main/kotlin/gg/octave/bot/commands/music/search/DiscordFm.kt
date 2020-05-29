@@ -26,6 +26,7 @@ package gg.octave.bot.commands.music.search
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.PLAY_MESSAGE
+import gg.octave.bot.music.LoadResultHandler
 import gg.octave.bot.music.utils.DiscordFMTrackContext
 import gg.octave.bot.utils.DiscordFM
 import me.devoxin.flight.api.Context
@@ -67,7 +68,7 @@ class DiscordFm : Cog {
 
         DiscordFMTrackContext(library, ctx.author.idLong, ctx.textChannel!!.idLong).let {
             manager.discordFMTrack = it
-            manager.loadAndPlay(ctx, track, it, "Now streaming random tracks from the `$library` radio station!", false)
+            LoadResultHandler.loadItem(track, ctx, manager, it, false, "Now streaming random tracks from the `$library` radio station!")
         }
     }
 

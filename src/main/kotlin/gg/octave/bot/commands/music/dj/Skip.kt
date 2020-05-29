@@ -40,7 +40,7 @@ class Skip : MusicCog {
     @CheckVoiceState
     @Command(aliases = ["sk", "s"], description = "Skips the current track.")
     fun skip(ctx: Context) {
-        ctx.manager.scheduler.nextTrack()
+        ctx.manager.nextTrack()
         ctx.send("Skipped current track.")
     }
 }

@@ -26,6 +26,7 @@ package gg.octave.bot.commands.admin
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.music.MusicManager
+import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.music.settings.BoostSetting
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -63,7 +64,7 @@ class PlayerStats : Cog {
         }
     }
 
-    private fun isEncoding(manager: MusicManager): Boolean {
+    private fun isEncoding(manager: MusicManagerV2): Boolean {
         val hasDspFx = manager.dspFilter.let {
             it.karaokeEnable || it.timescaleEnable || it.tremoloEnable || it.bassBoost != BoostSetting.OFF
         }

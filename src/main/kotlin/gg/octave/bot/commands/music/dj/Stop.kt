@@ -40,7 +40,7 @@ class Stop : MusicCog {
         val karen = ctx.manager
 
         if (clear) {
-            karen.scheduler.queue.clear()
+            karen.queue.clear()
         }
 
         karen.discordFMTrack = null
@@ -48,7 +48,7 @@ class Stop : MusicCog {
         Launcher.players.destroy(ctx.guild!!.idLong)
 
         val extra = when {
-            !clear && karen.scheduler.queue.isEmpty() -> "."
+            !clear && karen.queue.isEmpty() -> "."
             clear -> ", and the queue has been cleared."
             else -> ". If you want to clear the queue run `${ctx.trigger}clearqueue` or `${ctx.trigger}stop yes`."
         }

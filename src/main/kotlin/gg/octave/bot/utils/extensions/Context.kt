@@ -31,6 +31,7 @@ import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.db.premium.PremiumGuild
 import gg.octave.bot.entities.Configuration
 import gg.octave.bot.music.MusicManager
+import gg.octave.bot.music.MusicManagerV2
 import me.devoxin.flight.api.Context
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.VoiceChannel
@@ -57,10 +58,10 @@ val Context.config: Configuration
 val Context.launcher: Launcher
     get() = Launcher
 
-val Context.manager: MusicManager
+val Context.manager: MusicManagerV2
     get() = Launcher.players.get(this.guild)
 
-val Context.existingManager: MusicManager?
+val Context.existingManager: MusicManagerV2?
     get() = Launcher.players.getExisting(this.guild)
 
 val Context.voiceChannel: VoiceChannel?

@@ -41,7 +41,7 @@ class Move : MusicCog {
     @Command(aliases = ["m"], description = "Moves tracks within the queue.")
     fun move(ctx: Context, trackIndex: Int, toIndex: Int) {
         val manager = ctx.manager
-        val queue = manager.scheduler.queue
+        val queue = manager.queue
 
         if (queue.size < 2) {
             return ctx.send("There are no tracks in the queue to move.")

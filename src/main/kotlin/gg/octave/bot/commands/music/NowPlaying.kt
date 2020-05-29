@@ -44,7 +44,7 @@ class NowPlaying : MusicCog {
 
         val track = manager.player.playingTrack
         //Reset expire time if np has been called.
-        manager.scheduler.queue.clearExpireAsync()
+        manager.queue.clearExpireAsync()
 
         ctx.send {
             setColor(0x9570D3)
@@ -68,7 +68,7 @@ class NowPlaying : MusicCog {
                 true
             )
             addBlankField(true)
-            addField("Repeating", manager.scheduler.repeatOption.name.toLowerCase().capitalize(), true)
+            addField("Repeating", manager.repeatOption.name.toLowerCase().capitalize(), true)
             addField("Volume", "${manager.player.volume}%", true)
             addField("Bass Boost", manager.dspFilter.bassBoost.name.toLowerCase().capitalize(), true)
             val timeString = if (track.duration == Long.MAX_VALUE) {

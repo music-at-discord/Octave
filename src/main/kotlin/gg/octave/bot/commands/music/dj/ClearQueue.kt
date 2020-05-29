@@ -37,7 +37,7 @@ class ClearQueue : Cog {
     @Command(aliases = ["cq"], description = "Clear the current queue.")
     fun clearqueue(ctx: Context) {
         val manager = ctx.launcher.players.get(ctx.guild)
-        val queue = manager.scheduler.queue
+        val queue = manager.queue
 
         if (queue.isEmpty()) {
             return ctx.send("There's nothing to clear.")

@@ -60,7 +60,7 @@ class DMNowPlaying : MusicCog {
                     "**[${track.info.embedTitle}](${track.info.embedUri})**\n" +
                         "Track URL: ${track.info.uri}"
                 )
-                addField("Repeating", manager.scheduler.repeatOption.name.toLowerCase().capitalize(), true)
+                addField("Repeating", manager.repeatOption.name.toLowerCase().capitalize(), true)
                 addField("Bass Boost", manager.dspFilter.bassBoost.name.toLowerCase().capitalize(), true)
                 val timeString = if (track.duration == Long.MAX_VALUE) {
                     "`Streaming`"

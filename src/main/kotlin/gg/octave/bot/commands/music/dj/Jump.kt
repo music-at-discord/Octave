@@ -29,6 +29,7 @@ import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.music.MusicManager
+import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.utils.Utils
 import gg.octave.bot.utils.extensions.manager
 import me.devoxin.flight.api.Context
@@ -57,7 +58,7 @@ class Jump : MusicCog {
         }
     }
 
-    fun seekByMilliseconds(ctx: Context, manager: MusicManager, milliseconds: Long) {
+    fun seekByMilliseconds(ctx: Context, manager: MusicManagerV2, milliseconds: Long) {
         val currentTrack = manager.player.playingTrack
         val position = (currentTrack.position + milliseconds).coerceIn(0, currentTrack.duration)
         currentTrack.position = position
@@ -65,7 +66,7 @@ class Jump : MusicCog {
         ctx.send("Seeked to **${Utils.getTimestamp(position)}**.")
     }
 
-    fun seekByTimestamp(ctx: Context, manager: MusicManager, timestamp: String) {
+    fun seekByTimestamp(ctx: Context, manager: MusicManagerV2, timestamp: String) {
         val parts = timestamp.split(':').mapNotNull(String::toLongOrNull)
 
         val millis = when (parts.size) {
@@ -87,7 +88,7 @@ class Jump : MusicCog {
         ctx.send("Seeked to **${Utils.getTimestamp(absolutePosition)}**.")
     }
 
-    fun seekByTimeShorthand(ctx: Context, manager: MusicManager, shorthand: String) {
+    fun seekByTimeShorthand(ctx: Context, manager: MusicManagerV2, shorthand: String) {
         val segments = timeSegment.findAll(shorthand).map(MatchResult::value)
         val milliseconds = segments.map(::parseSegment).sum()
 

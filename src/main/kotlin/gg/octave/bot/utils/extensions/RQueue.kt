@@ -81,3 +81,7 @@ fun <T> RQueue<T>.move(index: Int, to: Int): T {
 
     return temp
 }
+
+fun <T> RQueue<T>.shuffle() {
+    (this as MutableList<*>).shuffle()
+}

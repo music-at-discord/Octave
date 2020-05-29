@@ -137,9 +137,8 @@ class Playlists : Cog {
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
 
-        //val manager = Launcher.players.get(ctx.guild!!)
-        val karen = MusicManagerV2(ctx.guild!!.idLong, Launcher.players.playerManager.createPlayer())
-        val lrh = LoadResultHandler(null, ctx, karen, TrackContext(ctx.author.idLong, ctx.textChannel!!.idLong), false, null)
+        val manager = Launcher.players.get(ctx.guild!!)
+        val lrh = LoadResultHandler(null, ctx, manager, TrackContext(ctx.author.idLong, ctx.textChannel!!.idLong), false, null)
         lrh.playlistLoaded(existingPlaylist.toBasicAudioPlaylist())
     }
 

@@ -32,9 +32,9 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class PlayerRegistry(private val bot: Launcher) {
+class PlayerRegistry {
     val playerManager = ExtendedAudioPlayerManager()
-    val registry = ConcurrentHashMap<Long, MusicManager>(bot.configuration.musicLimit)
+    val registry = ConcurrentHashMap<Long, MusicManagerV2>(Launcher.configuration.musicLimit)
     private val executor = Executors.newSingleThreadScheduledExecutor()
 
     init {
@@ -46,25 +46,23 @@ class PlayerRegistry(private val bot: Launcher) {
             // If guild null, or if connected, and not playing, and not queued for leave,
             // if last played >= IDLE_TIMEOUT minutes ago, and not 24/7 (all day) music, destroy/queue leave.
             it.guild == null || it.guild!!.audioManager.isConnected && it.player.playingTrack == null &&
-                !it.leaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
-                !isAllDayMusic(it.guildId)
+                !it.isLeaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
+                !isAllDayMusic(it.guildId.toString())
         }.forEach {
             if (it.guild == null) {
-                destroy(it.guildId.toLong())
+                destroy(it.guildId)
             } else {
                 it.queueLeave() //Then queue leave.
             }
         }
     }
 
-    fun get(guild: Guild?) = registry.computeIfAbsent(guild!!.idLong) {
-        MusicManager(bot, guild.id, this, playerManager)
-    }
+    fun get(guild: Guild?) = registry.computeIfAbsent(guild!!.idLong) { MusicManagerV2(guild.idLong, playerManager.createPlayer()) }
 
     fun getExisting(id: Long) = registry[id]
     fun getExisting(guild: Guild?) = getExisting(guild!!.idLong)
     fun destroy(id: Long) {
-        registry.remove(id)?.destroy()
+        registry.remove(id)?.cleanup()
     }
 
     fun destroy(guild: Guild?) = destroy(guild!!.idLong)

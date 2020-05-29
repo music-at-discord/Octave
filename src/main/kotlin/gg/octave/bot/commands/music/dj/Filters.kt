@@ -29,6 +29,7 @@ import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.music.MusicManager
+import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.manager
 import me.devoxin.flight.api.Context
@@ -79,7 +80,7 @@ class Filters : MusicCog {
         ctx.send("Cleared all filters.")
     }
 
-    private fun modifyTimescale(ctx: Context, type: String, amount: Double, manager: MusicManager) {
+    private fun modifyTimescale(ctx: Context, type: String, amount: Double, manager: MusicManagerV2) {
         val value = amount.coerceIn(0.1, 3.0)
 
         when (type) {
@@ -92,7 +93,7 @@ class Filters : MusicCog {
         ctx.send("Timescale `${type.toLowerCase()}` set to `$value`")
     }
 
-    private fun modifyTremolo(ctx: Context, type: String, amount: Double, manager: MusicManager) {
+    private fun modifyTremolo(ctx: Context, type: String, amount: Double, manager: MusicManagerV2) {
         when (type) {
             "depth" -> {
                 val depth = amount.coerceIn(0.0, 1.0)
@@ -109,7 +110,7 @@ class Filters : MusicCog {
         }
     }
 
-    private fun modifyKaraoke(ctx: Context, type: String?, amount: Float?, manager: MusicManager) {
+    private fun modifyKaraoke(ctx: Context, type: String?, amount: Float?, manager: MusicManagerV2) {
         if (type != null && (type == "level" || type == "band" || type == "width") && amount == null) {
             return ctx.send("You must specify a valid number for `amount`.")
         }

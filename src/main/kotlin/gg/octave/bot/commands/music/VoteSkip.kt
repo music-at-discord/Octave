@@ -128,7 +128,7 @@ class VoteSkip : MusicCog {
                         buildString {
                             if (skip > halfPeople) {
                                 appendln("The vote has passed! The song has been skipped.")
-                                manager.scheduler.nextTrack()
+                                manager.nextTrack()
                             } else {
                                 appendln("The vote has failed! The song will stay.")
                             }

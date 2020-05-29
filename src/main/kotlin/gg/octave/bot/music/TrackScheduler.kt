@@ -37,6 +37,7 @@ import gg.octave.bot.music.settings.RepeatOption
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.friendlierMessage
 import gg.octave.bot.utils.extensions.insertAt
+import gg.octave.bot.utils.extensions.shuffle
 import io.sentry.Sentry
 import io.sentry.event.Event
 import io.sentry.event.EventBuilder
@@ -64,10 +65,11 @@ class TrackScheduler(private val manager: MusicManager, private val player: Audi
      */
     fun queue(track: AudioTrack, isNext: Boolean) {
         if (!player.startTrack(track, true)) {
+            val encoded = Launcher.players.playerManager.encodeAudioTrack(track)
             if (isNext) {
-                insertAt(0, track)
+                queue.insertAt(0, encoded)
             } else {
-                queue.offer(Launcher.players.playerManager.encodeAudioTrack(track))
+                queue.offer(encoded)
             }
         }
     }
@@ -106,7 +108,7 @@ class TrackScheduler(private val manager: MusicManager, private val player: Audi
         }
 
         manager.discordFMTrack?.let {
-            it.nextDiscordFMTrack(manager).thenAccept { track ->
+            it.nextDiscordFMTrack().thenAccept { track ->
                 if (track == null) {
                     return@thenAccept Launcher.players.destroy(manager.guild)
                 }
@@ -201,8 +203,7 @@ class TrackScheduler(private val manager: MusicManager, private val player: Audi
         }
     }
 
-    fun shuffle() = (queue as MutableList<*>).shuffle()
-    fun insertAt(index: Int, element: AudioTrack) = queue.insertAt(index, Launcher.players.playerManager.encodeAudioTrack(element))
+    fun shuffle() = queue.shuffle()
 
     companion object {
         fun getQueueForGuild(guildId: String): RQueue<String> {

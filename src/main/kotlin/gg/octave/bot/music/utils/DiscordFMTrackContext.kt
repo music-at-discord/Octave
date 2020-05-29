@@ -29,7 +29,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import gg.octave.bot.Launcher
-import gg.octave.bot.music.MusicManager
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.util.concurrent.CompletableFuture
@@ -50,17 +49,17 @@ class DiscordFMTrackContext(
         writer.close() // This invokes flush.
     }
 
-    fun nextDiscordFMTrack(musicManager: MusicManager, errorDepth: Int = 0): CompletableFuture<AudioTrack?> {
+    fun nextDiscordFMTrack(errorDepth: Int = 0): CompletableFuture<AudioTrack?> {
         if (errorDepth > errorTolerance) {
             return CompletableFuture.completedFuture(null)
         }
 
         val randomSong = Launcher.discordFm.getRandomSong(station)
-            ?: return nextDiscordFMTrack(musicManager, errorDepth + 1)
+            ?: return nextDiscordFMTrack(errorDepth + 1)
 
         val future = CompletableFuture<AudioTrack?>()
 
-        musicManager.playerManager.loadItemOrdered(this, randomSong, object : AudioLoadResultHandler {
+        Launcher.players.playerManager.loadItemOrdered(this, randomSong, object : AudioLoadResultHandler {
             override fun trackLoaded(track: AudioTrack) {
                 track.userData = this@DiscordFMTrackContext
                 future.complete(track)
@@ -76,7 +75,7 @@ class DiscordFMTrackContext(
                 if (errorDepth >= errorTolerance) {
                     future.complete(null)
                 } else {
-                    nextDiscordFMTrack(musicManager, errorDepth + 1)
+                    nextDiscordFMTrack(errorDepth + 1)
                 }
             }
         })

@@ -98,8 +98,8 @@ class VoiceListener : EventListener {
         val avoidLeave = (premiumGuild != null || guildData.isPremium) && guildData.music.isAllDayMusic
 
         when {
-            manager.isAlone() && !manager.leaveQueued && !avoidLeave -> manager.queueLeave()
-            !manager.isAlone() && manager.leaveQueued -> manager.cancelLeave()
+            manager.isAlone && !manager.isLeaveQueued && !avoidLeave -> manager.queueLeave()
+            !manager.isAlone && manager.isLeaveQueued -> manager.cancelLeave()
         }
     }
 }

@@ -28,7 +28,9 @@ import com.jagrosh.jdautilities.menu.Selector
 import com.jagrosh.jdautilities.menu.SelectorBuilder
 import gg.octave.bot.Launcher
 import gg.octave.bot.listeners.FlightEventAdapter
+import gg.octave.bot.music.LoadResultHandler
 import gg.octave.bot.music.MusicManager
+import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.music.TrackScheduler
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.config
@@ -94,7 +96,7 @@ class Play : Cog {
             manager.player.playingTrack != null -> {
                 ctx.send("Music is already playing. Are you trying to queue a track? Try adding a search term with this command!")
             }
-            manager.scheduler.queue.isEmpty() -> {
+            manager.queue.isEmpty() -> {
                 ctx.send {
                     setColor(0x9570D3)
                     setTitle("Empty Queue")
@@ -106,7 +108,7 @@ class Play : Cog {
 
     private fun prompt(ctx: Context, hasManager: Boolean): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
-        val oldQueue = TrackScheduler.getQueueForGuild(ctx.guild!!.id)
+        val oldQueue = MusicManagerV2.getQueueForGuild(ctx.guild!!.id)
 
         if (!hasManager && !oldQueue.isEmpty()) {
             SelectorBuilder(Launcher.eventWaiter)
@@ -139,7 +141,7 @@ class Play : Cog {
     }
 
     companion object {
-        fun smartPlay(ctx: Context, manager: MusicManager?, args: List<String>, isSearchResult: Boolean, uri: String, isNext: Boolean = false) {
+        fun smartPlay(ctx: Context, manager: MusicManagerV2, args: List<String>, isSearchResult: Boolean, uri: String, isNext: Boolean = false) {
             when {
                 ctx.data.music.isVotePlay && !FlightEventAdapter.isDJ(ctx, false) -> startPlayVote(ctx, manager!!, args, isSearchResult, uri, isNext)
                 else -> play(ctx, args, isSearchResult, uri, isNext)
@@ -151,7 +153,7 @@ class Play : Cog {
             val config = ctx.config
 
             //Reset expire time if play has been called.
-            manager.scheduler.queue.clearExpire()
+            manager.queue.clearExpire()
 
             val query = when {
                 "https://" in args[0] || "http://" in args[0] || args[0].startsWith("spotify:") -> {
@@ -162,17 +164,11 @@ class Play : Cog {
             }
 
             val trackContext = TrackContext(ctx.author.idLong, ctx.textChannel!!.idLong)
-
-            manager.loadAndPlay(
-                ctx,
-                query,
-                trackContext,
-                if (!isSearchResult) "You can search and pick results using ${config.prefix}youtube or ${config.prefix}soundcloud while in a channel." else null,
-                isNext
-            )
+            val footnote = if (!isSearchResult) "You can search and pick results using ${config.prefix}youtube or ${config.prefix}soundcloud while in a channel." else null
+            LoadResultHandler.loadItem(query, ctx, manager, trackContext, isNext, footnote)
         }
 
-        fun startPlayVote(ctx: Context, manager: MusicManager, args: List<String>, isSearchResult: Boolean, uri: String, isNext: Boolean) {
+        fun startPlayVote(ctx: Context, manager: MusicManagerV2, args: List<String>, isSearchResult: Boolean, uri: String, isNext: Boolean) {
             if (manager.isVotingToPlay) {
                 return ctx.send("There is already a vote going on!")
             }

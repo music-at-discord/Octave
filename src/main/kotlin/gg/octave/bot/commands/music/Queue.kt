@@ -40,7 +40,7 @@ class Queue : Cog {
         val manager = Launcher.players.getExisting(ctx.guild)
             ?: return ctx.send("There's no music player in this guild.\n$PLAY_MESSAGE")
 
-        val queue = manager.scheduler.queue
+        val queue = manager.queue
         var queueLength = 0L
 
         ctx.textChannel?.let {
@@ -89,7 +89,7 @@ class Queue : Cog {
 
                 field("Entries", true) { queue.size }
                 field("Total Duration", true) { Utils.getTimestamp(queueLength) }
-                field("Repeating", true) { manager.scheduler.repeatOption.name.toLowerCase().capitalize() }
+                field("Repeating", true) { manager.repeatOption.name.toLowerCase().capitalize() }
             }.display(it)
         }
     }

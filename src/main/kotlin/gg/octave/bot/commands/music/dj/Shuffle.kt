@@ -29,6 +29,7 @@ import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.manager
+import gg.octave.bot.utils.extensions.shuffle
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 
@@ -42,11 +43,11 @@ class Shuffle : MusicCog {
     fun shuffle(ctx: Context) {
         val manager = ctx.manager
 
-        if (manager.scheduler.queue.isEmpty()) {
+        if (manager.queue.isEmpty()) {
             return ctx.send("The queue is empty.\n$PLAY_MESSAGE")
         }
 
-        manager.scheduler.shuffle()
+        manager.queue.shuffle()
         ctx.send("Player has been shuffled")
     }
 }

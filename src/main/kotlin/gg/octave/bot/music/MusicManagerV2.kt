@@ -3,16 +3,27 @@ package gg.octave.bot.music
 import com.sedmelluq.discord.lavaplayer.format.StandardAudioDataFormats
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason
 import com.sedmelluq.discord.lavaplayer.track.playback.MutableAudioFrame
 import gg.octave.bot.Launcher
+import gg.octave.bot.commands.music.embedTitle
+import gg.octave.bot.commands.music.embedUri
+import gg.octave.bot.db.OptionsRegistry
 import gg.octave.bot.music.filters.DSPFilter
+import gg.octave.bot.music.settings.RepeatOption
 import gg.octave.bot.music.utils.DiscordFMTrackContext
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.Task
+import gg.octave.bot.utils.extensions.friendlierMessage
 import gg.octave.bot.utils.extensions.insertAt
+import io.sentry.Sentry
+import io.sentry.event.Event
+import io.sentry.event.EventBuilder
+import io.sentry.event.interfaces.StackTraceInterface
 import me.devoxin.flight.api.Context
+import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.audio.AudioSendHandler
 import net.dv8tion.jda.api.entities.Guild
@@ -24,7 +35,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHandler, AudioEventAdapter() {
-    // Misc
+    // Meta
     val guild: Guild? get() = Launcher.shardManager.getGuildById(guildId)
     val isAlone: Boolean get() = guild?.selfMember?.voiceState?.channel?.members?.none { !it.user.isBot } ?: true
     val isIdle: Boolean get() = player.playingTrack == null && queue.isEmpty()
@@ -33,18 +44,19 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
     val queue: RQueue<String> = Launcher.db.redisson.getQueue("playerQueue:$guildId")
     val dspFilter = DSPFilter(player)
     var lastTrack: AudioTrack? = null
+        private set
+    var currentTrack: AudioTrack? = null
+        private set
     var discordFMTrack: DiscordFMTrackContext? = null
+    var repeatOption = RepeatOption.NONE
 
     // Settings/internals.
     private val leaveTask = Task(30, TimeUnit.SECONDS) { destroy() }
-    private val isLeaveQueued: Boolean get() = leaveTask.isRunning
+    val isLeaveQueued: Boolean get() = leaveTask.isRunning
 
-    private val dbAnnouncementChannel: String? get() = Launcher.db.getGuildData(guildId.toString())?.music?.announcementChannel
-    private val currentRequestChannel: TextChannel?
-        get() = (player.playingTrack ?: lastTrack)?.getUserData(TrackContext::class.java)
-            ?.requestedChannel?.let { guild?.getTextChannelById(it) }
-    private val announcementChannel: TextChannel?
-        get() = dbAnnouncementChannel?.let { guild?.getTextChannelById(it) } ?: currentRequestChannel
+    private var lastTimeAnnounced = 0L
+    private var lastErrorAnnounced = 0L
+    private var errorCount = 0L
 
     var lastVoteTime = 0L
     var isVotingToSkip = false
@@ -54,6 +66,14 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
 
     var loops = 0L
         private set
+
+    // Misc
+    private val dbAnnouncementChannel: String? get() = Launcher.db.getGuildData(guildId.toString())?.music?.announcementChannel
+    private val currentRequestChannel: TextChannel?
+        get() = (player.playingTrack ?: lastTrack)?.getUserData(TrackContext::class.java)
+            ?.requestedChannel?.let { guild?.getTextChannelById(it) }
+    val announcementChannel: TextChannel?
+        get() = dbAnnouncementChannel?.let { guild?.getTextChannelById(it) } ?: currentRequestChannel
 
     // ---------- End Properties ----------
 
@@ -101,12 +121,102 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
             }
         }
     }
-    // move audio connection
-    // close audio connection
 
-    // queue leave
-    // cancel leave
-    // create leave task
+    fun moveAudioConnection(channel: VoiceChannel) {
+        guild?.let {
+            if (!it.selfMember.voiceState!!.inVoiceChannel()) {
+                return destroy()
+            }
+
+            if (!it.selfMember.hasPermission(channel, Permission.VOICE_CONNECT)) {
+                currentRequestChannel?.sendMessage("I don't have permission to join `${channel.name}`.")?.queue()
+                return destroy()
+            }
+
+            player.isPaused = true
+            it.audioManager.openAudioConnection(channel)
+            player.isPaused = false
+
+            currentRequestChannel?.sendMessage(EmbedBuilder().apply {
+                setTitle("Music Playback")
+                setDescription("Moving to channel `${channel.name}`.")
+            }.build())?.queue()
+        }
+    }
+
+    fun closeAudioConnection() {
+        guild?.audioManager?.apply {
+            closeAudioConnection()
+            sendingHandler = null
+        }
+    }
+
+    fun queueLeave() {
+        leaveTask.start()
+        player.isPaused = true
+    }
+
+    fun cancelLeave() {
+        leaveTask.stop()
+        player.isPaused = false
+    }
+
+    fun nextTrack() {
+        if (repeatOption != RepeatOption.NONE) {
+            val cloneThis = currentTrack
+                ?: return
+
+            val cloned = cloneThis.makeClone().also { it.userData = cloneThis.userData } // I think makeClone copies user data, but better safe than sorry.
+
+            if (repeatOption == RepeatOption.SONG) {
+                return player.playTrack(cloned)
+            } else if (repeatOption == RepeatOption.QUEUE) {
+                queue.offer(Launcher.players.playerManager.encodeAudioTrack(cloned))
+            } // NONE doesn't need any handling.
+        }
+
+        if (queue.isNotEmpty()) {
+            val track = queue.poll()
+            val decodedTrack = Launcher.players.playerManager.decodeAudioTrack(track)
+            return player.playTrack(decodedTrack)
+        }
+
+        if (discordFMTrack == null) {
+            return player.stopTrack() // Wait for more music, or user/auto disconnect.
+            // return MusicManager.schedulerThread.execute { manager.playerRegistry.destroy(manager.guild) }
+        }
+
+        discordFMTrack?.let {
+            it.nextDiscordFMTrack().thenAccept { track ->
+                if (track == null) {
+                    return@thenAccept destroy()
+                }
+
+                player.startTrack(track, false)
+            }
+        }
+    }
+
+    private fun announceNext(track: AudioTrack) {
+        val channel = announcementChannel ?: return
+        val description = buildString {
+            append("Now playing __**[").append(track.info.embedTitle)
+            append("](").append(track.info.embedUri).append(")**__")
+
+            val reqData = track.getUserData(TrackContext::class.java)
+            append(" requested by ")
+            append(reqData?.requesterMention ?: "Unknown")
+            append(".")
+        }
+
+        // Avoid spamming by just sending it if the last time it was announced was more than 10s ago.
+        if (lastTimeAnnounced == 0L || lastTimeAnnounced + 10000 < System.currentTimeMillis()) {
+            val embed = EmbedBuilder().setDescription(description).build()
+            channel.sendMessage(embed).queue {
+                lastTimeAnnounced = System.currentTimeMillis()
+            }
+        }
+    }
 
     fun destroy() = Launcher.players.destroy(guildId)
 
@@ -115,15 +225,72 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
         dspFilter.clearFilters()
         queue.expire(4, TimeUnit.HOURS)
 
-        //closeAudioConnection()
+        closeAudioConnection()
     }
 
     // *----------- Scheduler/Event Handling -----------*
     override fun onTrackEnd(player: AudioPlayer, track: AudioTrack, endReason: AudioTrackEndReason) {
         lastPlayedAt = System.currentTimeMillis()
+        this.lastTrack = track
+
+        if (endReason.mayStartNext) {
+            nextTrack()
+        }
     }
 
-    // TODO: EVENTS
+    override fun onTrackStuck(player: AudioPlayer, track: AudioTrack, thresholdMs: Long, stackTrace: Array<out StackTraceElement>) {
+        val guild = guild ?: return
+        track.getUserData(TrackContext::class.java)
+            ?.requestedChannel
+            ?.let(guild::getTextChannelById)
+            ?.sendMessage("The track ${track.info.embedTitle} is stuck longer than ${thresholdMs}ms threshold.")
+            ?.queue()
+
+        val eventBuilder = EventBuilder().withMessage("AudioTrack stuck longer than ${thresholdMs}ms")
+            .withLevel(Event.Level.ERROR)
+            .withSentryInterface(StackTraceInterface(stackTrace))
+
+        Sentry.capture(eventBuilder)
+        nextTrack()
+    }
+
+    override fun onTrackException(player: AudioPlayer, track: AudioTrack, exception: FriendlyException) {
+        repeatOption = RepeatOption.NONE
+
+        if (exception.toString().contains("decoding")) {
+            return
+        }
+
+        Sentry.capture(exception)
+        val channel = track.getUserData(TrackContext::class.java)?.requestedChannel?.let {
+            guild?.getTextChannelById(it)
+        } ?: return
+
+        if (errorCount < 20L && (lastErrorAnnounced == 0L || lastErrorAnnounced + 6000 < System.currentTimeMillis())) {
+            channel.sendMessage("An unknown error occurred while playing **${track.info.embedTitle}**:\n${exception.friendlierMessage()}")
+                .queue {
+                    errorCount++
+                    lastErrorAnnounced = System.currentTimeMillis()
+                }
+        }
+    }
+
+    override fun onTrackStart(player: AudioPlayer, track: AudioTrack) {
+        currentTrack?.let {
+            if (it.identifier == track.identifier) {
+                loops++
+            } else {
+                loops = 0
+            }
+        }
+
+        val announce = currentTrack?.identifier != track.identifier
+        currentTrack = track
+
+        if (announce && OptionsRegistry.ofGuild(guildId.toString()).music.announce) {
+            announceNext(track)
+        }
+    }
 
     // *----------- AudioSendHandler -----------*
     private val frameBuffer = ByteBuffer.allocate(StandardAudioDataFormats.DISCORD_OPUS.maximumChunkSize())
@@ -132,4 +299,10 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
     override fun canProvide() = player.provide(lastFrame)
     override fun provide20MsAudio() = frameBuffer.flip()
     override fun isOpus() = true
+
+    companion object {
+        fun getQueueForGuild(guildId: String): RQueue<String> {
+            return Launcher.db.redisson.getQueue("playerQueue:$guildId")
+        }
+    }
 }

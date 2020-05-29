@@ -59,7 +59,7 @@ class ShardInfo : Cog {
         )
     }
 
-    private fun getShardIdForGuild(guildId: String, shardCount: Int): Int {
-        return ((guildId.toLong() shr 22) % shardCount).toInt()
+    private fun getShardIdForGuild(guildId: Long, shardCount: Int): Int {
+        return ((guildId shr 22) % shardCount).toInt()
     }
 }
