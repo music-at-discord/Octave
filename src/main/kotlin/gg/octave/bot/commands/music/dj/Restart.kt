@@ -38,7 +38,7 @@ class Restart : MusicCog {
 
     @DJ
     @CheckVoiceState
-    @Command(aliases = ["replay"], description = "Restart the current song.")
+    @Command(aliases = ["replay", "rs"], description = "Restart the current song.")
     fun restart(ctx: Context) {
         val manager = ctx.manager
 

@@ -39,7 +39,7 @@ class Repeat : MusicCog {
 
     @DJ
     @CheckVoiceState
-    @Command(aliases = ["loop"], description = "Set if the music player should repeat")
+    @Command(aliases = ["loop", "r", "l"], description = "Set if the music player should repeat")
     fun repeat(ctx: Context, option: RepeatOption) {
         ctx.manager.repeatOption = option
         ctx.send("${option.emoji} Track repeating was set to __**${option.name.toLowerCase()}**__.")

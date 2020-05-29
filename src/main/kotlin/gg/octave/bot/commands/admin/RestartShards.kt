@@ -31,7 +31,7 @@ import me.devoxin.flight.api.entities.Cog
 import net.dv8tion.jda.api.JDA
 
 class RestartShards : Cog {
-    @Command(aliases = ["rs"], description = "Restart bot shards.", developerOnly = true)
+    @Command(description = "Restart bot shards.", developerOnly = true)
     fun restartshards(ctx: Context, shardId: Int) {
         if (shardId < 0 || shardId >= ctx.jda.shardInfo.shardTotal) {
             return ctx.send("**$shardId** should be equal to or higher than 0, and less than ${ctx.jda.shardInfo.shardTotal}.")
