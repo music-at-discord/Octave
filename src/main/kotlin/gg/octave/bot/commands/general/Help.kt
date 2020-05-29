@@ -75,6 +75,7 @@ class Help : Cog {
         val categories = ctx.commandClient.commands.values
             .groupBy { categoryAlias[it.category] ?: it.category }
             .filter { it.key != "Admin" || ctx.author.idLong in ctx.commandClient.ownerIds }
+            .filter { it.value.isNotEmpty() }
 
         ctx.send {
             setColor(0x9571D3)
