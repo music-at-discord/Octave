@@ -40,16 +40,14 @@ class DiscordFMTrackContext(
     requestedChannel: Long
 ) : TrackContext(requester, requestedChannel) {
     override fun serialize(stream: ByteArrayOutputStream) {
-        fun serialize(stream: ByteArrayOutputStream) {
-            val writer = DataOutputStream(stream)
-            writer.writeInt(2)
-            // 1 => TrackContext
-            // 2 => DiscordFMTrackContext
-            writer.writeLong(requester)
-            writer.writeLong(requestedChannel)
-            writer.writeUTF(station)
-            writer.close() // This invokes flush.
-        }
+        val writer = DataOutputStream(stream)
+        writer.writeInt(2)
+        // 1 => TrackContext
+        // 2 => DiscordFMTrackContext
+        writer.writeLong(requester)
+        writer.writeLong(requestedChannel)
+        writer.writeUTF(station)
+        writer.close() // This invokes flush.
     }
 
     fun nextDiscordFMTrack(musicManager: MusicManager, errorDepth: Int = 0): CompletableFuture<AudioTrack?> {

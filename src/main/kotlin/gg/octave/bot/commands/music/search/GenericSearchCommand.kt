@@ -28,7 +28,6 @@ import com.jagrosh.jdautilities.selector
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
-import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.utils.Utils
 import gg.octave.bot.utils.extensions.selfMember
 import gg.octave.bot.utils.extensions.voiceChannel
@@ -68,12 +67,7 @@ fun genericSearchCommand(ctx: Context, query: String, searchPrefix: String, prov
             for (result in results) {
                 addOption("`${Utils.getTimestamp(result.info.length)}` **[${result.info.embedTitle}](${result.info.embedUri})**") {
                     if (ctx.member!!.voiceState!!.inVoiceChannel()) {
-                        val manager = try {
-                            Launcher.players.get(ctx.guild)
-                        } catch (e: MusicLimitException) {
-                            return@addOption e.sendToContext(ctx)
-                        }
-
+                        val manager = Launcher.players.get(ctx.guild)
                         val args = query.split(" +".toRegex())
                         Play.smartPlay(ctx, manager, args, true, result.info.uri)
                     } else {

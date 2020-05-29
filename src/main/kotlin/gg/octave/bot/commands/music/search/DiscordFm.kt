@@ -27,7 +27,6 @@ package gg.octave.bot.commands.music.search
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.PLAY_MESSAGE
 import gg.octave.bot.music.utils.DiscordFMTrackContext
-import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.utils.DiscordFM
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -61,11 +60,7 @@ class DiscordFm : Cog {
             ?: DiscordFM.LIBRARIES.minBy { StringUtils.getLevenshteinDistance(it, query) }
             ?: return ctx.send("Library $query doesn't exist. Available stations: `${DiscordFM.LIBRARIES.contentToString()}`.")
 
-        val manager = try {
-            Launcher.players.get(ctx.guild)
-        } catch (e: MusicLimitException) {
-            return e.sendToContext(ctx)
-        }
+        val manager = Launcher.players.get(ctx.guild)
 
         val track = Launcher.discordFm.getRandomSong(library)
             ?: return ctx.send("Couldn't find any tracks in that library.")

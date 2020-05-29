@@ -30,7 +30,6 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.listeners.FlightEventAdapter
 import gg.octave.bot.music.MusicManager
 import gg.octave.bot.music.TrackScheduler
-import gg.octave.bot.music.utils.MusicLimitException
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
@@ -69,14 +68,7 @@ class Play : Cog {
                 return@thenAccept
             }
 
-            val newManager = try {
-                Launcher.players.get(ctx.guild)
-            } catch (e: MusicLimitException) {
-                // I don't like these try/catches everywhere. They also have a slight impact on performance.
-                // TODO: Figure out a better solution.
-                return@thenAccept e.sendToContext(ctx)
-            }
-
+            val newManager = Launcher.players.get(ctx.guild)
             smartPlay(ctx, newManager, args, false, "")
         }.exceptionally {
             ctx.send("An error occurred!")
@@ -155,12 +147,7 @@ class Play : Cog {
         }
 
         fun play(ctx: Context, args: List<String>, isSearchResult: Boolean, uri: String, isNext: Boolean = false) {
-            val manager = try {
-                Launcher.players.get(ctx.guild)
-            } catch (e: MusicLimitException) {
-                return e.sendToContext(ctx)
-            }
-
+            val manager = Launcher.players.get(ctx.guild)
             val config = ctx.config
 
             //Reset expire time if play has been called.

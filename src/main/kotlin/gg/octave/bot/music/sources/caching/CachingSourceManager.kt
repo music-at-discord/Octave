@@ -100,10 +100,10 @@ class CachingSourceManager : AudioSourceManager {
         var successfulHits = 0
             private set
 
-        val creds = Launcher.credentials
-        val redisHost = creds.redisHost
-        val redisPort = creds.redisPort
-        val redisAuth = creds.redisAuth
+        private val creds = Launcher.credentials
+        private val redisHost = creds.redisHost
+        private val redisPort = creds.redisPort
+        private val redisAuth = creds.redisAuth
         private val jedisPool = JedisPool(JedisPoolConfig(), redisHost, redisPort, Protocol.DEFAULT_TIMEOUT, redisAuth)
 
         private val PLAYLIST_TTL = TimeUnit.HOURS.toMillis(2)

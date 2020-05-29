@@ -40,7 +40,6 @@ import gg.octave.bot.listeners.BotListener
 import gg.octave.bot.listeners.FlightEventAdapter
 import gg.octave.bot.listeners.VoiceListener
 import gg.octave.bot.music.PlayerRegistry
-import gg.octave.bot.music.utils.PlayerSweeper
 import gg.octave.bot.utils.DiscordFM
 import gg.octave.bot.utils.OctaveBot
 import gg.octave.bot.utils.extensions.registerAlmostAllParsers
@@ -125,6 +124,5 @@ object Launcher {
         }
 
         NodeInfoPoster(configuration.nodeNumber).postEvery(5, TimeUnit.SECONDS)
-        PlayerSweeper().runEvery(TimeUnit.MINUTES, 3)
     }
 }
