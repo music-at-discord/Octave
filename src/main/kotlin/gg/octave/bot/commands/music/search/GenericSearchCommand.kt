@@ -25,6 +25,8 @@
 package gg.octave.bot.commands.music.search
 
 import com.jagrosh.jdautilities.selector
+import com.sedmelluq.discord.lavaplayer.player.FunctionalResultHandler
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
@@ -33,18 +35,19 @@ import gg.octave.bot.utils.extensions.selfMember
 import gg.octave.bot.utils.extensions.voiceChannel
 import me.devoxin.flight.api.Context
 import java.awt.Color
+import java.util.function.Consumer
 
 fun genericSearchCommand(ctx: Context, query: String, searchPrefix: String, provider: String, color: Color, link: String, icon: String, thumbnail: String) {
-    Launcher.players.get(ctx.guild).search("$searchPrefix:$query", 5) { results ->
+    val handler: (List<AudioTrack>) -> Unit = handler@{ results ->
         if (results.isEmpty()) {
-            return@search ctx.send("No search results for `$query`.")
+            return@handler ctx.send("No search results for `$query`.")
         }
 
         val botChannel = ctx.selfMember!!.voiceState?.channel
         val userChannel = ctx.voiceChannel
 
         if (userChannel == null || botChannel != null && botChannel != userChannel) {
-            return@search ctx.send {
+            return@handler ctx.send {
                 setColor(Color(141, 20, 0))
                 setAuthor("$provider Results", link, icon)
                 setThumbnail(thumbnail)
@@ -79,4 +82,14 @@ fun genericSearchCommand(ctx: Context, query: String, searchPrefix: String, prov
             finally { it?.delete()?.queue() }
         }.display(ctx.textChannel!!)
     }
+
+    Launcher.players.playerManager.loadItem("$searchPrefix:$query", FunctionalResultHandler(
+        Consumer { handler(listOf(it)) },           // TrackLoaded
+        Consumer {
+            if (!it.isSearchResult) handler(emptyList())
+            else handler(it.tracks.subList(0, 5.coerceAtMost(it.tracks.size)))
+        }, // PlaylistLoaded
+        Runnable { handler(emptyList()) },          // NoMatches
+        Consumer { handler(emptyList()) }           // LoadFailed
+    ))
 }

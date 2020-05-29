@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit
 class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHandler, AudioEventAdapter() {
     // Misc
     val guild: Guild? get() = Launcher.shardManager.getGuildById(guildId)
+    val isAlone: Boolean get() = guild?.selfMember?.voiceState?.channel?.members?.none { !it.user.isBot } ?: true
 
     // Playback/Music related.
     val queue: RQueue<String> = Launcher.db.redisson.getQueue("playerQueue:$guildId")

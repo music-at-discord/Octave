@@ -33,5 +33,5 @@ import java.awt.Color
 class Soundcloud : Cog {
     @Command(aliases = ["sc"], description = "Search and see SoundCloud results.")
     fun soundcloud(ctx: Context, @Greedy query: String) = genericSearchCommand(ctx, query, "scsearch", "SoundCloud", Color(255, 110, 0),
-        "https://soundcloud.com", "https://soundcloud.com/favicon.ico", "https://octave.gg/assets/img/soundcloud.png")
+        "https://soundcloud.com", "https://cdn2.iconfinder.com/data/icons/minimalism/512/soundcloud.png", "https://octave.gg/assets/img/soundcloud.png")
 }

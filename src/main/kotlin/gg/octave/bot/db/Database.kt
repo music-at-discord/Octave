@@ -27,6 +27,7 @@ package gg.octave.bot.db
 import com.rethinkdb.RethinkDB
 import com.rethinkdb.RethinkDB.r
 import com.rethinkdb.ast.ReqlAst
+import com.rethinkdb.gen.ast.TableList
 import com.rethinkdb.gen.exc.ReqlDriverError
 import com.rethinkdb.net.Connection
 import com.rethinkdb.net.Cursor

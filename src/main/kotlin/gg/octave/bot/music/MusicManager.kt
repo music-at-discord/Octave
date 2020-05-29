@@ -53,27 +53,6 @@ import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 class MusicManager(val bot: Launcher, val guildId: String, val playerRegistry: PlayerRegistry, val playerManager: AudioPlayerManager) {
-    fun search(query: String, maxResults: Int = -1, callback: (results: List<AudioTrack>) -> Unit) {
-        playerManager.loadItem(query, object : AudioLoadResultHandler {
-            override fun trackLoaded(track: AudioTrack) = callback(listOf(track))
-
-            override fun playlistLoaded(playlist: AudioPlaylist) {
-                if (!playlist.isSearchResult) {
-                    return
-                }
-
-                if (maxResults == -1) {
-                    callback(playlist.tracks)
-                } else {
-                    callback(playlist.tracks.subList(0, maxResults.coerceAtMost(playlist.tracks.size)))
-                }
-            }
-
-            override fun noMatches() = callback(emptyList())
-            override fun loadFailed(e: FriendlyException) = callback(emptyList())
-        })
-    }
-
     @Volatile
     private var leaveTask: Future<*>? = null
 

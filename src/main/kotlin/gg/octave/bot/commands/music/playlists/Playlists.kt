@@ -22,6 +22,10 @@ class Playlists : Cog {
         return ctx.author.idLong in ctx.commandClient.ownerIds
     }
 
+    //IDEA:
+    // - Access playlists via index
+    // - Perhaps fuzzy name searching
+
     @Command(aliases = ["pl", "cpl"], description = "Manage your custom playlists.", hidden = true)
     fun playlists(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
 
