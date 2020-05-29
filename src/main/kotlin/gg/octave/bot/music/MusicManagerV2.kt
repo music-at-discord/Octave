@@ -12,9 +12,12 @@ import gg.octave.bot.music.utils.DiscordFMTrackContext
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.Task
 import gg.octave.bot.utils.extensions.insertAt
+import me.devoxin.flight.api.Context
+import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.audio.AudioSendHandler
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.entities.TextChannel
+import net.dv8tion.jda.api.entities.VoiceChannel
 import org.redisson.api.RQueue
 import java.nio.ByteBuffer
 import java.util.concurrent.Future
@@ -69,6 +72,42 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
         }
     }
 
+    fun openAudioConnection(channel: VoiceChannel, ctx: Context): Boolean {
+        when {
+            !guild?.selfMember!!.hasPermission(channel, Permission.VOICE_CONNECT) -> {
+                ctx.send("The bot can't connect to this channel due to a lack of permission.")
+                destroy()
+                return false
+            }
+            channel.userLimit != 0
+                && guild?.selfMember!!.hasPermission(channel, Permission.VOICE_MOVE_OTHERS)
+                && channel.members.size >= channel.userLimit -> {
+                ctx.send("The bot can't join due to the user limit.")
+                destroy()
+                return false
+            }
+            else -> {
+                guild?.audioManager?.apply {
+                    openAudioConnection(channel)
+                    sendingHandler = this@MusicManagerV2
+                }
+
+                ctx.send {
+                    setColor(0x9570D3)
+                    setTitle("Music Playback")
+                    setDescription("Joining channel `${channel.name}`.")
+                }
+                return true
+            }
+        }
+    }
+    // move audio connection
+    // close audio connection
+
+    // queue leave
+    // cancel leave
+    // create leave task
+
     fun destroy() = Launcher.players.destroy(guildId)
 
     fun cleanup() {
@@ -79,10 +118,12 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
         //closeAudioConnection()
     }
 
+    // *----------- Scheduler/Event Handling -----------*
     override fun onTrackEnd(player: AudioPlayer, track: AudioTrack, endReason: AudioTrackEndReason) {
         lastPlayedAt = System.currentTimeMillis()
     }
 
+    // TODO: EVENTS
 
     // *----------- AudioSendHandler -----------*
     private val frameBuffer = ByteBuffer.allocate(StandardAudioDataFormats.DISCORD_OPUS.maximumChunkSize())

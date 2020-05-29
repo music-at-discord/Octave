@@ -3,6 +3,9 @@ package gg.octave.bot.commands.music.playlists
 import com.sedmelluq.discord.lavaplayer.player.FunctionalResultHandler
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.music.CustomPlaylist
+import gg.octave.bot.music.LoadResultHandler
+import gg.octave.bot.music.MusicManagerV2
+import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.db
 import gg.octave.bot.utils.extensions.iterate
@@ -134,7 +137,10 @@ class Playlists : Cog {
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
 
-        val manager = Launcher.players.get(ctx.guild!!)
+        //val manager = Launcher.players.get(ctx.guild!!)
+        val karen = MusicManagerV2(ctx.guild!!.idLong, Launcher.players.playerManager.createPlayer())
+        val lrh = LoadResultHandler(null, ctx, karen, TrackContext(ctx.author.idLong, ctx.textChannel!!.idLong), false, null)
+        lrh.playlistLoaded(existingPlaylist.toBasicAudioPlaylist())
     }
 
     // fun share(ctx: Context, @Greedy name: String)

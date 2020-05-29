@@ -19,7 +19,7 @@ import me.devoxin.flight.api.Context
 import java.util.concurrent.TimeUnit
 
 class LoadResultHandler(
-    private val identifier: String,
+    private val identifier: String?,
     private val ctx: Context,
     private val musicManager: MusicManagerV2,
     private val trackContext: TrackContext,
@@ -124,7 +124,7 @@ class LoadResultHandler(
                 return false
             }
 
-            // return manager.openAudioConnection()
+            return musicManager.openAudioConnection(ctx.voiceChannel!!, ctx)
         }
 
         return true
@@ -180,7 +180,11 @@ class LoadResultHandler(
         }
     }
 
-    fun cache(item: AudioItem) = CachingSourceManager.cache(identifier, item)
+    fun cache(item: AudioItem) {
+        if (identifier != null) {
+            CachingSourceManager.cache(identifier, item)
+        }
+    }
 
     companion object {
         fun loadItem(query: String, ctx: Context, musicManager: MusicManagerV2, trackContext: TrackContext,

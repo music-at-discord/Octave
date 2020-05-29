@@ -112,6 +112,11 @@ public class CustomPlaylist extends ManagedObject {
                 .collect(Collectors.toList());
     }
 
+    @JsonIgnore
+    public BasicAudioPlaylist toBasicAudioPlaylist() {
+        return new BasicAudioPlaylist(getName(), getDecodedTracks(), null, false);
+    }
+
     public static CustomPlaylist createWith(String authorId, String name) {
         CustomPlaylist playlist = new CustomPlaylist(authorId + "-" + name);
         playlist.setAuthor(authorId);
