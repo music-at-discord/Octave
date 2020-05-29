@@ -84,12 +84,12 @@ fun genericSearchCommand(ctx: Context, query: String, searchPrefix: String, prov
     }
 
     Launcher.players.playerManager.loadItem("$searchPrefix:$query", FunctionalResultHandler(
-        Consumer { handler(listOf(it)) },           // TrackLoaded
+        Consumer { handler(listOf(it)) },
         Consumer {
             if (!it.isSearchResult) handler(emptyList())
             else handler(it.tracks.subList(0, 5.coerceAtMost(it.tracks.size)))
-        }, // PlaylistLoaded
-        Runnable { handler(emptyList()) },          // NoMatches
-        Consumer { handler(emptyList()) }           // LoadFailed
+        },
+        Runnable { handler(emptyList()) },
+        Consumer { handler(emptyList()) }
     ))
 }
