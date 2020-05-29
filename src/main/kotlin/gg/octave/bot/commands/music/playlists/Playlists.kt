@@ -60,7 +60,7 @@ class Playlists : Cog {
 
         ctx.send {
             setColor(0x9571D3)
-            setTitle("Playlist Created")
+            setTitle("Your Playlists")
             setDescription("Your shiny new playlist has been created.")
         }
     }
@@ -70,7 +70,7 @@ class Playlists : Cog {
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send {
                 setColor(0x9571D3)
-                setTitle("Unknown Custom Playlist")
+                setTitle("Your Playlists")
                 setDescription("No custom playlists found with that name.\nTo prevent accidental deletion, you need to enter the full playlist name.")
             }
 
@@ -78,7 +78,7 @@ class Playlists : Cog {
 
         ctx.send {
             setColor(0x9571D3)
-            setTitle("Playlist Deleted")
+            setTitle("Your Playlists")
             setDescription("Your custom playlist has been removed.")
         }
     }
