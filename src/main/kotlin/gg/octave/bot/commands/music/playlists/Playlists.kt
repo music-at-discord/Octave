@@ -142,11 +142,6 @@ class Playlists : Cog {
     // fun privacy(ctx: Context, setting: ..., @Greedy name: String) // Changes whether a playlist can be viewed by other users.
     // fun snoop(ctx: Context, user: User) // snoop on other user's custom playlists.
 
-    // fun addall(playlist link)
-    // fun addsingle(track link)
-    // fun saveto(now playing)
-    // maybe something more intuitive
-
-    // methods to remove a track or multiple from playlist
+    // method to remove multiple tracks from playlist
     // also method to use playlist for radio
 }
