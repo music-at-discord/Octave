@@ -128,7 +128,7 @@ class Playlists : Cog {
         Launcher.players.playerManager.loadItem(url.toString(), loader)
     }
 
-    @SubCommand
+    @SubCommand(description = "Loads a custom playlist for playing.")
     fun load(ctx: Context, @Greedy name: String) {
         val existingPlaylist = ctx.db.findCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
