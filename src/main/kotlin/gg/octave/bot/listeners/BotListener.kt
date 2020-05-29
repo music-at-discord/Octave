@@ -108,7 +108,9 @@ class BotListener : EventListener {
     }
 
     private fun onStatusChange(event: StatusChangeEvent) {
-        log.info("Shard #{} Status: {} -> {}", event.jda.shardInfo.shardId, event.oldStatus, event.newStatus)
+        if(event.newStatus.ordinal >= JDA.Status.LOADING_SUBSYSTEMS.ordinal) {
+            log.info("Shard #{} Status: {} -> {}", event.jda.shardInfo.shardId, event.oldStatus, event.newStatus)
+        }
     }
 
     private fun onReady(event: ReadyEvent) {
