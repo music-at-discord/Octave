@@ -29,12 +29,18 @@ import gg.octave.bot.utils.TextSplitter
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.entities.Cog
-import net.dv8tion.jda.api.JDA
+import org.json.JSONObject
 
 class ShardInfo : Cog {
     @Command(aliases = ["shards", "shard"], description = "View shard information.", developerOnly = true)
     suspend fun shardinfo(ctx: Context) {
-        val status = ctx.jda.shardManager!!.shards.reversed().joinToString("\n", transform = ::formatInfo)
+        var stats: Map<String, String> = HashMap()
+        Launcher.database.jedisPool.resource.use {
+            stats = it.hgetAll("stats")
+        }
+
+        val status = stats.entries.sortedBy { it.key.toInt() }
+                .joinToString("\n") { formatInfo(it.key.toInt(), stats.size, JSONObject(it.value)) }
         val pages = TextSplitter.split(status, 1920)
 
         for (page in pages) {
@@ -42,17 +48,14 @@ class ShardInfo : Cog {
         }
     }
 
-    private fun formatInfo(jda: JDA): String {
-        val shardId = jda.shardInfo.shardId
-        val totalShards = jda.shardInfo.shardTotal
-
+    private fun formatInfo(id: Int, total: Int, json: JSONObject): String {
         return "%3d | %9.9s | %7.7s | %6d | %6d | %3d".format(
-            shardId,
-            jda.status,
-            "${jda.gatewayPing}ms",
-            jda.guildCache.size(),
-            jda.userCache.size(),
-            Launcher.players.registry.values.count { getShardIdForGuild(it.guildId, totalShards) == shardId }
+                id,
+                json.getString("status"),
+                "${json.getLong("ping")}ms",
+                json.getLong("guild_count"),
+                json.getLong("cached_users"),
+                Launcher.players.registry.values.count { getShardIdForGuild(it.guildId, total) == id }
         )
     }
 

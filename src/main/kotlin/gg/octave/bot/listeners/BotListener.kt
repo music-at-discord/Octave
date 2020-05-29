@@ -108,7 +108,11 @@ class BotListener : EventListener {
     }
 
     private fun onStatusChange(event: StatusChangeEvent) {
-        log.info("Shard #{} Status: {} -> {}", event.jda.shardInfo.shardId, event.oldStatus, event.newStatus)
+        if(event.newStatus.ordinal >= JDA.Status.LOADING_SUBSYSTEMS.ordinal) {
+            log.info("Shard #{} Status: {} -> {}", event.jda.shardInfo.shardId, event.oldStatus, event.newStatus)
+        }
+
+        postStats(event.jda)
     }
 
     private fun onReady(event: ReadyEvent) {
@@ -120,6 +124,7 @@ class BotListener : EventListener {
     private fun onResume(event: ResumedEvent) {
         Launcher.datadog.incrementCounter("octave_bot.shardResume")
         log.info("JDA ${event.jda.shardInfo.shardId} has resumed.")
+        postStats(event.jda)
     }
 
     private fun onReconnect(event: ReconnectedEvent) {
@@ -152,6 +157,8 @@ class BotListener : EventListener {
             it.hset("stats", jda.shardInfo.shardId.toString(), JSONObject()
                     .put("guild_count", jda.guildCache.size())
                     .put("cached_users", jda.userCache.size())
+                    .put("status", jda.status)
+                    .put("ping", jda.gatewayPing)
                     .toString()
             )
         }
