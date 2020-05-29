@@ -75,14 +75,15 @@ class Help : Cog {
         val categories = ctx.commandClient.commands.values
             .groupBy { categoryAlias[it.category] ?: it.category }
             .filter { it.key != "Admin" || ctx.author.idLong in ctx.commandClient.ownerIds }
-            .filter { it.value.isNotEmpty() }
 
         ctx.send {
             setColor(0x9571D3)
             setTitle("Bot Commands")
             setDescription("The prefix of the bot on this server is `$guildTrigger`")
             for ((key, commands) in categories) {
-                val allCommands = commands.filter { !it.properties.hidden }
+                val allCommands = commands.filter { !it.properties.hidden }.takeIf { it.isNotEmpty() }
+                    ?: continue
+
                 val fieldName = "$key — ${allCommands.size}"
                 val commandList = allCommands.joinToString("`, `", prefix = "`", postfix = "`") { it.name }
                 addField(fieldName, commandList, false)
