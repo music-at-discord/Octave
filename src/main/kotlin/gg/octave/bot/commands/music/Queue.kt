@@ -38,7 +38,7 @@ class Queue : Cog {
     @Command(aliases = ["q"], description = "Shows the current queue.")
     fun queue(ctx: Context) {
         val manager = Launcher.players.getExisting(ctx.guild)
-            ?: return ctx.send("There's no music player in this guild.\n$PLAY_MESSAGE")
+            ?: return ctx.send("There's no music player in this guild.\n${PLAY_MESSAGE.format(ctx.trigger)}")
 
         val queue = manager.queue
         var queueLength = 0L

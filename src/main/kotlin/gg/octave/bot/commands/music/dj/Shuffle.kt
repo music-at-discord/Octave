@@ -44,7 +44,7 @@ class Shuffle : MusicCog {
         val manager = ctx.manager
 
         if (manager.queue.isEmpty()) {
-            return ctx.send("The queue is empty.\n$PLAY_MESSAGE")
+            return ctx.send("The queue is empty.\n${PLAY_MESSAGE.format(ctx.trigger)}")
         }
 
         manager.queue.shuffle()

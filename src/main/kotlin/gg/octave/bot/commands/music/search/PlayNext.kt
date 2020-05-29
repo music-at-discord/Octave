@@ -39,10 +39,10 @@ class PlayNext : Cog {
     @Command(aliases = ["pn"], description = "Adds a song at the start of the queue.")
     fun playnext(ctx: Context, @Greedy query: String) {
         val manager = ctx.existingManager
-            ?: return ctx.send("There's no queue here.\n$PLAY_MESSAGE")
+            ?: return ctx.send("There's no queue here.\n${PLAY_MESSAGE.format(ctx.trigger)}")
 
         val botChannel = ctx.selfMember!!.voiceState?.channel
-            ?: return ctx.send("I'm not currently playing anything.\n$PLAY_MESSAGE")
+            ?: return ctx.send("I'm not currently playing anything.\n${PLAY_MESSAGE.format(ctx.trigger)}")
         val userChannel = ctx.voiceChannel
 
         if (botChannel != userChannel) {

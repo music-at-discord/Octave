@@ -45,7 +45,7 @@ interface MusicCog : Cog {
         val manager = Launcher.players.getExisting(ctx.guild)
 
         if (requireManager() && manager == null) {
-            ctx.send("There's no music player in this server.\n$PLAY_MESSAGE")
+            ctx.send("There's no music player in this server.\n${PLAY_MESSAGE.format(ctx.trigger)}")
             return false
         }
 
@@ -57,7 +57,7 @@ interface MusicCog : Cog {
         }
 
         if (requirePlayer() && botChannel == null) {
-            ctx.send("The bot is not currently in a voice channel.\n$PLAY_MESSAGE")
+            ctx.send("The bot is not currently in a voice channel.\n${PLAY_MESSAGE.format(ctx.trigger)}")
             return false
         }
 

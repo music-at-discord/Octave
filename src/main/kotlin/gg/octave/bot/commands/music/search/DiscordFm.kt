@@ -75,7 +75,7 @@ class DiscordFm : Cog {
     @SubCommand
     fun stop(ctx: Context) {
         val manager = Launcher.players.getExisting(ctx.guild)
-            ?: return ctx.send("There's no music player in this guild.\n$PLAY_MESSAGE")
+            ?: return ctx.send("There's no music player in this guild.\n${PLAY_MESSAGE.format(ctx.trigger)}")
 
         if (manager.discordFMTrack == null) {
             return ctx.send("I'm not streaming random songs from a radio station.")
