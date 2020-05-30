@@ -31,6 +31,11 @@ import java.util.regex.Pattern
 
 object Utils {
     private val TIME_PATTERN = Pattern.compile("(-?\\d+)\\s*((?:d(?:ays?)?)|(?:h(?:ours?)?)|(?:m(?:in(?:utes?)?)?)|(?:s(?:ec(?:onds?)?)?))?")
+    private val alphaNumeric = ('a'..'z').union('A'..'Z').union('0'..'9')
+
+    fun generateId(): String {
+        return (0 until 5).map { alphaNumeric.random() }.joinToString("").toUpperCase()
+    }
 
     fun parseTime(time: String): Long {
         val s = time.toLowerCase()

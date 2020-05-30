@@ -9,6 +9,7 @@ import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.db
 import gg.octave.bot.utils.extensions.iterate
+import gg.octave.bot.utils.extensions.voiceChannel
 import me.devoxin.flight.api.CommandFunction
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -130,6 +131,23 @@ class Playlists : Cog {
 
     @SubCommand(description = "Loads a custom playlist for playing.")
     fun load(ctx: Context, @Greedy name: String) {
+        when {
+            ctx.voiceChannel == null -> {
+                return ctx.send {
+                    setColor(0x9571D3)
+                    setTitle("Your Playlists")
+                    setDescription("You need to be in a voice channel to load a playlist.")
+                }
+            }
+            ctx.guild!!.selfMember.voiceState?.channel != null && ctx.voiceChannel != ctx.guild!!.selfMember.voiceState?.channel -> {
+                return ctx.send {
+                    setColor(0x9571D3)
+                    setTitle("Your Playlists")
+                    setDescription("The bot is already playing music in another channel.")
+                }
+            }
+        }
+
         val existingPlaylist = ctx.db.findCustomPlaylist(ctx.author.id, name)
             ?: return ctx.send("You don't have any playlists with that name.")
 

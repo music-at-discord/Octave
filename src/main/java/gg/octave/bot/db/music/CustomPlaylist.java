@@ -31,6 +31,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.BasicAudioPlaylist;
 import gg.octave.bot.Launcher;
 import gg.octave.bot.db.ManagedObject;
+import gg.octave.bot.utils.Utils;
 
 import java.beans.ConstructorProperties;
 import java.io.IOException;
@@ -118,7 +119,13 @@ public class CustomPlaylist extends ManagedObject {
     }
 
     public static CustomPlaylist createWith(String authorId, String name) {
-        CustomPlaylist playlist = new CustomPlaylist(authorId + "-" + name);
+        String id = Utils.INSTANCE.generateId();
+
+        if (Launcher.INSTANCE.getDatabase().getCustomPlaylistById(id) != null) {
+            return createWith(authorId, name);
+        }
+
+        CustomPlaylist playlist = new CustomPlaylist(id);
         playlist.setAuthor(authorId);
         playlist.setName(name);
         return playlist;
