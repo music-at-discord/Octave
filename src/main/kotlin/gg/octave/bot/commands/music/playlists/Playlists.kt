@@ -2,14 +2,12 @@ package gg.octave.bot.commands.music.playlists
 
 import com.sedmelluq.discord.lavaplayer.player.FunctionalResultHandler
 import gg.octave.bot.Launcher
+import gg.octave.bot.db.OptionsRegistry
 import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.music.LoadResultHandler
 import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.music.utils.TrackContext
-import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
-import gg.octave.bot.utils.extensions.db
-import gg.octave.bot.utils.extensions.iterate
-import gg.octave.bot.utils.extensions.voiceChannel
+import gg.octave.bot.utils.extensions.*
 import me.devoxin.flight.api.CommandFunction
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -50,6 +48,10 @@ class Playlists : Cog {
 
     @SubCommand(aliases = ["new", "add", "+"], description = "Create a new custom playlist.")
     fun create(ctx: Context, @Greedy name: String) {
+        if (!checkQuota(ctx)) {
+            return
+        }
+
         val existingPlaylist = ctx.db.getCustomPlaylist(ctx.author.id, name)
 
         if (existingPlaylist != null) {
@@ -101,6 +103,10 @@ class Playlists : Cog {
 
     @SubCommand(description = "Import a playlist from YouTube/SoundCloud/...")
     fun import(ctx: Context, url: URL, @Greedy name: String?) {
+        if (!checkQuota(ctx)) {
+            return
+        }
+
         val loader = FunctionalResultHandler(
             Consumer { ctx.send("This is not a playlist.") },
             Consumer {
@@ -162,4 +168,19 @@ class Playlists : Cog {
 
     // method to remove multiple tracks from playlist
     // also method to use playlist for radio
+
+    private fun checkQuota(ctx: Context): Boolean {
+        val quota = ctx.premiumUser.remainingCustomPlaylistQuota
+
+        if (quota <= 0) {
+            ctx.send {
+                setColor(0x9571D3)
+                setTitle("Your Playlists")
+                setDescription("You don't have any remaining custom playlist slots.\n[Donate for more slots](http://patreon.com/octavebot)")
+            }
+            return false
+        }
+
+        return true
+    }
 }

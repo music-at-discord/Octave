@@ -29,7 +29,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.rethinkdb.net.Cursor;
 import gg.octave.bot.Launcher;
+import gg.octave.bot.db.Database;
 import gg.octave.bot.db.ManagedObject;
+import gg.octave.bot.db.music.CustomPlaylist;
 
 import javax.annotation.Nullable;
 import java.beans.ConstructorProperties;
@@ -75,6 +77,12 @@ public class PremiumUser extends ManagedObject {
     }
 
     @JsonIgnore
+    @Nullable
+    public Cursor<CustomPlaylist> getCustomPlaylists() {
+        return Launcher.INSTANCE.getDatabase().getCustomPlaylistsAsCursor(getId());
+    }
+
+    @JsonIgnore
     public int getTotalPremiumGuildQuota() {
         if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getId()))) {
             return 99999;
@@ -91,11 +99,6 @@ public class PremiumUser extends ManagedObject {
     }
 
     @JsonIgnore
-    public boolean isPremium() {
-        return pledgeAmount >= 5;
-    }
-
-    @JsonIgnore
     public int getRemainingPremiumGuildQuota() {
         Cursor<PremiumGuild> cursor = getPremiumGuilds();
 
@@ -106,5 +109,40 @@ public class PremiumUser extends ManagedObject {
 
         List<PremiumGuild> redeemedGuilds = cursor.toList();
         return getTotalPremiumGuildQuota() - redeemedGuilds.size();
+    }
+
+    @JsonIgnore
+    public int getTotalCustomPlaylistQuota() {
+        if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getId()))) {
+            return 99999;
+        } else if (pledgeAmount > 5) {
+            return 99999;
+        } else if (pledgeAmount == 5) {
+            return 5;
+        } else {
+            return 1;
+        }
+
+        // $0 -> 1
+        // $5 -> 5
+        // $5+ -> Unlimited
+    }
+
+    @JsonIgnore
+    public int getRemainingCustomPlaylistQuota() {
+        Cursor<CustomPlaylist> cursor = getCustomPlaylists();
+
+        if (cursor == null) {
+            return 0;
+            // In case of database error, return 0 to ensure users can't exploit malfunctions.
+        }
+
+        List<CustomPlaylist> customPlaylists = cursor.toList();
+        return getTotalCustomPlaylistQuota() - customPlaylists.size();
+    }
+
+    @JsonIgnore
+    public boolean isPremium() {
+        return pledgeAmount >= 5;
     }
 }

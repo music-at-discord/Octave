@@ -29,6 +29,7 @@ import gg.octave.bot.db.Database
 import gg.octave.bot.db.OptionsRegistry
 import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.db.premium.PremiumGuild
+import gg.octave.bot.db.premium.PremiumUser
 import gg.octave.bot.entities.Configuration
 import gg.octave.bot.music.MusicManager
 import gg.octave.bot.music.MusicManagerV2
@@ -51,6 +52,9 @@ val Context.premiumGuild: PremiumGuild?
 
 val Context.isGuildPremium: Boolean
     get() = premiumGuild != null || data.isPremium
+
+val Context.premiumUser: PremiumUser
+    get() = db.getPremiumUser(author.id)
 
 val Context.config: Configuration
     get() = Launcher.configuration
