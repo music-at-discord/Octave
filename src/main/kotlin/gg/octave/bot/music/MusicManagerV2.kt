@@ -209,7 +209,10 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
 
         // Avoid spamming by just sending it if the last time it was announced was more than 10s ago.
         if (lastTimeAnnounced == 0L || lastTimeAnnounced + 10000 < System.currentTimeMillis()) {
-            val embed = EmbedBuilder().setDescription(description).build()
+            val embed = EmbedBuilder()
+                .setColor(0x9570D3)
+                .setDescription(description)
+                .build()
             channel.sendMessage(embed).queue {
                 lastTimeAnnounced = System.currentTimeMillis()
             }
