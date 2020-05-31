@@ -193,7 +193,14 @@ class PlaylistManager(
                 ctx.send("Changes saved. Re-run `${ctx.trigger}cpl edit ${playlist.name}` if you would like to make further modifications.")
                 false
             }
-            else -> true
+            "exit" -> {
+                false
+            }
+            else -> {
+                playlist.setTracks(tracks)
+                playlist.save()
+                false
+            }
         }
     }
 
