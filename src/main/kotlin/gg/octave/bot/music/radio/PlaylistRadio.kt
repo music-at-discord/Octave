@@ -12,6 +12,7 @@ class PlaylistRadio(override val name: String, val author: String) : RadioSource
             ?: return CompletableFuture.completedFuture(null)
 
         val randomTrack = Launcher.players.playerManager.decodeTrack(playlist.encodedTracks.random())
+        randomTrack?.userData = context
         return CompletableFuture.completedFuture(randomTrack)
     }
 
