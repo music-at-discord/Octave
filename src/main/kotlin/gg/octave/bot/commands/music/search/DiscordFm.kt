@@ -27,6 +27,9 @@ package gg.octave.bot.commands.music.search
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.PLAY_MESSAGE
 import gg.octave.bot.music.LoadResultHandler
+import gg.octave.bot.music.radio.DiscordRadio
+import gg.octave.bot.music.radio.PlaylistRadio
+import gg.octave.bot.music.radio.RadioTrackContext
 import gg.octave.bot.music.utils.DiscordFMTrackContext
 import gg.octave.bot.utils.DiscordFM
 import me.devoxin.flight.api.Context
@@ -36,11 +39,11 @@ import me.devoxin.flight.api.entities.Cog
 import org.apache.commons.lang3.StringUtils
 
 class DiscordFm : Cog {
+    private val stations = DiscordFM.LIBRARIES.joinToString("\n") { "• `${it.capitalize()}`" }
+
     @Command(aliases = ["dfm"], description = "Stream random songs from some radio stations.")
     fun radio(ctx: Context, station: String?) {
         if (station == null) {
-            val stations = DiscordFM.LIBRARIES.joinToString("\n") { "• `${it.capitalize()}`" }
-
             return ctx.send {
                 setColor(0x9570D3)
                 setDescription(
@@ -66,10 +69,9 @@ class DiscordFm : Cog {
         val track = Launcher.discordFm.getRandomSong(library)
             ?: return ctx.send("Couldn't find any tracks in that library.")
 
-        DiscordFMTrackContext(library, ctx.author.idLong, ctx.textChannel!!.idLong).let {
-            manager.discordFMTrack = it
-            LoadResultHandler.loadItem(track, ctx, manager, it, false, "Now streaming random tracks from the `$library` radio station!")
-        }
+        val trackContext = RadioTrackContext(DiscordRadio(library), ctx.author.idLong, ctx.textChannel!!.idLong)
+        manager.radio = trackContext
+        LoadResultHandler.loadItem(track, ctx, manager, trackContext, false, "Now streaming random tracks from the `$library` radio station!")
     }
 
     @SubCommand
@@ -77,17 +79,21 @@ class DiscordFm : Cog {
         val manager = Launcher.players.getExisting(ctx.guild)
             ?: return ctx.send("There's no music player in this guild.\n${PLAY_MESSAGE.format(ctx.trigger)}")
 
-        if (manager.discordFMTrack == null) {
-            return ctx.send("I'm not streaming random songs from a radio station.")
+        val source = manager.radio?.source
+            ?: return ctx.send("The radio is not active.")
+
+        val message = when (source) {
+            is DiscordRadio -> "the `${source.name.capitalize()}` station."
+            is PlaylistRadio -> "<@${source.author}>'s playlist, `${source.name}`."
+            else -> "an unknown source."
         }
 
-        val station = manager.discordFMTrack!!.station.capitalize()
-        manager.discordFMTrack = null
+        manager.radio = null
 
         ctx.send {
             setColor(0x9570D3)
             setTitle("Radio")
-            setDescription("No longer streaming random songs from the `$station` station.")
+            setDescription("No longer streaming random songs from $message")
         }
     }
 }

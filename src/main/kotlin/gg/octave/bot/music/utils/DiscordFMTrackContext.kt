@@ -43,6 +43,7 @@ class DiscordFMTrackContext(
         writer.writeInt(2)
         // 1 => TrackContext
         // 2 => DiscordFMTrackContext
+        // 3 => RadioTrackContext
         writer.writeLong(requester)
         writer.writeLong(requestedChannel)
         writer.writeUTF(station)

@@ -24,6 +24,9 @@
 
 package gg.octave.bot.music.utils
 
+import gg.octave.bot.music.radio.DiscordRadio
+import gg.octave.bot.music.radio.RadioSource
+import gg.octave.bot.music.radio.RadioTrackContext
 import java.io.*
 
 open class TrackContext(val requester: Long, val requestedChannel: Long) {
@@ -35,6 +38,7 @@ open class TrackContext(val requester: Long, val requestedChannel: Long) {
         writer.writeInt(1)
         // 1 => TrackContext
         // 2 => DiscordFMTrackContext
+        // 3 => RadioTrackContext
         writer.writeLong(requester)
         writer.writeLong(requestedChannel)
         writer.close() // This invokes flush.
@@ -56,7 +60,12 @@ open class TrackContext(val requester: Long, val requestedChannel: Long) {
                     1 -> TrackContext(requester, requestedChannel)
                     2 -> {
                         val station = reader.readUTF()
-                        DiscordFMTrackContext(station, requester, requestedChannel)
+                        //DiscordFMTrackContext(station, requester, requestedChannel)
+                        RadioTrackContext(DiscordRadio(station), requester, requestedChannel)
+                    }
+                    3 -> {
+                        val source = RadioSource.deserialize(stream)
+                        RadioTrackContext(source, requester, requestedChannel)
                     }
                     else -> throw IllegalArgumentException("Invalid contextType $contextType!")
                 }

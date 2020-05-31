@@ -12,8 +12,8 @@ import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
 import gg.octave.bot.db.OptionsRegistry
 import gg.octave.bot.music.filters.DSPFilter
+import gg.octave.bot.music.radio.RadioTrackContext
 import gg.octave.bot.music.settings.RepeatOption
-import gg.octave.bot.music.utils.DiscordFMTrackContext
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.Task
 import gg.octave.bot.utils.extensions.friendlierMessage
@@ -47,7 +47,7 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
         private set
     var currentTrack: AudioTrack? = null
         private set
-    var discordFMTrack: DiscordFMTrackContext? = null
+    var radio: RadioTrackContext? = null
     var repeatOption = RepeatOption.NONE
 
     // Settings/internals.
@@ -181,19 +181,11 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
             return player.playTrack(decodedTrack)
         }
 
-        if (discordFMTrack == null) {
-            return player.stopTrack() // Wait for more music, or user/auto disconnect.
-            // return MusicManager.schedulerThread.execute { manager.playerRegistry.destroy(manager.guild) }
-        }
+        val radioTrack = radio?.nextTrack()
+            ?: return player.stopTrack()
 
-        discordFMTrack?.let {
-            it.nextDiscordFMTrack().thenAccept { track ->
-                if (track == null) {
-                    return@thenAccept destroy()
-                }
-
-                player.startTrack(track, false)
-            }
+        radioTrack.thenAccept {
+            player.startTrack(it, false)
         }
     }
 
