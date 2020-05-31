@@ -31,7 +31,6 @@ import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.db.premium.PremiumGuild
 import gg.octave.bot.db.premium.PremiumUser
 import gg.octave.bot.entities.Configuration
-import gg.octave.bot.music.MusicManager
 import gg.octave.bot.music.MusicManagerV2
 import me.devoxin.flight.api.Context
 import net.dv8tion.jda.api.entities.Member

@@ -64,12 +64,12 @@ class PatreonAPI(var accessToken: String?) {
 
                     if (pledge == null || pledge.isDeclined) {
                         Launcher.shardManager.openPrivateChannel(userId)
-                                .flatMap {
-                                    it.sendMessage("Your pledge was either declined or removed from Patreon. " +
-                                            "As a result, your perks have been revoked. If you believe this was in error, " +
-                                            "check your payment method. If not, we hope Octave exceeded your expectations, and " +
-                                            "we hope to see you again soon!")
-                                }.queue()
+                            .flatMap {
+                                it.sendMessage("Your pledge was either declined or removed from Patreon. " +
+                                    "As a result, your perks have been revoked. If you believe this was in error, " +
+                                    "check your payment method. If not, we hope Octave exceeded your expectations, and " +
+                                    "we hope to see you again soon!")
+                            }.queue()
 
                         for (guild in entry.premiumGuildsList) {
                             guild.delete()

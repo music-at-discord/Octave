@@ -25,7 +25,6 @@
 package gg.octave.bot.commands.admin
 
 import gg.octave.bot.Launcher
-import gg.octave.bot.music.MusicManager
 import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.music.settings.BoostSetting
 import me.devoxin.flight.api.Context
@@ -49,7 +48,9 @@ class PlayerStats : Cog {
 
         val paused = players.count { it.player.isPaused }
         val encoding = players.count(::isEncoding)
-        val alone = players.count { it.guild?.audioManager?.connectedChannel?.members?.none { m -> !m.user.isBot } ?: false }
+        val alone = players.count {
+            it.guild?.audioManager?.connectedChannel?.members?.none { m -> !m.user.isBot } ?: false
+        }
         val bySource = players.mapNotNull { it.player.playingTrack?.sourceManager?.sourceName }.groupingBy { it }.eachCount()
         //val bySource = sources.associateBy({ it }, { players.count { m -> isSource(it, m) } })
         val bySourceFormatted = bySource.map { "• ${it.key.capitalize()}: **${it.value}**" }.joinToString("\n")
@@ -58,7 +59,7 @@ class PlayerStats : Cog {
             setColor(0x9570D3)
             setTitle("Player Statistics")
             setDescription("**This node**: ${players.size}\n" +
-                    "**All nodes**: $musicPlayers")
+                "**All nodes**: $musicPlayers")
             addField("Source Insight", "**This node:**\n$bySourceFormatted", true)
             addField("Statistics", "**This node:**\n• **$encoding** encoding\n• **$paused** paused\n• **$alone** alone", true)
         }

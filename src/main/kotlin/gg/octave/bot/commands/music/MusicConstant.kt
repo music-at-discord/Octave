@@ -25,7 +25,6 @@
 package gg.octave.bot.commands.music
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo
-import gg.octave.bot.Launcher
 
 internal const val PLAY_MESSAGE = "\uD83C\uDFB6 `%splay (song/url)` in a voice channel to start playing some music!"
 

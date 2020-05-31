@@ -28,7 +28,6 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.db.OptionsRegistry
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
-import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.events.*
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
@@ -108,7 +107,7 @@ class BotListener : EventListener {
     }
 
     private fun onStatusChange(event: StatusChangeEvent) {
-        if(event.newStatus.ordinal >= JDA.Status.LOADING_SUBSYSTEMS.ordinal) {
+        if (event.newStatus.ordinal >= JDA.Status.LOADING_SUBSYSTEMS.ordinal) {
             log.info("Shard #{} Status: {} -> {}", event.jda.shardInfo.shardId, event.oldStatus, event.newStatus)
         }
 
@@ -155,11 +154,11 @@ class BotListener : EventListener {
     private fun postStats(jda: JDA) {
         Launcher.database.jedisPool.resource.use {
             it.hset("stats", jda.shardInfo.shardId.toString(), JSONObject()
-                    .put("guild_count", jda.guildCache.size())
-                    .put("cached_users", jda.userCache.size())
-                    .put("status", jda.status)
-                    .put("ping", jda.gatewayPing)
-                    .toString()
+                .put("guild_count", jda.guildCache.size())
+                .put("cached_users", jda.userCache.size())
+                .put("status", jda.status)
+                .put("ping", jda.gatewayPing)
+                .toString()
             )
         }
     }

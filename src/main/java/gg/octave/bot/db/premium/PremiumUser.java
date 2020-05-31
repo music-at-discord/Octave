@@ -29,7 +29,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.rethinkdb.net.Cursor;
 import gg.octave.bot.Launcher;
-import gg.octave.bot.db.Database;
 import gg.octave.bot.db.ManagedObject;
 import gg.octave.bot.db.music.CustomPlaylist;
 

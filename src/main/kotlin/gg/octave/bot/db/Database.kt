@@ -60,9 +60,9 @@ class Database(private val name: String) {
 
         // Init Rethink
         val builder = r.connection()
-                .hostname(creds.rethinkHost)
-                .port(creds.rethinkPort)
-                .user(rethinkUser, rethinkAuth)
+            .hostname(creds.rethinkHost)
+            .port(creds.rethinkPort)
+            .user(rethinkUser, rethinkAuth)
 
         try {
             conn = builder.connect()
@@ -119,9 +119,11 @@ class Database(private val name: String) {
     fun getCustomPlaylist(authorId: String, title: String) = query<Cursor<CustomPlaylist>, CustomPlaylist>(CustomPlaylist::class.java) {
         table("customplaylists").filter { it.g("author").eq(authorId).and(it.g("name").eq(title)) }
     }?.toList()?.firstOrNull()
+
     fun getCustomPlaylists(authorId: String) = query<Cursor<CustomPlaylist>, CustomPlaylist>(CustomPlaylist::class.java) {
         table("customplaylists").filter { it.g("author").eq(authorId) }
     }
+
     fun getCustomPlaylistsAsList(authorId: String) = getCustomPlaylists(authorId)?.toList() ?: emptyList()
     fun findCustomPlaylist(authorId: String, fuzzyTitle: String) = getCustomPlaylistsAsList(authorId).firstOrNull { it.name.toLowerCase().contains(fuzzyTitle) }
 

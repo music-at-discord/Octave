@@ -71,7 +71,7 @@ class PlayerRegistry {
 
     fun size() = registry.size
 
-    private fun isAllDayMusic(guildId: String) : Boolean {
+    private fun isAllDayMusic(guildId: String): Boolean {
         val premium = Launcher.database.getPremiumGuild(guildId)
         val guildData = OptionsRegistry.ofGuild(guildId)
         val key = guildData.isPremium

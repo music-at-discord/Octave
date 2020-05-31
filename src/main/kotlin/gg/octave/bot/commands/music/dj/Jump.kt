@@ -28,7 +28,6 @@ import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.entities.framework.Usages
-import gg.octave.bot.music.MusicManager
 import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.utils.Utils
 import gg.octave.bot.utils.extensions.manager

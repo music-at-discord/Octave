@@ -40,17 +40,17 @@ class NodeInfoPoster(var nodeId: Int) {
 
             Launcher.database.jedisPool.resource.use {
                 it.hset("node-stats", nodeId.toString(),
-                        JSONObject()
-                                .put("music_players", Launcher.players.size())
-                                .put("uptime", ManagementFactory.getRuntimeMXBean().uptime)
-                                .put("total_ram", ramTotal)
-                                .put("used_ram", ramUsedBytes)
-                                .put("thread_count", Thread.activeCount())
-                                .put("guild_count", Launcher.shardManager.guildCache.size())
-                                .put("cached_users", Launcher.shardManager.userCache.size())
-                                .put("shard_slice_start", Launcher.credentials.shardStart)
-                                .put("shard_slice_end", Launcher.credentials.shardEnd)
-                                .toString()
+                    JSONObject()
+                        .put("music_players", Launcher.players.size())
+                        .put("uptime", ManagementFactory.getRuntimeMXBean().uptime)
+                        .put("total_ram", ramTotal)
+                        .put("used_ram", ramUsedBytes)
+                        .put("thread_count", Thread.activeCount())
+                        .put("guild_count", Launcher.shardManager.guildCache.size())
+                        .put("cached_users", Launcher.shardManager.userCache.size())
+                        .put("shard_slice_start", Launcher.credentials.shardStart)
+                        .put("shard_slice_end", Launcher.credentials.shardEnd)
+                        .toString()
                 )
             }
         }, time, time, unit)

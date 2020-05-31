@@ -2,13 +2,10 @@ package gg.octave.bot.commands.music.playlists
 
 import com.sedmelluq.discord.lavaplayer.player.FunctionalResultHandler
 import gg.octave.bot.Launcher
-import gg.octave.bot.db.OptionsRegistry
 import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.music.LoadResultHandler
-import gg.octave.bot.music.MusicManagerV2
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.*
-import me.devoxin.flight.api.CommandFunction
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.annotations.Greedy

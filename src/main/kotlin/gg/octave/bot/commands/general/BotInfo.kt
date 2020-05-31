@@ -38,7 +38,6 @@ import me.devoxin.flight.api.annotations.SubCommand
 import me.devoxin.flight.api.entities.Cog
 import net.dv8tion.jda.api.JDAInfo
 import org.json.JSONObject
-import java.lang.StringBuilder
 import java.lang.management.ManagementFactory
 import java.text.DecimalFormat
 
@@ -121,7 +120,7 @@ class BotInfo : Cog {
                 setTitle("Node Statistics")
                 setUser(ctx.author)
                 setDescription("Per-node breakdown of the bot statistics.\nA node contains a set amount of shards.\n" +
-                        "**Current Node**: ${Launcher.configuration.nodeNumber} (${Launcher.configuration.nodeNumber + 1})")
+                    "**Current Node**: ${Launcher.configuration.nodeNumber} (${Launcher.configuration.nodeNumber + 1})")
                 setColor(ctx.selfMember?.color)
                 Launcher.database.jedisPool.resource.use {
                     val nodeStats = it.hgetAll("node-stats")
@@ -135,14 +134,14 @@ class BotInfo : Cog {
 
                         entry {
                             StringBuilder().append("Node ${node.key}\n")
-                                    .append("**Slice**: ${stats.getInt("shard_slice_start")} to ${stats.getInt("shard_slice_end") - 1}\n")
-                                    .append("**Uptime**: ${Utils.getTimestamp(stats.getLong("uptime"))}\n")
-                                    .append("**RAM Usage:** $ramUsedFormatted${ramUsedCalculated.unit} ($ramUsedPercent%)\n")
-                                    .append("**Threads**: ${stats.getLong("thread_count")}\n")
-                                    .append("**Guilds**: ${stats.getLong("guild_count")}\n")
-                                    .append("**Cached Users**: ${stats.getLong("cached_users")}\n")
-                                    .append("**Players**: ${stats.getLong("music_players")}\n")
-                                    .toString()
+                                .append("**Slice**: ${stats.getInt("shard_slice_start")} to ${stats.getInt("shard_slice_end") - 1}\n")
+                                .append("**Uptime**: ${Utils.getTimestamp(stats.getLong("uptime"))}\n")
+                                .append("**RAM Usage:** $ramUsedFormatted${ramUsedCalculated.unit} ($ramUsedPercent%)\n")
+                                .append("**Threads**: ${stats.getLong("thread_count")}\n")
+                                .append("**Guilds**: ${stats.getLong("guild_count")}\n")
+                                .append("**Cached Users**: ${stats.getLong("cached_users")}\n")
+                                .append("**Players**: ${stats.getLong("music_players")}\n")
+                                .toString()
                         }
                     }
                 }

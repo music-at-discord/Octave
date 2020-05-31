@@ -34,7 +34,6 @@ import gg.octave.bot.db.ManagedObject;
 import gg.octave.bot.utils.Utils;
 
 import java.beans.ConstructorProperties;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -40,7 +40,7 @@ class ShardInfo : Cog {
         }
 
         val status = stats.entries.sortedBy { it.key.toInt() }
-                .joinToString("\n") { formatInfo(it.key.toInt(), stats.size, JSONObject(it.value)) }
+            .joinToString("\n") { formatInfo(it.key.toInt(), stats.size, JSONObject(it.value)) }
         val pages = TextSplitter.split(status, 1920)
 
         for (page in pages) {
@@ -50,12 +50,12 @@ class ShardInfo : Cog {
 
     private fun formatInfo(id: Int, total: Int, json: JSONObject): String {
         return "%3d | %9.9s | %7.7s | %6d | %6d | %3d".format(
-                id,
-                json.getString("status"),
-                "${json.getLong("ping")}ms",
-                json.getLong("guild_count"),
-                json.getLong("cached_users"),
-                Launcher.players.registry.values.count { getShardIdForGuild(it.guildId, total) == id }
+            id,
+            json.getString("status"),
+            "${json.getLong("ping")}ms",
+            json.getLong("guild_count"),
+            json.getLong("cached_users"),
+            Launcher.players.registry.values.count { getShardIdForGuild(it.guildId, total) == id }
         )
     }
 
