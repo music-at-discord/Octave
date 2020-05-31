@@ -47,12 +47,9 @@ class Paginator(
     val STOP = "\u23F9"
     val RIGHT = "\u25B6"
 
-    private val menuPermissions = setOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION)
-
     fun display(channel: TextChannel) {
-        if (!channel.guild.selfMember.hasPermission(channel, menuPermissions)) {
-            val joined = menuPermissions.joinToString("`, `", prefix = "`", postfix = "`")
-            channel.sendMessage("Error: The bot requires the permissions $joined for pagination menus.").queue()
+        if (!channel.guild.selfMember.hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+            channel.sendMessage("Error: The bot requires permission to add reactions for pagination menus.").queue()
             return finally(null)
         }
 

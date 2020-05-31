@@ -46,16 +46,13 @@ class Selector(
         MESSAGE
     }
 
-    private val selectorPermissions = setOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION)
-
     val cancel = "\u274C"
     var message: Message? = null
 
     fun display(channel: TextChannel) {
-        if (!channel.guild.selfMember.hasPermission(channel, selectorPermissions)) {
-            val joined = selectorPermissions.joinToString("`, `", prefix = "`", postfix = "`")
-            channel.sendMessage("Error: The bot requires the permissions $joined for selection menus.").queue()
-            return finally(message)
+        if (!channel.guild.selfMember.hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+            channel.sendMessage("Error: The bot requires permission to add reactions for selection menus.").queue()
+            return finally(null)
         }
 
         channel.sendMessage(EmbedBuilder().apply {
