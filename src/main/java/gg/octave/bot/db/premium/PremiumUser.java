@@ -79,7 +79,7 @@ public class PremiumUser extends ManagedObject {
     @JsonIgnore
     @Nullable
     public Cursor<CustomPlaylist> getCustomPlaylists() {
-        return Launcher.INSTANCE.getDatabase().getCustomPlaylistsAsCursor(getId());
+        return Launcher.INSTANCE.getDatabase().getCustomPlaylists(getId());
     }
 
     @JsonIgnore

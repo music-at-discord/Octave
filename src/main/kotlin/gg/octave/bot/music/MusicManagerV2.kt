@@ -31,7 +31,6 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.redisson.api.RQueue
 import java.nio.ByteBuffer
-import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
 class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHandler, AudioEventAdapter() {
