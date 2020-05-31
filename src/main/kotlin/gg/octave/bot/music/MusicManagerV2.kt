@@ -12,6 +12,7 @@ import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
 import gg.octave.bot.db.OptionsRegistry
 import gg.octave.bot.music.filters.DSPFilter
+import gg.octave.bot.music.radio.PlaylistRadio
 import gg.octave.bot.music.radio.RadioTrackContext
 import gg.octave.bot.music.settings.RepeatOption
 import gg.octave.bot.music.utils.TrackContext
@@ -31,6 +32,7 @@ import net.dv8tion.jda.api.entities.TextChannel
 import net.dv8tion.jda.api.entities.VoiceChannel
 import org.redisson.api.RQueue
 import java.nio.ByteBuffer
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHandler, AudioEventAdapter() {
@@ -183,9 +185,14 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
         val radioTrack = radio?.nextTrack()
             ?: return player.stopTrack()
 
-        radioTrack.thenAccept {
-            player.startTrack(it, false)
-        }
+        radioTrack.thenCompose {
+            if (radio?.source is PlaylistRadio || it == null || lastTrack == null || it.identifier != lastTrack?.identifier) {
+                return@thenCompose CompletableFuture.completedFuture(it)
+            }
+
+            return@thenCompose radio?.let { r -> r.source.nextTrack(r) }
+                ?: CompletableFuture.completedFuture(it)
+        }.thenAccept { player.startTrack(it, false) }
     }
 
     private fun announceNext(track: AudioTrack) {

@@ -106,12 +106,13 @@ class Selector(
                         it.messageIdLong != message?.idLong -> false
                         it.user!!.isBot -> false
                         user != null && it.user != user -> {
-                            if(it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
+                            if (it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
                                 it.reaction.removeReaction(it.user!!).queue()
                             }
 
                             false
-                        } else -> {
+                        }
+                        else -> {
                             if (it.reaction.reactionEmote.name == cancel) {
                                 true
                             } else {
@@ -120,7 +121,7 @@ class Selector(
                                 if (value - 1 in options.indices) {
                                     true
                                 } else {
-                                    if(it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
+                                    if (it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
                                         it.reaction.removeReaction(it.user!!).queue()
                                     }
 
