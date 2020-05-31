@@ -131,7 +131,7 @@ class Radio : Cog {
         }
     }
 
-    @SubCommand
+    @SubCommand(description = "Turns off the radio.")
     fun stop(ctx: Context) {
         val manager = Launcher.players.getExisting(ctx.guild)
             ?: return ctx.send("There's no music player in this guild.\n${PLAY_MESSAGE.format(ctx.trigger)}")
