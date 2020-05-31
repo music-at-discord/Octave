@@ -77,10 +77,10 @@ class Queue : Cog {
                     }
                 }
 
-                manager.discordFMTrack?.let {
+                manager.radio?.let {
                     field("Radio") {
                         buildString {
-                            append("Currently streaming music from radio station `${it.station.capitalize()}`")
+                            append("Currently streaming music from radio station `${it.source.name.capitalize()}`")
                             append(", requested by ${it.requesterMention}")
                             append(". When the queue is empty, random tracks from the station will be added.")
                         }

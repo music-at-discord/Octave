@@ -50,9 +50,9 @@ class NowPlaying : MusicCog {
             setColor(0x9570D3)
             setTitle("Now Playing")
             setDescription("**[${track.info.embedTitle}](${track.info.embedUri})**")
-            manager.discordFMTrack?.let {
+            manager.radio?.let {
                 val r = buildString {
-                    append("Currently streaming music from radio station `${it.station.capitalize()}`")
+                    append("Currently streaming music from radio station `${it.source.name.capitalize()}`")
                     append(", requested by ${it.requesterMention}.")
                 }
                 addField("Radio", r, false)

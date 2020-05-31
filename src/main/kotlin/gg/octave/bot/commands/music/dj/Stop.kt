@@ -43,7 +43,7 @@ class Stop : MusicCog {
             karen.queue.clear()
         }
 
-        karen.discordFMTrack = null
+        karen.radio = null
         ctx.guild!!.audioManager.closeAudioConnection()
         Launcher.players.destroy(ctx.guild!!.idLong)
 

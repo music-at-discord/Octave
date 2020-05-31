@@ -25,7 +25,7 @@ class Playlists : Cog {
 
     @SubCommand(description = "Lists all of your custom playlists.")
     fun list(ctx: Context, page: Int = 1) {
-        val playlists = ctx.db.getCustomPlaylists(ctx.author.id).takeIf { it.isNotEmpty() }
+        val playlists = ctx.db.getCustomPlaylistsAsList(ctx.author.id).takeIf { it.isNotEmpty() }
             ?: return ctx.send {
                 setColor(0x9571D3)
                 setTitle("No Playlists :(")
