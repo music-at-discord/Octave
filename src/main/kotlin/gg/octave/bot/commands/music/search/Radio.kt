@@ -76,7 +76,16 @@ class Radio : Cog {
 
         val trackContext = RadioTrackContext(DiscordRadio(library), ctx.author.idLong, ctx.textChannel!!.idLong)
         manager.radio = trackContext
-        LoadResultHandler.loadItem(track, ctx, manager, trackContext, false, "Now streaming random tracks from the `$library` radio station!")
+
+        ctx.send {
+            setColor(0x9570D3)
+            setTitle("Radio")
+            setDescription("Radio set to `$library`. The radio will be played when there's nothing else queued.")
+        }
+
+        if (manager.isIdle) {
+            LoadResultHandler.loadItem(track, ctx, manager, trackContext, false, "Now streaming random tracks from the `$library` radio station!")
+        }
     }
 
     @SubCommand(aliases = ["cpl", "pl"], description = "Listen to songs from your custom playlists.")
@@ -101,20 +110,28 @@ class Radio : Cog {
         val trackContext = RadioTrackContext(PlaylistRadio(playlist.name, ctx.author.id), ctx.author.idLong, ctx.textChannel!!.idLong)
         manager.radio = trackContext
 
-        val lrh = LoadResultHandler(null, ctx, manager, trackContext, false,
-            "Now streaming random tracks from the playlist `${playlist.name}`!")
+        ctx.send {
+            setColor(0x9570D3)
+            setTitle("Radio")
+            setDescription("Radio set to `${playlist.name}`. The radio will be played when there's nothing else queued.")
+        }
 
-        val randomTrack = Launcher.players.playerManager.decodeTrack(playlist.encodedTracks.random())
-            ?: return ctx.send {
-                setColor(0x9570D3)
-                setTitle("Radio")
-                setDescription("Failed to retrieve a track from the playlist. Try again, or perhaps try another playlist.")
-            }
+        if (manager.isIdle) {
+            val lrh = LoadResultHandler(null, ctx, manager, trackContext, false,
+                "Now streaming random tracks from the playlist `${playlist.name}`!")
 
-        lrh.trackLoaded(randomTrack)
+            val randomTrack = Launcher.players.playerManager.decodeTrack(playlist.encodedTracks.random())
+                ?: return ctx.send {
+                    setColor(0x9570D3)
+                    setTitle("Radio")
+                    setDescription("Failed to retrieve a track from the playlist. Try again, or perhaps try another playlist.")
+                }
+
+            lrh.trackLoaded(randomTrack)
+        }
     }
 
-    @SubCommand
+    @SubCommand(description = "Turns off the radio.")
     fun stop(ctx: Context) {
         val manager = Launcher.players.getExisting(ctx.guild)
             ?: return ctx.send("There's no music player in this guild.\n${PLAY_MESSAGE.format(ctx.trigger)}")
