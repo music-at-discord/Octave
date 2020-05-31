@@ -72,6 +72,7 @@ class PlaylistManager(
                 `page <#>         :` Tabs to the given page, and displays it.
                 `resend           :` Re-sends the track list.
                 `save             :` Saves any modifications made to the playlist.
+                `exit             :` Exits playlist editing mode, discarding any changes.
             """.trimIndent())
         }
     }
@@ -111,8 +112,13 @@ class PlaylistManager(
 
         val embed = EmbedBuilder().apply {
             setColor(0x9571D3)
-            setTitle(playlist.name)
+            setTitle("Editing ${playlist.name} | ${ctx.author.name}'s playlist")
             setDescription(trackList)
+            addField(
+                "The bot will be listening for commands until you run `save` or `exit`, or no commands are sent for 20 seconds.",
+                "\u200b",
+                false
+            )
             setFooter("Page $page/$pages - Playlist Duration: $playlistDuration - Send \"help\" to view commands")
         }.build()
 
@@ -194,6 +200,7 @@ class PlaylistManager(
                 false
             }
             "exit" -> {
+                ctx.send("Discarded changes. If you wish to make any further modifications, re-run `${ctx.trigger}cpl edit ${playlist.name}`.")
                 false
             }
             else -> {
@@ -207,8 +214,12 @@ class PlaylistManager(
     companion object {
         private const val ELEMENTS_PER_PAGE = 10
         private val DEFAULT_PREDICATE: (Long, Long) -> (MessageReceivedEvent) -> Boolean = { authorId, channelId ->
-            { it.author.idLong == authorId && it.channel.idLong == channelId }
+            { it.author.idLong == authorId && it.channel.idLong == channelId && isCommand(it.message) }
         }
+        private val commands = setOf("help", "remove", "move", "page", "resend", "send", "save", "exit")
 
+        private fun isCommand(msg: Message): Boolean {
+            return commands.any { msg.contentRaw.startsWith(it) }
+        }
     }
 }
