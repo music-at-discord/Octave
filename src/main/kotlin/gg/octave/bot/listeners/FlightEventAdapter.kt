@@ -30,6 +30,7 @@ import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
 import gg.octave.bot.utils.extensions.generateExampleUsage
+import gg.octave.bot.utils.extensions.selfMember
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.hasAnyRoleId
 import gg.octave.bot.utils.hasAnyRoleNamed
@@ -111,6 +112,11 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
     @ExperimentalStdlibApi
     override fun onCommandPreInvoke(ctx: Context, command: CommandFunction): Boolean {
         if (ctx.guild == null) {
+            return false
+        }
+
+        if(!ctx.selfMember!!.hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
+            ctx.send("This bot requires the permission Embed Links to work (else the bot can't show embeds).")
             return false
         }
 
