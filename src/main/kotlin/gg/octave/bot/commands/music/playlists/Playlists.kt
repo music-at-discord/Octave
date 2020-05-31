@@ -167,7 +167,6 @@ class Playlists : Cog {
     // fun snoop(ctx: Context, user: User) // snoop on other user's custom playlists.
 
     // method to remove multiple tracks from playlist
-    // also method to use playlist for radio
 
     private fun checkQuota(ctx: Context): Boolean {
         val quota = ctx.premiumUser.remainingCustomPlaylistQuota
