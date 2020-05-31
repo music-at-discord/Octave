@@ -46,7 +46,7 @@ class Selector(
         MESSAGE
     }
 
-    private val selectorPermissions = setOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_MANAGE)
+    private val selectorPermissions = setOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION)
 
     val cancel = "\u274C"
     var message: Message? = null
@@ -108,11 +108,11 @@ class Selector(
                     when {
                         it.messageIdLong != message?.idLong -> false
                         it.user!!.isBot -> false
-                        user != null && it.user != user -> {
+                        user != null && it.user != user &&
+                                it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE) -> {
                             it.reaction.removeReaction(it.user!!).queue()
                             false
-                        }
-                        else -> {
+                        } else -> {
                             if (it.reaction.reactionEmote.name == cancel) {
                                 true
                             } else {
@@ -121,7 +121,10 @@ class Selector(
                                 if (value - 1 in options.indices) {
                                     true
                                 } else {
-                                    it.reaction.removeReaction(it.user!!).queue()
+                                    if(it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
+                                        it.reaction.removeReaction(it.user!!).queue()
+                                    }
+
                                     false
                                 }
                             }

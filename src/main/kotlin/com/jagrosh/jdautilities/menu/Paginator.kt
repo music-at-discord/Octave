@@ -47,7 +47,7 @@ class Paginator(
     val STOP = "\u23F9"
     val RIGHT = "\u25B6"
 
-    private val menuPermissions = setOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_MANAGE)
+    private val menuPermissions = setOf(Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ADD_REACTION)
 
     fun display(channel: TextChannel) {
         if (!channel.guild.selfMember.hasPermission(channel, menuPermissions)) {
@@ -118,7 +118,9 @@ class Paginator(
                         }
                     }
 
-                    it.reaction.removeReaction(it.user!!).queue()
+                    if(it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE)) {
+                        it.reaction.removeReaction(it.user!!).queue()
+                    }
 
                     if (pageNew != page) {
                         message?.editMessage(renderPage(pageNew))?.queue {
@@ -129,7 +131,8 @@ class Paginator(
                     when {
                         it.messageIdLong != message?.idLong -> false
                         it.user!!.isBot -> false
-                        user != null && it.user != user -> {
+                        user != null && it.user != user &&
+                                it.guild.selfMember.hasPermission(Permission.MESSAGE_MANAGE) -> {
                             it.reaction.removeReaction(it.user!!).queue()
                             false
                         }
