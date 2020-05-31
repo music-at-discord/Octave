@@ -203,11 +203,7 @@ class PlaylistManager(
                 ctx.send("Discarded changes. If you wish to make any further modifications, re-run `${ctx.trigger}cpl edit ${playlist.name}`.")
                 false
             }
-            else -> {
-                playlist.setTracks(tracks)
-                playlist.save()
-                false
-            }
+            else -> false
         }
     }
 
