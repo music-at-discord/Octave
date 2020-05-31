@@ -32,17 +32,24 @@ import gg.octave.bot.music.radio.PlaylistRadio
 import gg.octave.bot.music.radio.RadioTrackContext
 import gg.octave.bot.music.utils.DiscordFMTrackContext
 import gg.octave.bot.utils.DiscordFM
+import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
+import gg.octave.bot.utils.extensions.data
+import gg.octave.bot.utils.extensions.db
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
+import me.devoxin.flight.api.annotations.Greedy
 import me.devoxin.flight.api.annotations.SubCommand
 import me.devoxin.flight.api.entities.Cog
 import org.apache.commons.lang3.StringUtils
 
-class DiscordFm : Cog {
+class Radio : Cog {
     private val stations = DiscordFM.LIBRARIES.joinToString("\n") { "• `${it.capitalize()}`" }
 
-    @Command(aliases = ["dfm"], description = "Stream random songs from some radio stations.")
-    fun radio(ctx: Context, station: String?) {
+    @Command(description = "Stream random songs from some radio stations.")
+    fun radio(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
+
+    @SubCommand(aliases = ["dfm"], description = "Listen to songs from predefined playlists.")
+    fun discordfm(ctx: Context, @Greedy station: String?) {
         if (station == null) {
             return ctx.send {
                 setColor(0x9570D3)
@@ -72,6 +79,41 @@ class DiscordFm : Cog {
         val trackContext = RadioTrackContext(DiscordRadio(library), ctx.author.idLong, ctx.textChannel!!.idLong)
         manager.radio = trackContext
         LoadResultHandler.loadItem(track, ctx, manager, trackContext, false, "Now streaming random tracks from the `$library` radio station!")
+    }
+
+    @SubCommand(aliases = ["cpl", "pl"], description = "Listen to songs from your custom playlists.")
+    fun custom(ctx: Context, @Greedy playlistName: String) {
+        val playlist = ctx.db.findCustomPlaylist(ctx.author.id, playlistName)
+            ?: return ctx.send {
+                setColor(0x9570D3)
+                setTitle("Radio")
+                setDescription("Couldn't find any playlists with that name.\n" +
+                    "To view a list of your playlists, run `${ctx.trigger}cpl list`.")
+            }
+
+        if (playlist.encodedTracks.isEmpty()) {
+            return ctx.send {
+                setColor(0x9570D3)
+                setTitle("Radio")
+                setDescription("`${playlist.name}` contains no tracks. Try another playlist.")
+            }
+        }
+
+        val manager = Launcher.players.get(ctx.guild)
+        val trackContext = RadioTrackContext(PlaylistRadio(playlist.name, ctx.author.id), ctx.author.idLong, ctx.textChannel!!.idLong)
+        manager.radio = trackContext
+
+        val lrh = LoadResultHandler(null, ctx, manager, trackContext, false,
+            "Now streaming random tracks from the playlist `${playlist.name}`!")
+
+        val randomTrack = Launcher.players.playerManager.decodeTrack(playlist.encodedTracks.random())
+            ?: return ctx.send {
+                setColor(0x9570D3)
+                setTitle("Radio")
+                setDescription("Failed to retrieve a track from the playlist. Try again, or perhaps try another playlist.")
+            }
+
+        lrh.trackLoaded(randomTrack)
     }
 
     @SubCommand

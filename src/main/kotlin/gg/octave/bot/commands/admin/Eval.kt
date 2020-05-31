@@ -25,6 +25,7 @@
 package gg.octave.bot.commands.admin
 
 import gg.octave.bot.Launcher
+import gg.octave.bot.utils.extensions.existingManager
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.annotations.Greedy
@@ -39,7 +40,7 @@ class Eval : Cog {
     fun eval(ctx: Context, @Greedy code: String) {
         val stripped = code.replace("^```\\w+".toRegex(), "").removeSuffix("```")
 
-        val bindings = mapOf(
+        val bindings = mutableMapOf(
             "bot" to Launcher,
             "launcher" to Launcher,
             "db" to Launcher.database,
@@ -48,7 +49,10 @@ class Eval : Cog {
             "sm" to ctx.jda.shardManager!!
         )
 
-        val bindString = bindings.map { "val ${it.key} = bindings[\"${it.key}\"] as ${it.value.javaClass.kotlin.qualifiedName}" }.joinToString("\n")
+        ctx.existingManager?.let { bindings["mm"] = it }
+
+        val bindString = bindings.map { "val ${it.key} = bindings[\"${it.key}\"] as ${it.value.javaClass.kotlin.qualifiedName}" }
+            .joinToString("\n")
         val bind = engine.createBindings()
         bind.putAll(bindings)
 
