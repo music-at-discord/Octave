@@ -80,6 +80,7 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
 
     init {
         player.addListener(this)
+        player.volume = Launcher.db.getGuildData(guildId.toString())?.music?.volume ?: 100
     }
 
     fun enqueue(track: AudioTrack, isNext: Boolean) {

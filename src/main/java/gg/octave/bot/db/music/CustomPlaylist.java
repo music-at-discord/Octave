@@ -51,6 +51,9 @@ public class CustomPlaylist extends ManagedObject {
     @JsonDeserialize
     private List<String> encodedTracks = new ArrayList<>();
 
+    @JsonDeserialize
+    private boolean imported = false;
+
     @ConstructorProperties("id")
     public CustomPlaylist(String id) {
         super(id, "customplaylists");
@@ -74,6 +77,16 @@ public class CustomPlaylist extends ManagedObject {
     @JsonIgnore
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    @JsonIgnore
+    public void setImported(boolean imported) {
+        this.imported = imported;
+    }
+
+    @JsonIgnore
+    public boolean isImported() {
+        return imported;
     }
 
     @JsonIgnore

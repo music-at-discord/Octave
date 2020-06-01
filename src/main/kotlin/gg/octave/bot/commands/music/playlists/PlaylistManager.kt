@@ -70,6 +70,7 @@ class PlaylistManager(
                 `remove <index>   :` Removes the track at the specified index.
                 `move <track> <to>:` Moves the track at the given index, to the new index.
                 `page <#>         :` Tabs to the given page, and displays it.
+                `rename <name>    :` Rename the playlist.
                 `resend           :` Re-sends the track list.
                 `save             :` Saves any modifications made to the playlist.
                 `exit             :` Exits playlist editing mode, discarding any changes.
@@ -193,6 +194,17 @@ class PlaylistManager(
                 renderPage(true)
                 true
             }
+            "rename" -> {
+                val newName = args.joinToString(" ").takeIf { it.isNotEmpty() }
+
+                if (newName == null) {
+                    ctx.send("You need to specify a new name for the playlist.")
+                } else {
+                    playlist.name = newName
+                    renderPage()
+                }
+                true
+            }
             "save" -> {
                 playlist.setTracks(tracks)
                 playlist.save()
@@ -212,7 +224,7 @@ class PlaylistManager(
         private val DEFAULT_PREDICATE: (Long, Long) -> (MessageReceivedEvent) -> Boolean = { authorId, channelId ->
             { it.author.idLong == authorId && it.channel.idLong == channelId && isCommand(it.message) }
         }
-        private val commands = setOf("help", "remove", "move", "page", "resend", "send", "save", "exit")
+        private val commands = setOf("help", "remove", "move", "page", "resend", "rename", "send", "save", "exit")
 
         private fun isCommand(msg: Message): Boolean {
             return commands.any { msg.contentRaw.startsWith(it) }

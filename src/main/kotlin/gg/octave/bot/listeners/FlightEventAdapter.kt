@@ -121,7 +121,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         }
 
         val data = ctx.data
-        if(data.command.isInvokeDelete && ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
+        if (data.command.isInvokeDelete && ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
             ctx.message.delete().queue() // delete the message that triggered the command
         }
 

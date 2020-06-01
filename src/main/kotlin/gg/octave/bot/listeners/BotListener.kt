@@ -76,11 +76,12 @@ class BotListener : EventListener {
             ?: return
 
         //Greet message start.
+        val prefix = Launcher.configuration.prefix
         val embedBuilder = EmbedBuilder()
             .setThumbnail(event.jda.selfUser.effectiveAvatarUrl)
             .setColor(Color.BLUE)
             .setDescription("Welcome to Octave! The highest quality Discord music bot!\n" +
-                "Please check the links below to get help, and use `_help` to get started!")
+                "Please check the links below to get help, and use `${prefix}help` to get started!")
             .addField("Important Links",
                 "[Support Server](https://discord.gg/musicbot)\n" +
                     "[Website](https://octave.gg) \n" +

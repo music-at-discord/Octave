@@ -48,8 +48,8 @@ class ExtendedShardManager(private val shardManager: ShardManager) : ShardManage
     companion object {
         fun create(token: String, apply: DefaultShardManagerBuilder.() -> Unit = {}): ExtendedShardManager {
             RestAction.setDefaultFailure(ErrorResponseException.ignore(
-                    RestAction.getDefaultFailure(),
-                    ErrorResponse.UNKNOWN_MESSAGE
+                RestAction.getDefaultFailure(),
+                ErrorResponse.UNKNOWN_MESSAGE
             ))
 
             return DefaultShardManagerBuilder.create(token, IntentHelper.enabledIntents)

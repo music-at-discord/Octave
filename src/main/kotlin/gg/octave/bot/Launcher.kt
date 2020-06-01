@@ -93,6 +93,7 @@ object Launcher {
         println("+---------------------------------+")
 
         Sentry.init(configuration.sentryDsn)
+        Sentry.getStoredClient().release = OctaveBot.GIT_REVISION
         RestAction.setPassContext(false)
 
         commandExecutor = Executors.newCachedThreadPool(
