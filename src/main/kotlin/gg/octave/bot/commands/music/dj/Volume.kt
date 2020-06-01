@@ -28,6 +28,7 @@ import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.config
+import gg.octave.bot.utils.extensions.data
 import gg.octave.bot.utils.extensions.manager
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -43,7 +44,7 @@ class Volume : MusicCog {
     @Command(aliases = ["v", "vol"], description = "Set the volume of the music player.")
     fun volume(ctx: Context, amount: Int?) {
         if (amount == null) {
-            val volume = ctx.manager.player.volume.coerceIn(0, maximumVolume)
+            val volume = ctx.manager.player.volume
             val bar = buildBar(volume, maximumVolume)
 
             return ctx.send {
@@ -55,16 +56,17 @@ class Volume : MusicCog {
         }
 
         val newVolume = amount.coerceIn(0, maximumVolume)
-        val old = ctx.manager.player.volume
+        val oldVolume = ctx.manager.player.volume
         val bar = buildBar(newVolume, maximumVolume)
 
         ctx.manager.player.volume = newVolume
+        ctx.data.music.volume = newVolume
 
         ctx.send {
             setColor(0x9570D3)
             setTitle("Volume")
             setDescription(bar)
-            setFooter("Volume changed from $old% to ${ctx.manager.player.volume}%")
+            setFooter("Volume changed from $oldVolume% to ${ctx.manager.player.volume}%")
         }
     }
 
