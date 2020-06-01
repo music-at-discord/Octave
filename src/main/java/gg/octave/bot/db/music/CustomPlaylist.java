@@ -33,6 +33,7 @@ import gg.octave.bot.Launcher;
 import gg.octave.bot.db.ManagedObject;
 import gg.octave.bot.utils.Utils;
 
+import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,6 +51,9 @@ public class CustomPlaylist extends ManagedObject {
     @JsonSerialize
     @JsonDeserialize
     private List<String> encodedTracks = new ArrayList<>();
+
+    @JsonDeserialize
+    private boolean imported = false;
 
     @ConstructorProperties("id")
     public CustomPlaylist(String id) {
@@ -74,6 +78,16 @@ public class CustomPlaylist extends ManagedObject {
     @JsonIgnore
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    @JsonIgnore
+    public void setImported(boolean imported) {
+        this.imported = imported;
+    }
+
+    @JsonIgnore
+    public boolean isImported() {
+        return imported;
     }
 
     @JsonIgnore

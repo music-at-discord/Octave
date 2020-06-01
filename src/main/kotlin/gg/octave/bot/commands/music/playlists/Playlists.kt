@@ -5,6 +5,7 @@ import gg.octave.bot.Launcher
 import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.music.LoadResultHandler
 import gg.octave.bot.music.utils.TrackContext
+import gg.octave.bot.utils.Page
 import gg.octave.bot.utils.extensions.*
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
@@ -22,24 +23,29 @@ class Playlists : Cog {
 
     @SubCommand(description = "Lists all of your custom playlists.")
     fun list(ctx: Context, page: Int = 1) {
-        val playlists = ctx.db.getCustomPlaylistsAsList(ctx.author.id).takeIf { it.isNotEmpty() }
+        val allPlaylists = ctx.db.getCustomPlaylistsAsList(ctx.author.id).takeIf { it.isNotEmpty() }
             ?: return ctx.send {
                 setColor(0x9571D3)
                 setTitle("No Playlists :(")
                 setDescription("That's OK! You can create a new one with `${ctx.trigger}playlists create <name>`\n*Without the `<>` of course.*")
             }
 
-        val pages = ceil(playlists.size.toDouble() / 10).toInt()
-        val selectedPage = page.coerceIn(1, pages)
-        val start = 10 * (selectedPage - 1)
-        val end = (start + 10).coerceAtMost(playlists.size)
-        val joined = playlists.iterate(start..end).joinToString("\n") { (index, pl) -> "`${index + 1}.` ${pl.name}" }
+        val octavePlaylists = allPlaylists.filter { !it.isImported }
+        val memerPlaylists = allPlaylists.filter { it.isImported }
+
+        val octavePage = Page.paginate(octavePlaylists, page, "") { i, p -> "`${i + 1}.` ${p.name}\n" }
+        val memerPage = Page.paginate(memerPlaylists, page, "") { i, p -> "`${i + 1}.` ${p.name}\n" }
 
         ctx.send {
             setColor(0x9571D3)
             setTitle("Your Playlists")
-            setDescription(joined)
-            setFooter("Showing ${end - start} of ${playlists.size} playlists • Page $page/$pages")
+            setDescription(octavePage.content)
+
+            if (memerPage.content.isNotEmpty()) {
+                addField("Imported (page ${memerPage.page}/${memerPage.maxPages})", memerPage.content, false)
+            }
+
+            setFooter("Showing ${octavePage.elementCount} of ${octavePlaylists.size} playlists • Page ${octavePage.page}/${octavePage.maxPages}")
         }
     }
 
