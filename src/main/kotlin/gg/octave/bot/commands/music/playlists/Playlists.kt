@@ -6,10 +6,7 @@ import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.music.LoadResultHandler
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.Page
-import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
-import gg.octave.bot.utils.extensions.db
-import gg.octave.bot.utils.extensions.premiumUser
-import gg.octave.bot.utils.extensions.voiceChannel
+import gg.octave.bot.utils.extensions.*
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.annotations.Greedy
@@ -38,16 +35,19 @@ class Playlists : Cog {
         val octavePage = Page.paginate(octavePlaylists, page, "") { i, p -> "`${i + 1}.` ${p.name}\n" }
         val memerPage = Page.paginate(memerPlaylists, page, "") { i, p -> "`${i + 1}.` ${p.name}\n" }
 
+        val showing = octavePage.elementCount + memerPage.elementCount
+        val total = octavePlaylists.size + memerPlaylists.size
+
         ctx.send {
             setColor(0x9571D3)
             setTitle("Your Playlists")
-            setDescription(octavePage.content)
 
+            addField("Playlists (${octavePage.maxPages.plural("page")})", octavePage.content, true)
             if (memerPage.content.isNotEmpty()) {
-                addField("Imported (page ${memerPage.page}/${memerPage.maxPages})", memerPage.content, false)
+                addField("Imported (${memerPage.maxPages.plural("page")})", memerPage.content, true)
             }
 
-            setFooter("Showing ${octavePage.elementCount} of ${octavePlaylists.size} playlists • Page ${octavePage.page}/${octavePage.maxPages}")
+            setFooter("Showing $showing of $total playlists • Page ${octavePage.page} • Specify a page to go to.")
         }
     }
 
