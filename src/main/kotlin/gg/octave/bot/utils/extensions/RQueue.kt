@@ -44,7 +44,7 @@ fun RQueue<String>.removeAt(index: Int): String {
 }
 
 // I don't like duplicate code but this should theoretically be more efficient
-//  for removing at multiple indexes, than using .removeAt(index).
+// for removing at multiple indexes, than using .removeAt(index).
 fun RQueue<String>.removeAll(indexes: Collection<Int>): Int {
     val biggestIndex = indexes.max()!!
     var iterIndex = 0
