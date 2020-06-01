@@ -6,7 +6,10 @@ import gg.octave.bot.db.music.CustomPlaylist
 import gg.octave.bot.music.LoadResultHandler
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.Page
-import gg.octave.bot.utils.extensions.*
+import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
+import gg.octave.bot.utils.extensions.db
+import gg.octave.bot.utils.extensions.premiumUser
+import gg.octave.bot.utils.extensions.voiceChannel
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.annotations.Greedy
@@ -15,7 +18,6 @@ import me.devoxin.flight.api.entities.Cog
 import net.dv8tion.jda.api.EmbedBuilder
 import java.net.URL
 import java.util.function.Consumer
-import kotlin.math.ceil
 
 class Playlists : Cog {
     @Command(aliases = ["pl", "cpl"], description = "Manage your custom playlists.")

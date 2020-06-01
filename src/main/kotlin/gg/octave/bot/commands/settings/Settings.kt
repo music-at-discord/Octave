@@ -279,7 +279,7 @@ class Settings : Cog {
 
     @SubCommand(description = "Sets whether the command invocation will be deleted after the command is sent.")
     fun invokeDelete(ctx: Context, toggle: Boolean) {
-        if(!ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
+        if (!ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
             return ctx.send("I don't have permission to delete messages.")
         }
 

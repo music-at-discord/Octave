@@ -33,7 +33,6 @@ import gg.octave.bot.Launcher;
 import gg.octave.bot.db.ManagedObject;
 import gg.octave.bot.utils.Utils;
 
-import javax.annotation.Nonnull;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.List;
