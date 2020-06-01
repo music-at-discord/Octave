@@ -30,6 +30,8 @@ import gg.octave.bot.entities.sharding.BucketedController
 import gg.octave.bot.utils.IntentHelper
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.PrivateChannel
+import net.dv8tion.jda.api.exceptions.ErrorResponseException
+import net.dv8tion.jda.api.requests.ErrorResponse
 import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
@@ -45,6 +47,11 @@ class ExtendedShardManager(private val shardManager: ShardManager) : ShardManage
 
     companion object {
         fun create(token: String, apply: DefaultShardManagerBuilder.() -> Unit = {}): ExtendedShardManager {
+            RestAction.setDefaultFailure(ErrorResponseException.ignore(
+                    RestAction.getDefaultFailure(),
+                    ErrorResponse.UNKNOWN_MESSAGE
+            ))
+
             return DefaultShardManagerBuilder.create(token, IntentHelper.enabledIntents)
                 .apply {
                     val configuration = Launcher.configuration
