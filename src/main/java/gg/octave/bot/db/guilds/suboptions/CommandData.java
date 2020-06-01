@@ -34,6 +34,7 @@ public class CommandData {
     private String prefix;
     private String djRole;
     private boolean autoDelete = false;
+    private boolean invokeDelete = false;
     private long autoDeleteDelay = 0L;
     private boolean adminBypass = false;
     private boolean djOnlyMode;
@@ -68,6 +69,14 @@ public class CommandData {
 
     public void setAutoDelete(boolean autoDelete) {
         this.autoDelete = autoDelete;
+    }
+
+    public boolean isInvokeDelete() {
+        return invokeDelete;
+    }
+
+    public void setInvokeDelete(boolean invokeDelete) {
+        this.invokeDelete = invokeDelete;
     }
 
     public boolean isAdminBypass() {

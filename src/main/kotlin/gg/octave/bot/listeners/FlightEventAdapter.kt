@@ -120,13 +120,16 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             return false
         }
 
+        val data = ctx.data
+        if(data.command.isInvokeDelete && ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
+            ctx.message.delete().queue() // delete the message that triggered the command
+        }
+
         if (ctx.member!!.hasPermission(Permission.ADMINISTRATOR)
             || ctx.member!!.hasPermission(Permission.MANAGE_SERVER)
             || ctx.author.idLong in ctx.config.admins) {
             return true
         }
-
-        val data = ctx.data
 
         //Don't send a message if it's just ignored.
         if (isIgnored(ctx, data, ctx.member!!)) {

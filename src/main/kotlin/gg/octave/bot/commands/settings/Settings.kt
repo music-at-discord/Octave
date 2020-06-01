@@ -277,6 +277,20 @@ class Settings : Cog {
         ctx.send("Set auto-delete delay to ${getDisplayValue(timeMillis)}.")
     }
 
+    @SubCommand(description = "Sets whether the command invocation will be deleted after the command is sent.")
+    fun invokeDelete(ctx: Context, toggle: Boolean) {
+        if(!ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
+            return ctx.send("I don't have permission to delete messages.")
+        }
+
+        val data = ctx.data
+        data.command.isInvokeDelete = toggle;
+        data.save()
+
+        val send = if (toggle) "Command triggers will be deleted automatically." else "Command triggers won't be deleted automatically."
+        ctx.send(send)
+    }
+
     @SubCommand(description = "Enable/Disable 24/7 mode. Premium Guilds only.")
     fun alldaymusic(ctx: Context, toggle: Boolean) {
         val data = ctx.data
