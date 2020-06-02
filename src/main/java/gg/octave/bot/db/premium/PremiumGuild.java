@@ -76,7 +76,7 @@ public class PremiumGuild extends ManagedObject {
     @JsonIgnore
     public int getQueueSizeQuota() {
         double pledgeAmount = getRedeemer().getPledgeAmount();
-        if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getId())) || pledgeAmount >= 10) {
+        if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getRedeemerId())) || pledgeAmount >= 10) {
             return Integer.MAX_VALUE;
         } else if (pledgeAmount >= 5) {
             return 500;
@@ -88,7 +88,7 @@ public class PremiumGuild extends ManagedObject {
     @JsonIgnore
     public long getSongLengthQuota() {
         double pledgeAmount = getRedeemer().getPledgeAmount();
-        if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getId()))) {
+        if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getRedeemerId()))) {
             return Integer.MAX_VALUE;
         } else if (pledgeAmount >= 10) {
             return TimeUnit.MINUTES.toMillis(720);
