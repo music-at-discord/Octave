@@ -119,10 +119,6 @@ public class PremiumUser extends ManagedObject {
         } else {
             return 5;
         }
-
-        // $0 -> 1
-        // $5 -> 5
-        // $5+ -> Unlimited
     }
 
     @JsonIgnore
