@@ -114,17 +114,11 @@ public class PremiumUser extends ManagedObject {
     public int getTotalCustomPlaylistQuota() {
         if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getId()))) {
             return 99999;
-        } else if (pledgeAmount > 5) {
+        } else if (isPremium()) {
             return 99999;
-        } else if (pledgeAmount == 5) {
-            return 5;
         } else {
-            return 1;
+            return 5;
         }
-
-        // $0 -> 1
-        // $5 -> 5
-        // $5+ -> Unlimited
     }
 
     @JsonIgnore
