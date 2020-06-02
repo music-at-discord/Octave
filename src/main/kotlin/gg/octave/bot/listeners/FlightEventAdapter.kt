@@ -27,10 +27,8 @@ package gg.octave.bot.listeners
 import gg.octave.bot.Launcher
 import gg.octave.bot.db.guilds.GuildData
 import gg.octave.bot.entities.framework.DJ
-import gg.octave.bot.utils.extensions.config
-import gg.octave.bot.utils.extensions.data
-import gg.octave.bot.utils.extensions.generateExampleUsage
-import gg.octave.bot.utils.extensions.selfMember
+import gg.octave.bot.entities.framework.DonorOnly
+import gg.octave.bot.utils.extensions.*
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.hasAnyRoleId
 import gg.octave.bot.utils.hasAnyRoleNamed
@@ -123,6 +121,18 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         val data = ctx.data
         if (data.command.isInvokeDelete && ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
             ctx.message.delete().queue() // delete the message that triggered the command
+        }
+
+        if (command.method.hasAnnotation<DonorOnly>() && !ctx.isGuildPremium) {
+            ctx.send("This command is only for premium servers. " +
+                    "If you want to pledge to unlock this command, head to <https://www.patreon.com/octavebot>. Thanks you for your support!")
+            //Lazily reset volume to 100. This will only run if the guild isn't premium, command is donor-only and the volume isn't already 100.
+            if (data.music.volume != 100) {
+                data.music.volume = 100
+                data.save()
+            }
+
+            return false
         }
 
         if (ctx.member!!.hasPermission(Permission.ADMINISTRATOR)

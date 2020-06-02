@@ -26,6 +26,7 @@ package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
+import gg.octave.bot.entities.framework.DonorOnly
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.config
 import gg.octave.bot.utils.extensions.data
@@ -41,6 +42,7 @@ class Volume : MusicCog {
 
     @DJ
     @CheckVoiceState
+    @DonorOnly
     @Command(aliases = ["v", "vol"], description = "Set the volume of the music player.")
     fun volume(ctx: Context, amount: Int?) {
         if (amount == null) {
