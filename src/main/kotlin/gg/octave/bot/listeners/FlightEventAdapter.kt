@@ -115,7 +115,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             return false
         }
 
-        if (!ctx.selfMember!!.hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
+        if (!ctx.selfMember!!.hasPermission(ctx.textChannel!!, Permission.MESSAGE_EMBED_LINKS)) {
             ctx.send("This bot requires the permission Embed Links to work (else the bot can't show embeds).")
             return false
         }

@@ -117,7 +117,7 @@ public class PremiumUser extends ManagedObject {
         } else if (isPremium()) {
             return 99999;
         } else {
-            return 1;
+            return 5;
         }
 
         // $0 -> 1
