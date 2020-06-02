@@ -24,4 +24,4 @@
 
 package gg.octave.bot.entities.framework
 
-annotation class DonorOnly { }
+annotation class DonorOnly
