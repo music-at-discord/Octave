@@ -60,7 +60,6 @@ class BotInfo : Cog {
         val ramUsedBytes = Runtime.getRuntime().let { it.totalMemory() - it.freeMemory() }
         val ramUsedCalculated = Capacity.calculate(ramUsedBytes)
         val ramUsedFormatted = dpFormatter.format(ramUsedCalculated.amount)
-        val ramUsedPercent = dpFormatter.format(ramUsedBytes.toDouble() / Runtime.getRuntime().totalMemory() * 100)
         var guilds = 0L
         var users = 0L
         var musicPlayers = 0L

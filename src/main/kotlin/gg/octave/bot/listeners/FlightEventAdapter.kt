@@ -125,7 +125,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
 
         if (command.method.hasAnnotation<DonorOnly>() && !ctx.isGuildPremium) {
             ctx.send("This command is only for premium servers. " +
-                    "If you want to pledge to unlock this command, head to <https://www.patreon.com/octavebot>. Thanks you for your support!")
+                    "If you want to pledge to unlock this command, head to <https://www.patreon.com/octavebot>. Thank you for your support!")
             //Lazily reset volume to 100. This will only run if the guild isn't premium, command is donor-only and the volume isn't already 100.
             if (data.music.volume != 100) {
                 data.music.volume = 100
