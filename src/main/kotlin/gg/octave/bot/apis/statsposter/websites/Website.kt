@@ -46,7 +46,10 @@ abstract class Website(
             url(postUrl)
             post(RequestBody.create(RequestUtil.APPLICATION_JSON, "{\"$countHeader\": $count}"))
             header("Authorization", authorization)
-        }.submit().assert(Response::isSuccessful) { "Posting to $name failed: ${it.code()} ${it.message()}" }
+        }.submit().thenApply {
+            check(it.isSuccessful) { "Posting to $name failed: ${it.code()} ${it.message()}" }
+            it
+        }
     }
 
 }
