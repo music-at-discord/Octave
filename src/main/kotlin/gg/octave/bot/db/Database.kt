@@ -125,8 +125,11 @@ class Database(private val name: String) {
     }
 
     fun getCustomPlaylistsAsList(authorId: String) = getCustomPlaylists(authorId)?.toList() ?: emptyList()
-    fun findCustomPlaylist(authorId: String, fuzzyTitle: String) = getCustomPlaylistsAsList(authorId)
-        .firstOrNull { it.name == fuzzyTitle || it.name.toLowerCase().contains(fuzzyTitle) }
+    fun findCustomPlaylist(authorId: String, fuzzyTitle: String): CustomPlaylist? {
+        val loweredTitle = fuzzyTitle.toLowerCase()
+        return getCustomPlaylistsAsList(authorId)
+            .firstOrNull { it.name == fuzzyTitle || it.name.toLowerCase().contains(loweredTitle) }
+    }
 
     fun close() = conn.close()
 
