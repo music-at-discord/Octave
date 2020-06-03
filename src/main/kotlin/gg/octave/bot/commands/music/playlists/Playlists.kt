@@ -140,7 +140,7 @@ class Playlists : Cog {
         Launcher.players.playerManager.loadItem(url.toString(), loader)
     }
 
-    @SubCommand(description = "Loads a custom playlist for playing.")
+    @SubCommand(aliases = ["play"], description = "Loads a custom playlist for playing.")
     fun load(ctx: Context, @Greedy name: String) {
         when {
             ctx.voiceChannel == null -> {
