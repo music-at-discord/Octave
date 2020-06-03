@@ -125,7 +125,8 @@ class Database(private val name: String) {
     }
 
     fun getCustomPlaylistsAsList(authorId: String) = getCustomPlaylists(authorId)?.toList() ?: emptyList()
-    fun findCustomPlaylist(authorId: String, fuzzyTitle: String) = getCustomPlaylistsAsList(authorId).firstOrNull { it.name.toLowerCase().contains(fuzzyTitle) }
+    fun findCustomPlaylist(authorId: String, fuzzyTitle: String) = getCustomPlaylistsAsList(authorId)
+        .firstOrNull { it.name == fuzzyTitle || it.name.toLowerCase().contains(fuzzyTitle) }
 
     fun close() = conn.close()
 
