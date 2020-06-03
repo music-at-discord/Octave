@@ -25,7 +25,6 @@
 package gg.octave.bot.apis.statsposter.websites
 
 import gg.octave.bot.utils.RequestUtil
-import gg.octave.bot.utils.extensions.assert
 import okhttp3.RequestBody
 import okhttp3.Response
 import java.util.concurrent.CompletableFuture
