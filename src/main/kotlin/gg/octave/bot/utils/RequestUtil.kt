@@ -49,12 +49,7 @@ object RequestUtil {
         return request(options).submit()
             .thenApply {
                 if (checkStatus && !it.isSuccessful) {
-                    val extra = if (it.header("content-type") == "application/json") {
-                        it.body()?.string() ?: "{}"
-                    } else {
-                        "{}"
-                    }
-                    throw IllegalStateException("Received invalid status code: ${it.code()} - $extra")
+                    throw IllegalStateException("Received invalid status code: ${it.code()}")
                 }
                 it
             }
