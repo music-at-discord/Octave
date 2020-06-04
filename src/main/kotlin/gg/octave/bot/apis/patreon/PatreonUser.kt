@@ -27,6 +27,7 @@ package gg.octave.bot.apis.patreon
 import org.json.JSONObject
 
 class PatreonUser(
+    val id: Int,
     val firstName: String,
     val lastName: String,
     val email: String,
@@ -34,6 +35,17 @@ class PatreonUser(
     val isDeclined: Boolean,
     val discordId: Long?
 ) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is PatreonUser) return false
+
+        return this.id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return 31 * id.hashCode()
+    }
+
     companion object {
         fun fromJsonObject(userObj: JSONObject, pledgeObj: JSONObject): PatreonUser {
             val userAttr = userObj.getJSONObject("attributes")
@@ -44,6 +56,7 @@ class PatreonUser(
                 ?.getLong("user_id")
 
             return PatreonUser(
+                userObj.getInt("id"),
                 userAttr.getString("first_name"),
                 userAttr.optString("last_name", ""),
                 userAttr.getString("email"),
