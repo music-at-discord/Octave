@@ -88,7 +88,7 @@ class Patron : Cog {
                         setDescription(
                             "Couldn't find your pledge.\n" +
                                 "[Re-link your account](https://support.patreon.com/hc/en-us/articles/212052266-Get-my-Discord-role) and try again.\n" +
-                                 "If this still doesn't work, [join the Discord server](https://discord.gg/musicbot) for support."
+                                "If this still doesn't work, [join the Discord server](https://discord.gg/musicbot) for support."
                         )
                     }
 
