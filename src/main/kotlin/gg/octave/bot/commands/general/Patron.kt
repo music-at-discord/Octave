@@ -82,12 +82,14 @@ class Patron : Cog {
             .submit()
             .thenCompose { Launcher.patreon.fetchPledges() }
             .thenAccept { pledges ->
+                println(pledges.size)
                 val pledge = pledges.firstOrNull { it.discordId != null && it.discordId == ctx.author.idLong }
                     ?: return@thenAccept ctx.send {
                         setColor(0x9570D3)
                         setDescription(
                             "Couldn't find your pledge.\n" +
-                                "[Re-link your account](https://support.patreon.com/hc/en-us/articles/212052266-Get-my-Discord-role) and try again."
+                                "[Re-link your account](https://support.patreon.com/hc/en-us/articles/212052266-Get-my-Discord-role) and try again.\n" +
+                                "If this still doesn't work, [join the Discord server](https://discord.gg/musicbot) for support."
                         )
                     }
 
