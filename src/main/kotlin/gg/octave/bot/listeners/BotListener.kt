@@ -153,6 +153,10 @@ class BotListener : EventListener {
     }
 
     private fun postStats(jda: JDA) {
+        if(jda.status == JDA.Status.INITIALIZED) {
+            return
+        }
+
         Launcher.database.jedisPool.resource.use {
             it.hset("stats", jda.shardInfo.shardId.toString(), JSONObject()
                 .put("guild_count", jda.guildCache.size())
