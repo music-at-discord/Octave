@@ -82,7 +82,6 @@ class Patron : Cog {
             .submit()
             .thenCompose { Launcher.patreon.fetchPledges() }
             .thenAccept { pledges ->
-                println(pledges.size)
                 val pledge = pledges.firstOrNull { it.discordId != null && it.discordId == ctx.author.idLong }
                     ?: return@thenAccept ctx.send {
                         setColor(0x9570D3)
