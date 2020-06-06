@@ -116,8 +116,8 @@ class PatreonAPI(var accessToken: String?) {
 
     fun fetchPledges(campaignId: String = "754103") = fetchPledgesOfCampaign0(campaignId)
 
-    private fun fetchPledgesOfCampaign0(campaignId: String, offset: String? = null): CompletableFuture<Set<PatreonUser>> {
-        val users = mutableSetOf<PatreonUser>()
+    private fun fetchPledgesOfCampaign0(campaignId: String, offset: String? = null): CompletableFuture<List<PatreonUser>> {
+        val users = mutableListOf<PatreonUser>()
 
         return fetchPageOfPledge(campaignId, offset)
             .thenCompose {
@@ -126,7 +126,7 @@ class PatreonAPI(var accessToken: String?) {
                 if (it.hasMore && offset != it.offset) {
                     fetchPledgesOfCampaign0(campaignId, it.offset)
                 } else {
-                    CompletableFuture.completedFuture(emptySet())
+                    CompletableFuture.completedFuture(emptyList())
                 }
             }
             .thenAccept { users.addAll(it) }
@@ -141,7 +141,7 @@ class PatreonAPI(var accessToken: String?) {
         }.thenApply {
             val pledges = it.getJSONArray("data")
             val nextPage = getNextPage(it)
-            val users = mutableSetOf<PatreonUser>()
+            val users = mutableListOf<PatreonUser>()
 
             for ((index, obj) in it.getJSONArray("included").withIndex()) {
                 obj as JSONObject
