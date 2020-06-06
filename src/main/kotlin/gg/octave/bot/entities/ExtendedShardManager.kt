@@ -26,7 +26,6 @@ package gg.octave.bot.entities
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory
 import gg.octave.bot.Launcher
-import gg.octave.bot.entities.sharding.BucketedController
 import gg.octave.bot.utils.IntentHelper
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.entities.PrivateChannel
@@ -36,6 +35,7 @@ import net.dv8tion.jda.api.requests.RestAction
 import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder
 import net.dv8tion.jda.api.sharding.ShardManager
 import net.dv8tion.jda.api.utils.ChunkingFilter
+import net.dv8tion.jda.api.utils.ConcurrentSessionController
 import net.dv8tion.jda.api.utils.MemberCachePolicy
 import net.dv8tion.jda.api.utils.cache.CacheFlag
 import java.util.*
@@ -46,11 +46,15 @@ class ExtendedShardManager(private val shardManager: ShardManager) : ShardManage
     }
 
     companion object {
+        private val sessionController = ConcurrentSessionController()
+
         fun create(token: String, apply: DefaultShardManagerBuilder.() -> Unit = {}): ExtendedShardManager {
             RestAction.setDefaultFailure(ErrorResponseException.ignore(
                 RestAction.getDefaultFailure(),
                 ErrorResponse.UNKNOWN_MESSAGE
             ))
+
+            sessionController.setConcurrency(Launcher.configuration.bucketFactor)
 
             return DefaultShardManagerBuilder.create(token, IntentHelper.enabledIntents)
                 .apply {
@@ -61,7 +65,7 @@ class ExtendedShardManager(private val shardManager: ShardManager) : ShardManage
                     setActivityProvider { Activity.playing(configuration.game.format(it)) }
 
                     // Gateway
-                    setSessionController(BucketedController(configuration.bucketFactor, configuration.homeGuild))
+                    setSessionController(sessionController)
                     setShardsTotal(credentials.totalShards)
                     setShards(credentials.shardStart, Launcher.credentials.shardEnd - 1)
                     setMaxReconnectDelay(32)
