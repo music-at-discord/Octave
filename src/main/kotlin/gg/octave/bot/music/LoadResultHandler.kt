@@ -28,6 +28,7 @@ class LoadResultHandler(
 ) : AudioLoadResultHandler {
     private val settings = ctx.data
     private val premiumGuild = ctx.premiumGuild
+    private var isRetry = false
 
     override fun trackLoaded(track: AudioTrack) {
         cache(track)
@@ -94,6 +95,12 @@ class LoadResultHandler(
     }
 
     override fun noMatches() {
+        if (!isRetry && identifier != null) {
+            isRetry = true
+            Launcher.players.playerManager.loadItemOrdered(ctx.guild!!.idLong, identifier, this)
+            return
+        }
+
         if (musicManager.isIdle) {
             musicManager.destroy()
         }
