@@ -153,7 +153,7 @@ class BotListener : EventListener {
     }
 
     private fun postStats(jda: JDA) {
-        if(jda.status == JDA.Status.INITIALIZED) {
+        if (jda.status == JDA.Status.INITIALIZED) {
             return
         }
 
