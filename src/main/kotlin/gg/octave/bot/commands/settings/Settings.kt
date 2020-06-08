@@ -304,22 +304,22 @@ class Settings : Cog {
     }
 
     @SubCommand(aliases = ["votequeuecooldown", "vqc", "vpc"], description = "Sets the vote-play cooldown.")
-    @Usages("20m", "reset")
+    @Usages("15s", "reset")
     fun voteplaycooldown(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.votePlayCooldown = it }, ctx.config.votePlayCooldown, ctx.config.votePlayCooldownText, "vote-play cooldown")
 
     @SubCommand(aliases = ["votequeueduration", "vqd", "vpd"], description = "Sets the vote-play duration.")
-    @Usages("20m", "reset")
+    @Usages("15s", "reset")
     fun voteplayduration(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.votePlayDuration = it }, ctx.config.votePlayDuration, ctx.config.votePlayDurationText, "vote-play duration")
 
     @SubCommand(aliases = ["vsd"], description = "Sets the vote-skip duration.")
-    @Usages("20m", "reset")
+    @Usages("15s", "reset")
     fun voteskipduration(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.voteSkipDuration = it }, ctx.config.voteSkipDuration, ctx.config.voteSkipDurationText, "vote-skip duration")
 
     @SubCommand(aliases = ["vsc"], description = "Sets the vote-skip cooldown.")
-    @Usages("20m", "reset")
+    @Usages("15s", "reset")
     fun voteskipcooldown(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.voteSkipCooldown = it }, ctx.config.voteSkipCooldown, ctx.config.voteSkipCooldownText, "vote-skip cooldown")
 
@@ -337,7 +337,7 @@ class Settings : Cog {
         val amount = try {
             duration.toDuration()
         } catch (e: RuntimeException) {
-            return ctx.send("Wrong duration specified: Expected something like `40m`")
+            return ctx.send("Wrong duration specified: Expected something like `15s`")
         }
 
         if (amount > limit) {
