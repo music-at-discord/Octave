@@ -75,7 +75,6 @@ fun parseDuration(input: String): Long {
     } catch (e: NumberFormatException) {
         throw RuntimeException("Could not parse duration number '$numberString'")
     }
-
 }
 
 fun getDisplayValue(ms: Long, shorthand: Boolean = false): String {

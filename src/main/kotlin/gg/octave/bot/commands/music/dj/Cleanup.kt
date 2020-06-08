@@ -29,6 +29,7 @@ import gg.octave.bot.entities.`typealias`.Predicate
 import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
+import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.music.utils.TrackContext
 import gg.octave.bot.utils.extensions.DEFAULT_SUBCOMMAND
 import gg.octave.bot.utils.extensions.manager
@@ -116,6 +117,7 @@ class Cleanup : MusicCog {
     }
 
     @SubCommand(aliases = ["longerthan", "duration", "time"], description = "Removes tracks that are longer than the given duration.")
+    @Usages("20m")
     fun exceeds(ctx: Context, duration: Duration) {
         val oldSize = ctx.manager.queue.size
 

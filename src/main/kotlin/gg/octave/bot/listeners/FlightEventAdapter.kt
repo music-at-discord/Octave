@@ -44,8 +44,6 @@ import net.dv8tion.jda.api.entities.Role
 import kotlin.reflect.full.hasAnnotation
 
 class FlightEventAdapter : DefaultCommandEventAdapter() {
-
-
     @ExperimentalStdlibApi
     override fun onBadArgument(ctx: Context, command: CommandFunction, error: BadArgument) {
         if (error.argument.type.isEnum) {
@@ -178,7 +176,6 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
         return member.user.id in data.ignored.users || ctx.textChannel!!.id in data.ignored.channels
             || data.ignored.roles.any { id -> member.roles.any { it.id == id } }
     }
-
 
     override fun onCommandPostInvoke(ctx: Context, command: CommandFunction, failed: Boolean) {
         Launcher.datadog.incrementCounter("bot.commands_ran")

@@ -25,6 +25,7 @@
 package gg.octave.bot.commands.settings
 
 import gg.octave.bot.db.guilds.GuildData
+import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.utils.extensions.*
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.toDuration
@@ -201,19 +202,14 @@ class Settings : Cog {
     }
 
     @SubCommand(aliases = ["sl"], description = "Set the maximum song length. \"reset\" to reset.")
-    fun songlength(ctx: Context, content: String) {
+    @Usages("20m")
+    fun songlength(ctx: Context, @Greedy duration: Duration?) {
         val data = ctx.data
 
-        if (content == "reset") {
+        if (duration == null) {
             data.music.maxSongLength = 0
             data.save()
             return ctx.send("Song length limit reset.")
-        }
-
-        val duration = try {
-            content.toDuration()
-        } catch (e: RuntimeException) {
-            return ctx.send("Wrong duration specified: Expected something like `40m`")
         }
 
         val premiumGuild = ctx.premiumGuild
@@ -229,7 +225,7 @@ class Settings : Cog {
 
         data.music.maxSongLength = duration.toMillis()
         data.save()
-        ctx.send("Successfully set song length limit to $content.")
+        ctx.send("Successfully set song length limit to ${duration.toHuman()}.")
     }
 
     @SubCommand(aliases = ["qs"], description = "Sets the maximum queue size for the server. Omit to reset.")
@@ -256,6 +252,7 @@ class Settings : Cog {
     }
 
     @SubCommand(description = "Sets the auto-delete delay.")
+    @Usages("20m")
     fun autodeletedelay(ctx: Context, duration: Duration?) {
         val data = ctx.data
 
@@ -278,7 +275,7 @@ class Settings : Cog {
     }
 
     @SubCommand(description = "Sets whether the command invocation will be deleted after the command is sent.")
-    fun invokeDelete(ctx: Context, toggle: Boolean) {
+    fun invokedelete(ctx: Context, toggle: Boolean) {
         if (!ctx.selfMember!!.hasPermission(Permission.MESSAGE_MANAGE)) {
             return ctx.send("I don't have permission to delete messages.")
         }
@@ -307,18 +304,22 @@ class Settings : Cog {
     }
 
     @SubCommand(aliases = ["votequeuecooldown", "vqc", "vpc"], description = "Sets the vote-play cooldown.")
+    @Usages("20m", "reset")
     fun voteplaycooldown(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.votePlayCooldown = it }, ctx.config.votePlayCooldown, ctx.config.votePlayCooldownText, "vote-play cooldown")
 
     @SubCommand(aliases = ["votequeueduration", "vqd", "vpd"], description = "Sets the vote-play duration.")
+    @Usages("20m", "reset")
     fun voteplayduration(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.votePlayDuration = it }, ctx.config.votePlayDuration, ctx.config.votePlayDurationText, "vote-play duration")
 
     @SubCommand(aliases = ["vsd"], description = "Sets the vote-skip duration.")
+    @Usages("20m", "reset")
     fun voteskipduration(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.voteSkipDuration = it }, ctx.config.voteSkipDuration, ctx.config.voteSkipDurationText, "vote-skip duration")
 
     @SubCommand(aliases = ["vsc"], description = "Sets the vote-skip cooldown.")
+    @Usages("20m", "reset")
     fun voteskipcooldown(ctx: Context, @Greedy duration: String) = durationParseCommand(ctx, duration,
         { music.voteSkipCooldown = it }, ctx.config.voteSkipCooldown, ctx.config.voteSkipCooldownText, "vote-skip cooldown")
 
