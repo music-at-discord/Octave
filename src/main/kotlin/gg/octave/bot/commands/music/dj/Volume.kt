@@ -61,8 +61,10 @@ class Volume : MusicCog {
         val oldVolume = ctx.manager.player.volume
         val bar = buildBar(newVolume, maximumVolume)
 
+        val data = ctx.data
         ctx.manager.player.volume = newVolume
-        ctx.data.music.volume = newVolume
+        data.music.volume = newVolume
+        data.save()
 
         ctx.send {
             setColor(0x9570D3)
