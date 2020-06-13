@@ -88,16 +88,16 @@ class ExtendedAudioPlayerManager(private val dapm: AudioPlayerManager = DefaultA
                 .setup()
         }
 
-        val spotifyAudioSourceManager = SpotifyAudioSourceManager(
-            credentials.spotifyClientId,
-            credentials.spotifyClientSecret,
-            youtubeAudioSourceManager
-        )
+        registerSourceManagers(CachingSourceManager(), DiscordAttachmentAudioSourceManager())
+
+        val spotifyClientId = credentials.spotifyClientId
+        val spotifyClientSecret = credentials.spotifyClientSecret
+
+        if (!spotifyClientId.isNullOrEmpty() && !spotifyClientSecret.isNullOrEmpty()) {
+            registerSourceManager(SpotifyAudioSourceManager(spotifyClientId, spotifyClientSecret, youtubeAudioSourceManager))
+        }
 
         registerSourceManagers(
-            CachingSourceManager(),
-            DiscordAttachmentAudioSourceManager(),
-            spotifyAudioSourceManager,
             youtubeAudioSourceManager,
             SoundCloudAudioSourceManager.createDefault(),
             GetyarnAudioSourceManager(),

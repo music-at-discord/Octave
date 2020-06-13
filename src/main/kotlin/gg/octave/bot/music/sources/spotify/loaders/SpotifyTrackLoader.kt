@@ -47,9 +47,7 @@ class SpotifyTrackLoader : Loader {
     }
 
     private fun fetchTrackInfo(sourceManager: SpotifyAudioSourceManager, trackId: String): JSONObject {
-        return sourceManager.request("https://api.spotify.com/v1/tracks/$trackId") {
-            addHeader("Authorization", "Bearer ${sourceManager.accessToken}")
-        }.use {
+        return sourceManager.request("https://api.spotify.com/v1/tracks/$trackId").use {
             check(it.statusLine.statusCode == HttpStatus.SC_OK) {
                 "Received code ${it.statusLine.statusCode} from Spotify while fetching track information"
             }

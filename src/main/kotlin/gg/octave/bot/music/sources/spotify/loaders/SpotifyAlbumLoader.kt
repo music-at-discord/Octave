@@ -57,9 +57,7 @@ class SpotifyAlbumLoader : Loader {
     }
 
     private fun fetchAlbumInfo(sourceManager: SpotifyAudioSourceManager, albumId: String): JSONObject {
-        return sourceManager.request("https://api.spotify.com/v1/albums/$albumId") {
-            addHeader("Authorization", "Bearer ${sourceManager.accessToken}")
-        }.use {
+        return sourceManager.request("https://api.spotify.com/v1/albums/$albumId").use {
             check(it.statusLine.statusCode == HttpStatus.SC_OK) {
                 "Received code ${it.statusLine.statusCode} from Spotify while fetching album tracks"
             }

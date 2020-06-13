@@ -50,9 +50,7 @@ class SpotifyPlaylistLoader : Loader {
     }
 
     private fun fetchPlaylistInfo(sourceManager: SpotifyAudioSourceManager, playlistId: String): JSONObject {
-        return sourceManager.request("https://api.spotify.com/v1/playlists/$playlistId") {
-            addHeader("Authorization", "Bearer ${sourceManager.accessToken}")
-        }.use {
+        return sourceManager.request("https://api.spotify.com/v1/playlists/$playlistId").use {
             check(it.statusLine.statusCode == HttpStatus.SC_OK) {
                 "Received code ${it.statusLine.statusCode} from Spotify while fetching playlist information"
             }
@@ -64,9 +62,7 @@ class SpotifyPlaylistLoader : Loader {
 
     private fun fetchPlaylistTracks(manager: DefaultAudioPlayerManager,
                                     sourceManager: SpotifyAudioSourceManager, playlistId: String): List<AudioTrack> {
-        return sourceManager.request("https://api.spotify.com/v1/playlists/$playlistId/tracks") {
-            addHeader("Authorization", "Bearer ${sourceManager.accessToken}")
-        }.use {
+        return sourceManager.request("https://api.spotify.com/v1/playlists/$playlistId/tracks").use {
             check(it.statusLine.statusCode == HttpStatus.SC_OK) {
                 "Received code ${it.statusLine.statusCode} from Spotify while fetching playlist tracks"
             }
