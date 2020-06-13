@@ -81,7 +81,6 @@ class SpotifyAccessTokenTracker(clientId: String, clientSecret: String, private 
                 }
             } catch (e: Exception) {
                 _accessToken = null
-
             }
         }
     }
