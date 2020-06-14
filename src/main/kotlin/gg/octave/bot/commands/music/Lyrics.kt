@@ -34,6 +34,7 @@ import me.devoxin.flight.api.annotations.SubCommand
 import me.devoxin.flight.api.entities.Cog
 import me.devoxin.flight.internal.utils.TextSplitter
 import java.net.URLEncoder
+import java.util.concurrent.TimeUnit
 
 class Lyrics : Cog {
     @Command(description = "Shows the lyrics of the current song")
@@ -74,6 +75,7 @@ class Lyrics : Cog {
                     setTitle("Lyrics for $fullTitle")
                     setEmptyMessage("There should be something here 👀")
                     setItemsPerPage(1)
+                    setTimeout(1, TimeUnit.MINUTES)
                     finally { message -> message?.delete()?.queue() }
 
                     for (page in pages) {
