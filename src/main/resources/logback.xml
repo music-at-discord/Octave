@@ -38,8 +38,11 @@
         </encoder>
     </appender>
 
+    <appender name="DISCORD" class="gg.octave.bot.utils.DiscordLogBack"/>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE-OUT"/>
+        <appender-ref ref="DISCORD"/>
     </root>
 </configuration>
