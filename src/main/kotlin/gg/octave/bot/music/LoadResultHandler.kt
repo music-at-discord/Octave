@@ -59,14 +59,20 @@ class LoadResultHandler(
             return
         }
 
+        val queueLimit = queueLimit()
         val pendingEnqueue = playlist.tracks.filter { checkTrack(it, true) }
-        val added = pendingEnqueue.size
-        val ignored = playlist.tracks.size - added
+        var added = 0
 
         for (track in pendingEnqueue) {
+            if (musicManager.queue.size + 1 >= queueLimit) {
+                break
+            }
             track.userData = trackContext
             musicManager.enqueue(track, isNext)
+            added++
         }
+
+        val ignored = pendingEnqueue.size - added
 
         ctx.send {
             setColor(0x9570D3)
@@ -137,15 +143,17 @@ class LoadResultHandler(
         return true
     }
 
-    private fun checkTrack(track: AudioTrack, silent: Boolean): Boolean {
-        val queueLimit = queueLimit()
-        val queueLimitDisplay = if (queueLimit == Integer.MAX_VALUE) "unlimited" else queueLimit.toString()
+    private fun checkTrack(track: AudioTrack, isPlaylist: Boolean): Boolean {
+        if (!isPlaylist) {
+            val queueLimit = queueLimit()
+            val queueLimitDisplay = if (queueLimit == Integer.MAX_VALUE) "unlimited" else queueLimit.toString()
 
-        if (musicManager.queue.size + 1 >= queueLimit) {
-            if (!silent) {
-                ctx.send("The queue can not exceed $queueLimitDisplay songs.")
+            if (musicManager.queue.size + 1 >= queueLimit) {
+                if (!isPlaylist) {
+                    ctx.send("The queue can not exceed $queueLimitDisplay songs.")
+                }
+                return false
             }
-            return false
         }
 
         if (!track.info.isStream) {
@@ -166,7 +174,7 @@ class LoadResultHandler(
             }
 
             if (track.duration > durationLimit) {
-                if (!silent) {
+                if (!isPlaylist) {
                     ctx.send("The track can not exceed $durationLimitText.")
                 }
                 return false
