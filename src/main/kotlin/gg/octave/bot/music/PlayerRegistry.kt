@@ -57,6 +57,7 @@ class PlayerRegistry {
         }
     }
 
+    @Synchronized
     fun get(guild: Guild?) = registry.computeIfAbsent(guild!!.idLong) { MusicManagerV2(guild.idLong, playerManager.createPlayer()) }
 
     fun getExisting(id: Long) = registry[id]

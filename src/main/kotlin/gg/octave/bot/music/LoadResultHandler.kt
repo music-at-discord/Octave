@@ -202,7 +202,7 @@ class LoadResultHandler(
     }
 
     companion object {
-        private const val MAX_LOAD_RETRIES = 3
+        private const val MAX_LOAD_RETRIES = 2
 
         fun loadItem(query: String, ctx: Context, musicManager: MusicManagerV2, trackContext: TrackContext,
                      isNext: Boolean, footnote: String? = null) {
