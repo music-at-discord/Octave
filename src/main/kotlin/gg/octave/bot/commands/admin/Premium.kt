@@ -27,7 +27,7 @@ class Premium : Cog {
     }
 
     @SubCommand(aliases = ["-"], description = "Remove an override (deletes entry)")
-    fun remove(ctx: Context, user: Snowflake, pledge: Double) {
+    fun remove(ctx: Context, user: Snowflake) {
         val pu = Launcher.db.getPremiumUser(user.resolved.toString())
         pu.delete()
 
