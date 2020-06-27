@@ -42,6 +42,10 @@ public class PremiumUser extends ManagedObject {
     @JsonDeserialize
     private double pledgeAmount;
 
+    @JsonSerialize
+    @JsonDeserialize
+    private boolean override = false;
+
     @ConstructorProperties("id")
     public PremiumUser(String id) {
         super(id, "premiumusers");
@@ -54,6 +58,12 @@ public class PremiumUser extends ManagedObject {
     }
 
     @JsonIgnore
+    public PremiumUser setOverride(boolean override) {
+        this.override = override;
+        return this;
+    }
+
+    @JsonIgnore
     public long getIdLong() {
         return Long.parseLong(getId());
     }
@@ -61,6 +71,11 @@ public class PremiumUser extends ManagedObject {
     @JsonIgnore
     public double getPledgeAmount() {
         return pledgeAmount;
+    }
+
+    @JsonIgnore
+    public boolean isOverride() {
+        return override;
     }
 
     @JsonIgnore

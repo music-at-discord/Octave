@@ -44,7 +44,7 @@ class PatreonAPI(var accessToken: String?) {
     init {
         if (accessToken?.isEmpty() == false) {
             log.info("Can't pay? We'll take it away")
-            Scheduler.fixedRateScheduleWithSuppression(executor, 1, 1, TimeUnit.DAYS) { sweep() }
+            //Scheduler.fixedRateScheduleWithSuppression(executor, 1, 1, TimeUnit.DAYS) { sweep() }
         }
     }
 
