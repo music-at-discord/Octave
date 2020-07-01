@@ -25,7 +25,6 @@
 package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.Launcher
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.manager
@@ -33,8 +32,9 @@ import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 
 class Stop : MusicCog {
-    @DJ
-    @CheckVoiceState
+    override fun sameChannel() = true
+
+    @DJ(ignoreAlone = true)
     @Command(aliases = ["end", "st", "fuckoff"], description = "Stop and clear the music player.")
     fun stop(ctx: Context, clear: Boolean = false) {
         val karen = ctx.manager

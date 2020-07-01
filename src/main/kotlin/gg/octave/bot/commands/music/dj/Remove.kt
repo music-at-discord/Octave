@@ -27,7 +27,6 @@ package gg.octave.bot.commands.music.dj
 import gg.octave.bot.Launcher
 import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.commands.music.embedUri
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.entities.framework.Usages
@@ -46,7 +45,6 @@ class Remove : MusicCog {
     private val pattern = Pattern.compile("(\\d+)?\\s*?\\.\\.\\s*(\\d+)?")
 
     @DJ
-    @CheckVoiceState
     @Usages("first", "last", "all", "1..5", "1", "1 7 12 3")
     @Command(aliases = ["removesong", "rm", "rem"], description = "Remove a song from the queue.")
     fun remove(ctx: Context, @Greedy which: String?) {

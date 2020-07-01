@@ -24,16 +24,16 @@
 
 package gg.octave.bot.commands.music.dj
 
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
+import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.launcher
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
-import me.devoxin.flight.api.entities.Cog
 
-class ClearQueue : Cog {
-    @DJ
-    @CheckVoiceState
+class ClearQueue : MusicCog {
+    override fun sameChannel() = true
+
+    @DJ(ignoreAlone = true)
     @Command(aliases = ["cq"], description = "Clear the current queue.")
     fun clearqueue(ctx: Context) {
         val manager = ctx.launcher.players.get(ctx.guild)

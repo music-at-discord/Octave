@@ -24,7 +24,6 @@
 
 package gg.octave.bot.commands.music.dj
 
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.music.settings.RepeatOption
@@ -38,7 +37,6 @@ class Repeat : MusicCog {
     override fun requirePlayer() = true
 
     @DJ
-    @CheckVoiceState
     @Command(aliases = ["loop", "r", "l"], description = "Set if the music player should repeat")
     fun repeat(ctx: Context, option: RepeatOption) {
         ctx.manager.repeatOption = option

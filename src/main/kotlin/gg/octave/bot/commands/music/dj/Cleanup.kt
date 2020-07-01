@@ -26,7 +26,6 @@ package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.Launcher
 import gg.octave.bot.entities.`typealias`.Predicate
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.entities.framework.Usages
@@ -47,7 +46,6 @@ class Cleanup : MusicCog {
     override fun requirePlayer() = true
 
     @DJ
-    @CheckVoiceState
     @Command(aliases = ["cu"], description = "Clear songs based on a specific user, duplicates, or if a user left")
     fun cleanup(ctx: Context, @Greedy member: Member?) {
         if (member == null) {

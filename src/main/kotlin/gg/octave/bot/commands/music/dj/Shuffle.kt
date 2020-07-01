@@ -25,7 +25,6 @@
 package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.commands.music.PLAY_MESSAGE
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.manager
@@ -38,7 +37,6 @@ class Shuffle : MusicCog {
     override fun requirePlayer() = true
 
     @DJ
-    @CheckVoiceState
     @Command(description = "Shuffles the queue order around.")
     fun shuffle(ctx: Context) {
         val manager = ctx.manager

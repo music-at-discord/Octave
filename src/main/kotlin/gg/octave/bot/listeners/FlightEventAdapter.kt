@@ -41,6 +41,7 @@ import me.devoxin.flight.api.hooks.DefaultCommandEventAdapter
 import net.dv8tion.jda.api.Permission
 import net.dv8tion.jda.api.entities.Member
 import net.dv8tion.jda.api.entities.Role
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.hasAnnotation
 
 class FlightEventAdapter : DefaultCommandEventAdapter() {
@@ -165,8 +166,10 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
             }
         }
 
-        if (command.method.hasAnnotation<DJ>() || data.command.isDjOnlyMode) {
-            return data.music.isDisableDj || isDJ(ctx)
+        val djAnnotation = command.method.findAnnotation<DJ>()
+        if (djAnnotation != null || data.command.isDjOnlyMode) {
+            val ignoreAlone = djAnnotation?.ignoreAlone ?: false
+            return data.music.isDisableDj || isDJ(ctx, ignoreAlone = ignoreAlone)
         }
 
         return true
@@ -208,7 +211,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
     }
 
     companion object {
-        fun isDJ(ctx: Context, send: Boolean = true): Boolean {
+        fun isDJ(ctx: Context, send: Boolean = true, ignoreAlone: Boolean = false): Boolean {
             val data = ctx.data
             val isAlone = ctx.guild!!.audioManager.connectedChannel.let { it != null && it.members.count { m -> !m.user.isBot } == 1 }
             val djRole = data.command.djRole
@@ -217,7 +220,7 @@ class FlightEventAdapter : DefaultCommandEventAdapter() {
 
             val admin = ctx.member!!.hasPermission(Permission.MANAGE_SERVER)
 
-            if (ctx.member!!.hasAnyRoleNamed("DJ") || djRolePresent || isAlone || admin) {
+            if (ctx.member!!.hasAnyRoleNamed("DJ") || djRolePresent || (isAlone && !ignoreAlone) || admin) {
                 return true
             }
 

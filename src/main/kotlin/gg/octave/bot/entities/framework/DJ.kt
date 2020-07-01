@@ -24,4 +24,4 @@
 
 package gg.octave.bot.entities.framework
 
-annotation class DJ
+annotation class DJ(val ignoreAlone: Boolean = false)

@@ -24,7 +24,6 @@
 
 package gg.octave.bot.commands.music.dj
 
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.DonorOnly
 import gg.octave.bot.entities.framework.MusicCog
@@ -35,13 +34,13 @@ import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 
 class Volume : MusicCog {
+    override fun sameChannel() = true
     override fun requirePlayer() = true
 
     private val totalBlocks = 20
     private val maximumVolume = 150
 
     @DJ
-    @CheckVoiceState
     @DonorOnly
     @Command(aliases = ["v", "vol"], description = "Set the volume of the music player.")
     fun volume(ctx: Context, amount: Int?) {

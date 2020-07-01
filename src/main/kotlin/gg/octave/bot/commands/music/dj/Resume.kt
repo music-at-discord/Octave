@@ -25,23 +25,24 @@
 package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.commands.music.PLAY_MESSAGE
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
+import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.manager
 import gg.octave.bot.utils.extensions.voiceChannel
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
-import me.devoxin.flight.api.entities.Cog
 
-class Resume : Cog {
+class Resume : MusicCog {
+    override fun requireVoiceState() = true
+
     @DJ
-    @CheckVoiceState
     @Command(aliases = ["rq"], description = "Resume the music queue.")
     fun resumequeue(ctx: Context) {
         val manager = ctx.manager
+        val connectedChannel = ctx.guild!!.audioManager.connectedChannel
 
-        if (ctx.voiceChannel == null) {
-            return ctx.send("You need to be in a voice channel.")
+        if (connectedChannel != null && ctx.voiceChannel != connectedChannel) {
+            return ctx.send("You need to be in my voice channel.")
         }
 
         if (manager.queue.isEmpty()) {

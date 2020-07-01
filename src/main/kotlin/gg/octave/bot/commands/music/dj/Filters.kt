@@ -38,7 +38,6 @@ class Filters : MusicCog {
     override fun requirePlayer() = true
 
     @DJ
-    @CheckVoiceState
     @DonorOnly
     @Command(aliases = ["filters", "fx", "effects"], description = "Apply audio filters to the music such as speed and pitch")
     fun filter(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)

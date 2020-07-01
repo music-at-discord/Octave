@@ -24,7 +24,6 @@
 
 package gg.octave.bot.commands.music.dj
 
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.manager
@@ -37,7 +36,6 @@ class Skip : MusicCog {
     override fun requirePlayer() = true
 
     @DJ
-    @CheckVoiceState
     @Command(aliases = ["sk", "s"], description = "Skips the current track.")
     fun skip(ctx: Context) {
         ctx.manager.nextTrack()

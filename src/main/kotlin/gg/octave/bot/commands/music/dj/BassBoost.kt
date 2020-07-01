@@ -24,7 +24,6 @@
 
 package gg.octave.bot.commands.music.dj
 
-import gg.octave.bot.entities.framework.CheckVoiceState
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.DonorOnly
 import gg.octave.bot.entities.framework.MusicCog
@@ -40,7 +39,6 @@ class BassBoost : MusicCog {
 
     @DJ
     @DonorOnly
-    @CheckVoiceState
     @Command(aliases = ["bb", "bass", "boost"], description = "Applies bass boost to the music.")
     fun bassboost(ctx: Context, strength: BoostSetting) {
         ctx.manager.dspFilter.bassBoost = strength
