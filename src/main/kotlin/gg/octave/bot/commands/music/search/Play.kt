@@ -106,7 +106,7 @@ class Play : Cog {
 
     private fun prompt(ctx: Context, hasManager: Boolean): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
-        val oldQueue = MusicManagerV2.getQueueForGuild(ctx.guild!!.id)
+        val oldQueue = MusicManagerV2.getQueueFor(ctx.guild!!.id)
 
         if (!hasManager && !oldQueue.isEmpty()) {
             SelectorBuilder(Launcher.eventWaiter)
@@ -141,7 +141,7 @@ class Play : Cog {
     companion object {
         fun smartPlay(ctx: Context, manager: MusicManagerV2, args: List<String>, isSearchResult: Boolean, uri: String, isNext: Boolean = false) {
             when {
-                ctx.data.music.isVotePlay && !FlightEventAdapter.isDJ(ctx, false) -> startPlayVote(ctx, manager!!, args, isSearchResult, uri, isNext)
+                ctx.data.music.isVotePlay && !FlightEventAdapter.isDJ(ctx, false) -> startPlayVote(ctx, manager, args, isSearchResult, uri, isNext)
                 else -> play(ctx, args, isSearchResult, uri, isNext)
             }
         }

@@ -37,6 +37,8 @@ class PlayerRegistry {
     val registry = ConcurrentHashMap<Long, MusicManagerV2>(Launcher.configuration.musicLimit)
     private val executor = Executors.newSingleThreadScheduledExecutor()
 
+    private val playTimeout = TimeUnit.MINUTES.toMillis(2)
+
     init {
         Scheduler.fixedRateScheduleWithSuppression(executor, 3, 3, TimeUnit.MINUTES) { sweep() }
     }
@@ -45,8 +47,8 @@ class PlayerRegistry {
         registry.values.filter {
             // If guild null, or if connected, and not playing, and not queued for leave,
             // if last played >= IDLE_TIMEOUT minutes ago, and not 24/7 (all day) music, destroy/queue leave.
-            it.guild == null || it.guild!!.audioManager.isConnected && it.player.playingTrack == null &&
-                !it.isLeaveQueued && System.currentTimeMillis() - it.lastPlayedAt > 120000 &&
+            it.guild == null || it.guild!!.audioManager.isConnected && it.isIdle &&
+                !it.isLeaveQueued && System.currentTimeMillis() - it.lastPlayedAt > playTimeout &&
                 !isAllDayMusic(it.guildId.toString())
         }.forEach {
             if (it.guild == null) {

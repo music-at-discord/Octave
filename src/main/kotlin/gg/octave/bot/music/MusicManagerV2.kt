@@ -57,7 +57,6 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
 
     private var lastTimeAnnounced = 0L
     private var lastErrorAnnounced = 0L
-    private var errorCount = 0L
 
     var lastVoteTime = 0L
     var isVotingToSkip = false
@@ -268,10 +267,9 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
             guild?.getTextChannelById(it)
         } ?: return
 
-        if (errorCount < 20L && (lastErrorAnnounced == 0L || lastErrorAnnounced + 6000 < System.currentTimeMillis())) {
+        if (System.currentTimeMillis() > lastErrorAnnounced + 5000) {
             channel.sendMessage("An unknown error occurred while playing **${track.info.embedTitle}**:\n${exception.friendlierMessage()}")
                 .queue {
-                    errorCount++
                     lastErrorAnnounced = System.currentTimeMillis()
                 }
         }
@@ -303,8 +301,6 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
     override fun isOpus() = true
 
     companion object {
-        fun getQueueForGuild(guildId: String): RQueue<String> {
-            return Launcher.db.redisson.getQueue("playerQueue:$guildId")
-        }
+        fun getQueueFor(guildId: String): RQueue<String> = Launcher.db.redisson.getQueue("playerQueue:$guildId")
     }
 }
