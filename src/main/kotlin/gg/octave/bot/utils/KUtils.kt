@@ -38,6 +38,8 @@ fun Member.hasAnyRoleId(id: String) = id == guild.publicRole.id || roles.any { i
 
 fun String.toDuration(): Duration = Duration.ofNanos(parseDuration(this))
 
+fun Boolean.toHuman(): String = if (this) "Enabled" else "Disabled"
+
 fun parseDuration(input: String): Long {
     val s = input.trim()
     val originalUnitString = getUnits(s)

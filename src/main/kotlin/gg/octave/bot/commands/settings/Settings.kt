@@ -29,6 +29,7 @@ import gg.octave.bot.entities.framework.Usages
 import gg.octave.bot.utils.extensions.*
 import gg.octave.bot.utils.getDisplayValue
 import gg.octave.bot.utils.toDuration
+import gg.octave.bot.utils.toHuman
 import me.devoxin.flight.api.Context
 import me.devoxin.flight.api.annotations.Command
 import me.devoxin.flight.api.annotations.Greedy
@@ -45,6 +46,47 @@ class Settings : Cog {
     @Command(aliases = ["setting", "set", "config", "configuration", "configure", "opts", "options"],
         description = "Change music settings.", userPermissions = [Permission.MANAGE_SERVER])
     fun settings(ctx: Context) = DEFAULT_SUBCOMMAND(ctx)
+
+    @SubCommand(aliases = ["view", "list"])
+    fun show(ctx: Context) {
+        val data = ctx.data
+
+        val cmd = data.command
+        val ignored = data.ignored
+        val music = data.music
+
+        val respClean = if (cmd.isAutoDelete) getDisplayValue(cmd.autoDeleteDelay) else "Disabled"
+        val vpCdDur = "${getDisplayValue(music.votePlayDuration)} / ${getDisplayValue(music.votePlayCooldown)}"
+        val vsCdDur = "${getDisplayValue(music.voteSkipDuration)} / ${getDisplayValue(music.voteSkipCooldown)}"
+
+        ctx.send {
+            setColor(0x9570D3)
+            setTitle("Settings")
+            addField("Command", buildString {
+                appendln("Prefix: ${cmd.prefix}")
+                appendln("Response Cleanup: $respClean")
+                appendln("Delete Invocation: ${cmd.isInvokeDelete.toHuman()}")
+            }, true)
+            addField("Music", buildString {
+                appendln("Default Volume: ${music.volume}")
+                appendln("All Day Music: ${music.isAllDayMusic.toHuman()}")
+                appendln("Vote-Play: ${music.isVotePlay.toHuman()}")
+                appendln("Vote-Play Duration/Cooldown: $vpCdDur")
+                appendln("Vote-Skip Duration/Cooldown: $vsCdDur")
+            }, true)
+            addField("DJ", buildString {
+                appendln("Enabled: ${(!data.music.isDisableDj).toHuman()}")
+                appendln("DJ-Only: ${cmd.isDjOnlyMode.toHuman()}")
+                    //appendln("Roles")
+            }, false)
+        }
+
+        // TODO: queue limit
+        // TODO: max song length
+        // TODO: designated music/voice channels
+        // TODO: dj role list
+        // TODO: ignored channels list
+    }
 
     @SubCommand(description = "Resets the settings for the guild.")
     fun reset(ctx: Context) {

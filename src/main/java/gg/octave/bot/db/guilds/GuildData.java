@@ -38,8 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GuildData extends ManagedObject {
-    @JsonIgnore
-    public Object logData;
     @JsonSerialize
     @JsonDeserialize(as = CommandData.class)
     private CommandData commandData;
@@ -131,6 +129,5 @@ public class GuildData extends ManagedObject {
         ignoredData = null;
         musicData = null;
         roleData = null;
-        logData = null;
     }
 }
