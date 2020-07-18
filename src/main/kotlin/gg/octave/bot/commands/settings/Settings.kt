@@ -77,7 +77,7 @@ class Settings : Cog {
             addField("DJ", buildString {
                 appendln("Enabled: ${(!data.music.isDisableDj).toHuman()}")
                 appendln("DJ-Only: ${cmd.isDjOnlyMode.toHuman()}")
-                    //appendln("Roles")
+                //appendln("Roles")
             }, false)
         }
 

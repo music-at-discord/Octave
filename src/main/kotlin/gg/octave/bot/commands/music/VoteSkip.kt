@@ -93,24 +93,20 @@ class VoteSkip : MusicCog {
 
         manager.lastVoteTime = System.currentTimeMillis()
         manager.isVotingToSkip = true
+
         val halfPeople = ctx.selfMember!!.voiceState!!.channel!!.members.filterNot { it.user.isBot }.size / 2
 
-        val message = ctx.sendAsync {
-            setTitle("Vote Skip")
-            setDescription(
-                buildString {
-                    append(ctx.message.author.asMention)
-                    append(" has voted to **skip** the current track!")
-                    append(" React with :thumbsup:\n")
-                    append("If at least **${halfPeople + 1}** vote(s) from listeners are obtained " +
-                        "within **$voteSkipDurationText**, the song will be skipped!")
-                }
-            )
-        }
-
-        message.addReaction("👍")
-            .submit()
-            .thenApply { message }
+        ctx.messageChannel.sendMessage(
+            EmbedBuilder().apply {
+                setTitle("Vote Skip")
+                setDescription(
+                    "${ctx.author.asMention} has voted to **skip** the current track! React with 👍\n" +
+                        "If at least **$halfPeople** vote(s) from listeners are obtained within **$voteSkipDurationText**," +
+                        "the song will be skipped!"
+                )
+            }.build()
+        ).submit()
+            .thenCompose { m -> m.addReaction("👍").submit().thenApply { m } }
             .thenCompose {
                 it.editMessage(EmbedBuilder(it.embeds[0])
                     .apply {

@@ -200,23 +200,16 @@ class Play : Cog {
             val channel = ctx.selfMember!!.voiceState!!.channel ?: ctx.voiceChannel!!
             val halfPeople = channel.members.filter { !it.user.isBot }.size / 2
 
-            ctx.messageChannel.sendMessage(EmbedBuilder().apply {
-                setTitle("Vote Play")
-                setDescription(
-                    buildString {
-                        append(ctx.author.asMention)
-                        append(" has voted to **play** a track!")
-                        append(" React with :thumbsup:\n")
-                        append("If there are more than $halfPeople vote(s) within $votePlayDurationText, the track will be queued.")
-                    }
-                )
-            }.build())
-                .submit()
-                .thenCompose { m ->
-                    m.addReaction("👍")
-                        .submit()
-                        .thenApply { m }
-                }
+            ctx.messageChannel.sendMessage(
+                EmbedBuilder().apply {
+                    setTitle("Vote Play")
+                    setDescription(
+                        "${ctx.author.asMention} has voted to **play** a track! React with 👍\n" +
+                            "If there are more than $halfPeople vote(s) within $votePlayDurationText, the track will be queued"
+                    )
+                }.build()
+            ).submit()
+                .thenCompose { m -> m.addReaction("👍").submit().thenApply { m } }
                 .thenCompose {
                     it.editMessage(EmbedBuilder(it.embeds[0])
                         .apply {
