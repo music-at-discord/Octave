@@ -52,40 +52,50 @@ class Settings : Cog {
         val data = ctx.data
 
         val cmd = data.command
-        val ignored = data.ignored
         val music = data.music
 
         val respClean = if (cmd.isAutoDelete) getDisplayValue(cmd.autoDeleteDelay) else "Disabled"
-        val vpCdDur = "${getDisplayValue(music.votePlayDuration)} / ${getDisplayValue(music.votePlayCooldown)}"
-        val vsCdDur = "${getDisplayValue(music.voteSkipDuration)} / ${getDisplayValue(music.voteSkipCooldown)}"
+        val musicChannels = music.channels.mapNotNull(ctx.guild!!::getVoiceChannelById)
+            .takeIf { it.isNotEmpty() }
+            ?.joinToString("`, `", transform = VoiceChannel::getName, prefix = "`", postfix = "`")
+            ?: "`All Voice Channels`"
+
+        val mainDjRole = cmd.djRole?.let(ctx.guild!!::getRoleById)?.asMention
+            ?: "`Default (DJ)`"
+        val djRoleList = music.djRoles.mapNotNull(ctx.guild!!::getRoleById)
+            .map(Role::getAsMention)
+            .plus(mainDjRole)
+            .joinToString(", ")
 
         ctx.send {
             setColor(0x9570D3)
-            setTitle("Settings")
+            setTitle("Settings Overview")
             addField("Command", buildString {
-                appendln("Prefix: ${cmd.prefix}")
-                appendln("Response Cleanup: $respClean")
-                appendln("Delete Invocation: ${cmd.isInvokeDelete.toHuman()}")
+                appendln("Prefix: `${cmd.prefix}`")
+                appendln("Response Cleanup: `$respClean`")
+                appendln("Delete Invocation: `${cmd.isInvokeDelete.toHuman()}`")
             }, true)
+            addField("Limits", "Queue Size: `0 songs`\nSong Length: `0 seconds`", true)
             addField("Music", buildString {
-                appendln("Default Volume: ${music.volume}")
-                appendln("All Day Music: ${music.isAllDayMusic.toHuman()}")
-                appendln("Vote-Play: ${music.isVotePlay.toHuman()}")
-                appendln("Vote-Play Duration/Cooldown: $vpCdDur")
-                appendln("Vote-Skip Duration/Cooldown: $vsCdDur")
+                appendln("Default Volume: `${music.volume}%`")
+                appendln("All Day Music: `${music.isAllDayMusic.toHuman()}`")
+                appendln("Vote-Skip:")
+                appendln("\u200b • duration: `${getDisplayValue(music.voteSkipDuration)}`")
+                appendln("\u200b • cooldown: `${getDisplayValue(music.voteSkipCooldown)}`")
+                appendln("Vote-Play: `${music.isVotePlay.toHuman()}`")
+                appendln("\u200b • duration: `${getDisplayValue(music.votePlayDuration)}`")
+                appendln("\u200b • cooldown: `${getDisplayValue(music.votePlayCooldown)}`")
             }, true)
             addField("DJ", buildString {
-                appendln("Enabled: ${(!data.music.isDisableDj).toHuman()}")
-                appendln("DJ-Only: ${cmd.isDjOnlyMode.toHuman()}")
-                //appendln("Roles")
+                appendln("Status: `${(!data.music.isDisableDj).toHuman()}`")
+                appendln("DJ-Only: `${cmd.isDjOnlyMode.toHuman()}`")
+                appendln("Roles: $djRoleList")
             }, false)
+            addField("Designated Music VC", musicChannels, false)
+            addField("Ignoring", "Use `${ctx.trigger}ignore list` to view ignored entities.", false)
         }
 
-        // TODO: queue limit
-        // TODO: max song length
-        // TODO: designated music/voice channels
-        // TODO: dj role list
-        // TODO: ignored channels list
+        // TODO: fill in song length/queue limit values
     }
 
     @SubCommand(description = "Resets the settings for the guild.")

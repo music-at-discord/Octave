@@ -101,8 +101,8 @@ class MusicManagerV2(val guildId: Long, val player: AudioPlayer) : AudioSendHand
                 return false
             }
             channel.userLimit != 0 && channel.members.size >= channel.userLimit
-                && !guild?.selfMember!!.hasPermission(channel, Permission.VOICE_MOVE_OTHERS) -> {
-                ctx.send("The bot can't join due to the user limit.")
+                && guild?.selfMember?.hasPermission(channel, Permission.VOICE_MOVE_OTHERS) != true -> {
+                ctx.send("The bot can't join due to the user limit. Grant me `${Permission.VOICE_MOVE_OTHERS.name}` or raise the user limit.")
                 destroy()
                 return false
             }
