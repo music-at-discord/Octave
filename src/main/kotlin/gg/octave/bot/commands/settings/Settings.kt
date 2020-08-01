@@ -67,6 +67,12 @@ class Settings : Cog {
             .plus(mainDjRole)
             .joinToString(", ")
 
+        val premiumGuild = ctx.premiumGuild
+        val durationLimit = premiumGuild?.songLengthQuota ?: ctx.config.durationLimit.toMillis()
+        val queueLimit = premiumGuild?.queueSizeQuota ?: ctx.config.queueLimit
+        val durFmt = if (durationLimit == Long.MAX_VALUE) "∞" else getDisplayValue(durationLimit)
+        val queueFmt = if (queueLimit == Int.MAX_VALUE) "∞" else queueLimit.toString()
+
         ctx.send {
             setColor(0x9570D3)
             setTitle("Settings Overview")
@@ -75,7 +81,7 @@ class Settings : Cog {
                 appendln("Response Cleanup: `$respClean`")
                 appendln("Delete Invocation: `${cmd.isInvokeDelete.toHuman()}`")
             }, true)
-            addField("Limits", "Queue Size: `0 songs`\nSong Length: `0 seconds`", true)
+            addField("Limits", "Queue Size: `$queueFmt songs`\nSong Length: `$durFmt`", true)
             addField("Music", buildString {
                 appendln("Default Volume: `${music.volume}%`")
                 appendln("All Day Music: `${music.isAllDayMusic.toHuman()}`")

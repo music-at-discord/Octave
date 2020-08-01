@@ -89,7 +89,7 @@ public class PremiumGuild extends ManagedObject {
     public long getSongLengthQuota() {
         double pledgeAmount = getRedeemer().getPledgeAmount();
         if (Launcher.INSTANCE.getConfiguration().getAdmins().contains(Long.parseLong(getRedeemerId()))) {
-            return Integer.MAX_VALUE;
+            return Long.MAX_VALUE;
         } else if (pledgeAmount >= 10) {
             return TimeUnit.MINUTES.toMillis(720);
         } else if (pledgeAmount >= 5) {
