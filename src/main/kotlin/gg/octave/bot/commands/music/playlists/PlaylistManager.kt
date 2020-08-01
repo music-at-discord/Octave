@@ -66,14 +66,14 @@ class PlaylistManager(
             setColor(0x9571D3)
             setTitle("Editing a Custom Playlist")
             setDescription("""
-                `help             :` Shows this menu.
-                `remove <index>   :` Removes the track at the specified index.
-                `move <track> <to>:` Moves the track at the given index, to the new index.
-                `page <#>         :` Tabs to the given page, and displays it.
-                `rename <name>    :` Rename the playlist.
-                `resend           :` Re-sends the track list.
-                `save             :` Saves any modifications made to the playlist.
-                `exit             :` Exits playlist editing mode, discarding any changes.
+                `help              :` Shows this menu.
+                `remove <index>    :` Removes the track at the specified index.
+                `move <at #> <to #>:` Moves the track at the given index, to the new index.
+                `page <#>          :` Tabs to the given page, and displays it.
+                `rename <name>     :` Rename the playlist.
+                `resend            :` Re-sends the track list.
+                `save              :` Saves any modifications made to the playlist.
+                `exit              :` Exits playlist editing mode, discarding any changes.
             """.trimIndent())
         }
     }
@@ -164,7 +164,7 @@ class PlaylistManager(
     }
 
     private fun handle(received: Message): Boolean {
-        val (command, args) = received.contentRaw.split("\\s+".toRegex()).section()
+        val (command, args) = received.contentRaw.toLowerCase().split("\\s+".toRegex()).section()
 
         return when (command) {
             "help" -> {
