@@ -208,11 +208,19 @@ class PlaylistManager(
             "save" -> {
                 playlist.setTracks(tracks)
                 playlist.save()
-                ctx.send("Changes saved. Re-run `${ctx.trigger}cpl edit ${playlist.name}` if you would like to make further modifications.")
+                ctx.send {
+                    setColor(0x9571D3)
+                    setTitle("Playlist Updated")
+                    setDescription("Changes saved. Re-run `${ctx.trigger}cpl edit ${playlist.name}` if you would like to make further modifications.")
+                }
                 false
             }
             "exit" -> {
-                ctx.send("Discarded changes. If you wish to make any further modifications, re-run `${ctx.trigger}cpl edit ${playlist.name}`.")
+                ctx.send {
+                    setColor(0x9571D3)
+                    setTitle("Playlist Unchanged")
+                    setDescription("Discarded changes. If you wish to make any further modifications, re-run `${ctx.trigger}cpl edit ${playlist.name}`.")
+                }
                 false
             }
             else -> false

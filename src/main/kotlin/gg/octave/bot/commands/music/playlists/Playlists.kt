@@ -131,7 +131,11 @@ class Playlists : Cog {
                 playlist.setTracks(it.tracks)
                 playlist.save()
 
-                ctx.send("Playlist imported as `$importName` successfully!")
+                ctx.send {
+                    setColor(0x9571D3)
+                    setTitle("Playlist Imported")
+                    setDescription("The playlist `${it.name}` has been imported as `$importName` successfully!")
+                }
             },
             Runnable { ctx.send("The URL doesn't lead to a valid playlist.") },
             Consumer { ctx.send("Failed to load the media resource.\n`${it.localizedMessage}`") }
