@@ -25,6 +25,7 @@
 package gg.octave.bot.commands.music.dj
 
 import gg.octave.bot.Launcher
+import gg.octave.bot.commands.music.embedTitle
 import gg.octave.bot.entities.framework.DJ
 import gg.octave.bot.entities.framework.MusicCog
 import gg.octave.bot.utils.extensions.manager
@@ -56,6 +57,10 @@ class Move : MusicCog {
         val moved = queue.move(realIndex, realTo)
         val track = Launcher.players.playerManager.decodeAudioTrack(moved)
 
-        ctx.send("Moved **${track.info.title}** to position **$toIndex** in the queue.")
+        ctx.send {
+            setColor(0x9570D3)
+            setTitle("Track Moved")
+            setDescription("**${track.info.embedTitle}** is now at position **$toIndex** in the queue.")
+        }
     }
 }
