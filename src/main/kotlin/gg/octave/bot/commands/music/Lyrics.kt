@@ -60,7 +60,7 @@ class Lyrics : Cog {
             header("User-Agent", "Octave (DiscordBot, https://github.com/DankMemer/Octave)")
         }.thenAccept {
             if (!it.isNull("error")) {
-                return@thenAccept ctx.send("No lyrics found for `$title`. Try another song?")
+                return@thenAccept ctx.send("No lyrics found for `${ctx.cleanContent(title)}`. Try another song?")
             }
 
             val lyrics = it.getString("content")
