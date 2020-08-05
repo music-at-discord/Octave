@@ -15,3 +15,8 @@ build/*
 Octave.iml
 out/*
 botversion.txt
+
+bin/
+.settings/
+.classpath
+.project

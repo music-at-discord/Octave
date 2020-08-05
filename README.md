@@ -14,3 +14,19 @@ Octave provides a premium music experience.
 - We are not responsible for anything that this project does to you or your server and can not be held liable 
     for anything pertaining to it. 
 
+## Music@Discord selfhosting how-to (incomplete)
+
+Prerequisites:
+- Git
+- JDK 11
+- RethinkDB (A database called 'bot' and the tables: `guilds_v2` `premiumguilds` `premiumusers`)
+- Redis
+
+Setup:
+- Clone the respository using: `git clone https://github.com/music-at-discord/Octave`
+- Switch directory to the bot: `cd Octave`
+- Rename `credentials.conf.example` to `credentials.conf`
+- Open `credentials.conf` in your favourite text editor
+- Set 'token' to your bot's token, make sure to include ""
+- Set the 'console webhook' to a webhook for logging, again be sure to include ""
+- run `./gradlew run` to compile and run the bot
