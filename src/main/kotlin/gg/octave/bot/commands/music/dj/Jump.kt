@@ -60,7 +60,7 @@ class Jump : MusicCog {
         val position = (currentTrack.position + milliseconds).coerceIn(0, currentTrack.duration)
         currentTrack.position = position
 
-        ctx.send("Seeked to **${Utils.getTimestamp(position)}**.")
+        ctx.send("Jumped to **${Utils.getTimestamp(position)}**.")
     }
 
     fun seekByTimestamp(ctx: Context, manager: MusicManagerV2, timestamp: String) {
@@ -82,7 +82,7 @@ class Jump : MusicCog {
         val absolutePosition = millis.coerceIn(0, currentTrack.duration)
         currentTrack.position = absolutePosition
 
-        ctx.send("Seeked to **${Utils.getTimestamp(absolutePosition)}**.")
+        ctx.send("Jumped to **${Utils.getTimestamp(absolutePosition)}**.")
     }
 
     fun seekByTimeShorthand(ctx: Context, manager: MusicManagerV2, shorthand: String) {
@@ -93,7 +93,7 @@ class Jump : MusicCog {
         val absolutePosition = (currentTrack.position + milliseconds).coerceIn(0, currentTrack.duration)
         currentTrack.position = absolutePosition
 
-        ctx.send("Seeked to **${Utils.getTimestamp(absolutePosition)}**.")
+        ctx.send("Jumped to **${Utils.getTimestamp(absolutePosition)}**.")
     }
 
     private fun parseSegment(segment: String): Long {
