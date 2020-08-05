@@ -40,7 +40,7 @@ import java.util.function.Consumer
 fun genericSearchCommand(ctx: Context, query: String, searchPrefix: String, provider: String, color: Color, link: String, icon: String, thumbnail: String) {
     val handler: (List<AudioTrack>) -> Unit = handler@{ results ->
         if (results.isEmpty()) {
-            return@handler ctx.send("No search results for `$query`.")
+            return@handler ctx.send("No search results for `${ctx.cleanContent(query)}`.")
         }
 
         val botChannel = ctx.selfMember!!.voiceState?.channel
