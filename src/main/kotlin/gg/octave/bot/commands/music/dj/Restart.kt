@@ -43,7 +43,12 @@ class Restart : MusicCog {
         val track = manager.player.playingTrack ?: manager.lastTrack
         ?: return ctx.send("No track has been previously started.")
 
-        ctx.send("Restarting track: `${track.info.embedTitle}`.")
+        ctx.send {
+            setColor(0x9570D3)
+            setTitle("Restarting Track")
+            setDescription("The track `${track.info.embedTitle}` is now restarting.")
+        }
+
         manager.player.playTrack(track.makeClone())
     }
 }
